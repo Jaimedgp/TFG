@@ -88,12 +88,19 @@ no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 
 """
 
-tIntev = 1 *10**(-9)
+nWindw = 1 # numero de ventanas (para promediar) N natural
+tWindw = 40.96 # tiempo de la ventana [ns]
+tFinal = 0.4 #nWindw * tWindw # tiempo total simulado
+delta = 0.0025 # tiempo de muestreo para la FFT [ns]
+nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
+
+tIntev = 1 *10**(-1) # tiempo de integracion [ns]
+nTime = int(tFinal / tIntev)
 
 ################################################################################
 ##  Constantes a user durante la simulacion
 ##
-##      se computan antes para disminuir el numero de claculos
+##      se computan antes para disminuir el numero de calculos
 ################################################################################
 
 #   Delta_t I_bias
@@ -132,7 +139,7 @@ vgTGmm = vgT * gamma
 #       dN
 vgTGmmN = vgTGmm * nTr
 
-intTtau = tIntev * tauP
+intTtau = tIntev / tauP
 
 btGmm = beta * gamma
 
@@ -154,3 +161,44 @@ aphintTtau = (alpha / 2) * intTtau
 #  2 pi ---- TempIntev tIntev
 #        dT
 tmp = 2 * np.pi *dfdT * tempIntev * tIntev
+
+# Fase constant
+faseConstant = aphvgTGmmN + aphintTtau - tmp
+
+################################################################################
+##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
+##      densidad de fotones (S) y de la fase optica (Phi)
+################################################################################
+
+time = np.linspace(0, tFinal, nTime, dtype=np.float64)
+N = np.zeros(nTime, dtype=np.float64)
+S = np.zeros(nTime, dtype=np.float64)
+Phi = np.zeros(nTime, dtype=np.float64)
+
+# Se definen las condiciones iniciales para resolver la EDO
+N[0] = nTr
+S[0] = 10**(20)
+Phi[0] = 0
+
+sint = np.sin(angFreq*time)
+
+for i in range(0, nTime-1):
+#for i in range(0, 10):
+
+    bTN = bTIntv * N[i] * N[i]
+
+    invS = 1 / ((1/S[i]) + epsilon)
+
+    #Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
+
+    N[i+1] = (N[i] + tIeV + amplit*sint[i] - aTIntv*N[i] - bTN -
+                                   (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
+
+    S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
+
+
+    print N[i], S[i], Phi[i]
+    print i
+
+plt.plot(time, N)
+plt.show()
