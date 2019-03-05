@@ -35,7 +35,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #####################################
-##       CONSTANTES FISICAS
+##       CONSTANTES FISICAS (PDB)
 #####################################
 
 c0 = 299792458 # speed of light in vacuum [m s^-1]
@@ -64,6 +64,9 @@ C = 9.0 *10**(-50) # Auger recombination coefficient [m^6 ns^-1]
 beta = 5.3 *10**(-6) #fraction of spontaneous emission coupled in2 lasing mode
 epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
+
+etaF = 0.17 # in-fiber external quantum efficiency
+f0 = 1 # emission frequency [GHz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
@@ -187,6 +190,11 @@ tmp = 2 * np.pi *dfdT * tempIntev * tIntev
 
 # Fase constant
 faseConstant = aphvgTGmmN + aphintTtau - tmp
+
+#        h f0 Vact
+# etaF -------------
+#       Gamma tauP
+constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
