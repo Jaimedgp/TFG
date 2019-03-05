@@ -6,7 +6,29 @@
     inyection terms
 
     author: JaimeDGP
-    latest version: 26 February 2019
+    latest version: 5 March 2019
+
+                    ---------------
+                    |    INDICE   |
+                    ---------------
+
+    CONSTANTES.................................................39
+
+        Fisicas...........................................39
+        Articulo..........................................50
+
+            Tabla.....................................54
+            Recopilado................................70
+            Angel Valle...............................78
+            Diego Chaves..............................89
+
+        Muestreo..........................................100
+        Simulacion........................................127
+
+    Vectores..................................................194
+    Simulacion................................................208
+    Representacion............................................227
+
 """
 
 import numpy as np
@@ -18,6 +40,7 @@ import matplotlib.pyplot as plt
 
 c0 = 299792458 # speed of light in vacuum [m s^-1]
 e = 1.6021766208 *10**(-19) # electron charge[C]
+h = 6.626070040 *10**(-34) # Plank's constant [J s]
 
 ################################################################################
 ##    Datos tomados del articulo cientifico
@@ -180,6 +203,10 @@ N[0] = nTr
 S[0] = 10**(20)
 Phi[0] = 0
 
+############################
+##  Iniciar Simulacion
+############################
+
 sint = np.sin(angFreq*time)
 
 for i in range(0, nTime-1):
@@ -194,6 +221,10 @@ for i in range(0, nTime-1):
     S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
 
     Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
+
+#########################################
+##  Representacion de los Datos
+#########################################
 
 fig = plt.figure(figsize=(8,6))
 plt.plot(time, N/nTr)
