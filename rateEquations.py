@@ -33,11 +33,11 @@ e = 1.6021766208 *10**(-19) # electron charge[C]
 vAct = 1.53 *10**(-17) # active volume [m^3]
 gamma = 0.06 # optical confinement factor
 nTr = 1.3 *10**(24) # transparency carrier density [m^-3]
-B = 1.5 *10**(-16) # spontaneous coefficient [m^3 s^-1]
+B = 1.5 *10**(-25) # spontaneous coefficient [m^3 ns^-1]
 dGdN = 4.38 *10**(-20) # differential gain [m^2]
-tauP = 2.17 # photon lifetime [ps]
-A = 2.8 *10**(8) # non-radiative coefficient [s^-1]
-C = 9.0 *10**(-41) # Auger recombination coefficient [m^6 s^-1]
+tauP = 2.17*10**(-3) # photon lifetime [ns]
+A = 0.28 # non-radiative coefficient [ns^-1]
+C = 9.0 *10**(-50) # Auger recombination coefficient [m^6 ns^-1]
 beta = 5.3 *10**(-6) #fraction of spontaneous emission coupled in2 lasing mode
 epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
@@ -46,16 +46,16 @@ alpha = 3 # linewidth engancement factor
 # Recopilado por el articulo
 #---------------------------------------------------
 
-iBias = 34 # bias current [mA]
+iBias = 34 *10**(-12) # bias current [C ns^-1]
 fR = 5 #  [GHz]
-vRF = 1.8 #RMS voltage value of the signal generator [V]
+vRF = 1.8 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
 #---------------------------------------------------
 
 ng = 3.5 # index of the 
-vg = c0/ng # group velocity [m s^-1
+vg = c0/ng *10**(-9)# group velocity [m ns^-1]
 
 cLoss = 1 # loss coeficient accounting for the frequency
 zL = 50 # impedance of the laser module [ohms]
@@ -65,14 +65,14 @@ z0 = 50 # generator output impedance [ohms]
 # Facilitados por las medidas de Diego Chaves
 #---------------------------------------------------
 
-dfdT = -13.5 # temperature coefficient of the emission frequency [GHz/K]
-tempIntev = 1.3 # the difference between the active region temp at the
-                # operating conditiona and at the threshold
+dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
+tempIntev = 2.09 # the difference between the active region temp at the
+                 # operating conditiona and at the threshold for Ibias = 34 mA
 
 ################################################################################
-##  Valores del muestre para la simulacion
+##  Valores del muestreo para la simulacion
 ##
-##      datos tanto para el calculo de las ventanas de estudio, tiempos de
+##      datos para el calculo de las ventanas de estudio, tiempos de
 ##      muestre para la FFT y tiempos de integracion
 ################################################################################
 """
@@ -89,12 +89,12 @@ no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
 nWindw = 1 # numero de ventanas (para promediar) N natural
-tWindw = 40.96 # tiempo de la ventana [ns]
-tFinal = 0.4 #nWindw * tWindw # tiempo total simulado
+tWindw = 2#40.96 # tiempo de la ventana [ns]
+tFinal = nWindw * tWindw # tiempo total simulado
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 
-tIntev = 1 *10**(-1) # tiempo de integracion [ns]
+tIntev = 1 *10**(-5) # tiempo de integracion [ns]
 nTime = int(tFinal / tIntev)
 
 ################################################################################
@@ -183,22 +183,21 @@ Phi[0] = 0
 sint = np.sin(angFreq*time)
 
 for i in range(0, nTime-1):
-#for i in range(0, 10):
 
     bTN = bTIntv * N[i] * N[i]
 
     invS = 1 / ((1/S[i]) + epsilon)
-
-    #Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
 
     N[i+1] = (N[i] + tIeV + amplit*sint[i] - aTIntv*N[i] - bTN -
                                    (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
 
     S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
 
+    Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
 
-    print N[i], S[i], Phi[i]
-    print i
-
-plt.plot(time, N)
+fig = plt.figure(figsize=(8,6))
+plt.plot(time, N/nTr)
+plt.xlabel("tiempo [ns]", fontsize=15)
+plt.ylabel("$N(t)/N_{tr}$", fontsize=15)
 plt.show()
+fig.savefig("./N.png")
