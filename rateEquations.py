@@ -66,7 +66,7 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = 1 # emission frequency [GHz]
+f0 = 1 *10**(9)# emission frequency [Hz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
@@ -206,10 +206,14 @@ N = np.zeros(nTime, dtype=np.float64)
 S = np.zeros(nTime, dtype=np.float64)
 Phi = np.zeros(nTime, dtype=np.float64)
 
+opField = np.zeros(nTime, dtype=np.float64)
+
 # Se definen las condiciones iniciales para resolver la EDO
 N[0] = nTr
 S[0] = 10**(20)
 Phi[0] = 0
+
+opField[0] = np.sqrt(constP * S[0])
 
 ############################
 ##  Iniciar Simulacion
@@ -230,13 +234,15 @@ for i in range(0, nTime-1):
 
     Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
 
+    opField[i+1] = np.sqrt(constP * S[i+1])
+
 #########################################
 ##  Representacion de los Datos
 #########################################
 
 fig = plt.figure(figsize=(8,6))
-plt.plot(time, N/nTr)
+plt.plot(time, opField)
 plt.xlabel("tiempo [ns]", fontsize=15)
-plt.ylabel("$N(t)/N_{tr}$", fontsize=15)
+plt.ylabel("$E(t)$", fontsize=15)
 plt.show()
-fig.savefig("./N.png")
+fig.savefig("./E.png")
