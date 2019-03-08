@@ -33,6 +33,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import cmath
 
 #####################################
 ##       CONSTANTES FISICAS (PDB)
@@ -66,7 +67,7 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = 1 *10**(9)# emission frequency [Hz]
+f0 = c0 / (1.546823 * 10**(-6))# emission frequency [Hz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
@@ -115,13 +116,15 @@ no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
 nWindw = 1 # numero de ventanas (para promediar) N natural
-tWindw = 2#40.96 # tiempo de la ventana [ns]
+tWindw = 40.96 # tiempo de la ventana [ns]
 tFinal = nWindw * tWindw # tiempo total simulado
-delta = 0.0025 # tiempo de muestreo para la FFT [ns]
-nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-nTime = int(tFinal / tIntev)
+nTime = int(tWindw / tIntev)
+
+delta = 0.0025 # tiempo de muestreo para la FFT [ns]
+nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
+ndelta = 250.0
 
 ################################################################################
 ##  Constantes a user durante la simulacion
@@ -206,7 +209,8 @@ N = np.zeros(nTime, dtype=np.float64)
 S = np.zeros(nTime, dtype=np.float64)
 Phi = np.zeros(nTime, dtype=np.float64)
 
-opField = np.zeros(nTime, dtype=np.float64)
+opField = np.zeros(nFFT, dtype=complex)
+topField = np.linspace(0, tFinal, nFFT, dtype=np.float64)
 
 # Se definen las condiciones iniciales para resolver la EDO
 N[0] = nTr
@@ -220,29 +224,38 @@ opField[0] = np.sqrt(constP * S[0])
 ############################
 
 sint = np.sin(angFreq*time)
+TFprom = 0
 
-for i in range(0, nTime-1):
+for win in range(0, nWindw):
+    for i in range(0, nTime-1):
 
-    bTN = bTIntv * N[i] * N[i]
+        bTN = bTIntv * N[i] * N[i]
 
-    invS = 1 / ((1/S[i]) + epsilon)
+        invS = 1 / ((1/S[i]) + epsilon)
 
-    N[i+1] = (N[i] + tIeV + amplit*sint[i] - aTIntv*N[i] - bTN -
-                                   (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
+        N[i+1] = (N[i] + tIeV + amplit*sint[i] - aTIntv*N[i] - bTN -
+                                    (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
 
-    S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
+        S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
 
-    Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
+        Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
 
-    opField[i+1] = np.sqrt(constP * S[i+1])
+        if ((i+1) % ndelta) == 0:
+
+            index = int((i+1)/ndelta)
+            opField[index] = np.sqrt(constP * S[i+1]) * np.exp(1j*Phi[i+1])
+
+    transFourier = np.fft.fft(opField)
+    TFprom += np.fft.fftshift(transFourier)/nWindw
 
 #########################################
 ##  Representacion de los Datos
 #########################################
 
 fig = plt.figure(figsize=(8,6))
-plt.plot(time, opField)
-plt.xlabel("tiempo [ns]", fontsize=15)
-plt.ylabel("$E(t)$", fontsize=15)
+plt.plot(abs(TFprom))
+#plt.xlabel("tiempo [ns]", fontsize=15)
+#plt.ylabel("$E(t)$", fontsize=15)
+plt.title("Transformada de Fourier de $E(t)$")
 plt.show()
-fig.savefig("./E.png")
+fig.savefig("./Efft.png")
