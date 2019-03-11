@@ -22,12 +22,12 @@
             Angel Valle...............................82
             Diego Chaves..............................93
 
-        Muestreo..........................................104
-        Simulacion........................................133
+        Muestreo..........................................111
+        Simulacion........................................140
 
-    Vectores..................................................205
-    Simulacion................................................224
-    Representacion............................................253
+    Vectores..................................................212
+    Simulacion................................................231
+    Representacion............................................260
 
 """
 
@@ -255,12 +255,12 @@ for win in range(0, nWindw):
     transFourier = np.fft.fft(opField)
     TFprom += np.fft.fftshift(transFourier)/nWindw
 
-fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
-fftTime = np.fft.fftshift(fftTime)
-
 #########################################
 ##  Representacion de los Datos
 #########################################
+
+fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
+fftTime = np.fft.fftshift(fftTime)
 
 fig = plt.figure(figsize=(8,6))
 plt.plot(fftTime, abs(TFprom))
@@ -268,4 +268,4 @@ plt.xlabel("$\\nu$ [GHz]", fontsize=15)
 plt.ylabel("EOP", fontsize=15)
 plt.title("Transformada de Fourier de $E(t)$")
 plt.show()
-fig.savefig("./Efft.png")
+fig.savefig("./Graficas/Efft.png")
