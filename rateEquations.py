@@ -6,7 +6,7 @@
     inyection terms
 
     author: JaimeDGP
-    latest version: 5 March 2019
+    latest version: 11 March 2019
 
                     ---------------
                     |    INDICE   |
@@ -39,9 +39,9 @@ import cmath
 ##       CONSTANTES FISICAS (PDB)
 #####################################
 
-c0 = 299792458 # speed of light in vacuum [m s^-1]
-e = 1.6021766208 *10**(-19) # electron charge[C]
-h = 6.626070040 *10**(-34) # Plank's constant [J s]
+c0 = 0.299792458 # speed of light in vacuum [m ns^-1]
+e = 1.6021766208 *10**(-19) # electron charge [C]
+h = 6.626070040 *10**(-25) # Plank's constant [J ns]
 
 ################################################################################
 ##    Datos tomados del articulo cientifico
@@ -67,7 +67,7 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = c0 / (1.546823 * 10**(-6))# emission frequency [Hz]
+f0 = c0 / (1.546823 * 10**(-6))# emission frequency [GHz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
@@ -75,14 +75,14 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency [Hz]
 
 iBias = 34 *10**(-12) # bias current [C ns^-1]
 fR = 5 #  [GHz]
-vRF = 1.8 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
 #---------------------------------------------------
 
 ng = 3.5 # index of the 
-vg = c0/ng *10**(-9)# group velocity [m ns^-1]
+vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
 
 cLoss = 1 # loss coeficient accounting for the frequency
 zL = 50 # impedance of the laser module [ohms]
@@ -93,8 +93,15 @@ z0 = 50 # generator output impedance [ohms]
 #---------------------------------------------------
 
 dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
-tempIntev = 2.09 # the difference between the active region temp at the
-                 # operating conditiona and at the threshold for Ibias = 34 mA
+
+"""
+        the difference between the active region temp at the
+    operating conditiona and at the threshold for Ibias = 34 mA
+
+        the value has been obtain by a polynomial regression of a table of data
+    (deltaT.txt) using a python script (getTemperature.py)
+"""
+tempIntev = 1.9579185783
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -120,11 +127,11 @@ tWindw = 40.96 # tiempo de la ventana [ns]
 tFinal = nWindw * tWindw # tiempo total simulado
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-nTime = int(tWindw / tIntev)
+nTime = int(tWindw / tIntev) # numero de pasos de integracion
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
-ndelta = 250.0
+ndelta = 250.0 # ndelta*tIntev=delta
 
 ################################################################################
 ##  Constantes a user durante la simulacion
@@ -204,13 +211,13 @@ constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 ##      densidad de fotones (S) y de la fase optica (Phi)
 ################################################################################
 
-time = np.linspace(0, tFinal, nTime, dtype=np.float64)
-N = np.zeros(nTime, dtype=np.float64)
-S = np.zeros(nTime, dtype=np.float64)
-Phi = np.zeros(nTime, dtype=np.float64)
+time = np.linspace(0, tFinal, nTime)
+N = np.zeros(nTime)
+S = np.zeros(nTime)
+Phi = np.zeros(nTime)
 
 opField = np.zeros(nFFT, dtype=complex)
-topField = np.linspace(0, tFinal, nFFT, dtype=np.float64)
+topField = np.linspace(0, tFinal, nFFT)
 
 # Se definen las condiciones iniciales para resolver la EDO
 N[0] = nTr
@@ -248,14 +255,17 @@ for win in range(0, nWindw):
     transFourier = np.fft.fft(opField)
     TFprom += np.fft.fftshift(transFourier)/nWindw
 
+fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
+fftTime = np.fft.fftshift(fftTime)
+
 #########################################
 ##  Representacion de los Datos
 #########################################
 
 fig = plt.figure(figsize=(8,6))
-plt.plot(abs(TFprom))
-#plt.xlabel("tiempo [ns]", fontsize=15)
-#plt.ylabel("$E(t)$", fontsize=15)
+plt.plot(fftTime, abs(TFprom))
+plt.xlabel("$\\nu$ [GHz]", fontsize=15)
+plt.ylabel("EOP", fontsize=15)
 plt.title("Transformada de Fourier de $E(t)$")
 plt.show()
 fig.savefig("./Efft.png")
