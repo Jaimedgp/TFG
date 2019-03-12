@@ -21,14 +21,6 @@ def getTemperature(nameFile, intensity):
     parameters = np.polyfit(intensidad, deltaT, len(deltaT)-1)
 
     result = 0
-    xTh = np.linspace(15, 65, 100)
-    for i in range(len(parameters)):
-        result += parameters[len(parameters)-(i+1)]*xTh**(i)
-
-    plt.plot(xTh, result)
-    plt.plot(intensidad, deltaT, "ro")
-    plt.show()
-    result = 0
     for i in range(len(parameters)):
         result += parameters[len(parameters)-(i+1)]*intensity**(i)
     return result
