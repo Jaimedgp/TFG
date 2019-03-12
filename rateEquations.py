@@ -12,22 +12,26 @@
                     |    INDICE   |
                     ---------------
 
-    CONSTANTES.................................................40
+    CONSTANTES.................................................44
 
-        Fisicas...........................................40
-        Articulo..........................................51
+        Fisicas...........................................44
+        Articulo..........................................55
 
-            Tabla.....................................55
-            Recopilado................................74
-            Angel Valle...............................82
-            Diego Chaves..............................93
+            Tabla.....................................59
+            Recopilado................................78
+            Angel Valle...............................86
+            Diego Chaves..............................97
 
-        Muestreo..........................................111
-        Simulacion........................................140
+        Muestreo..........................................115
+        Simulacion........................................144
 
-    Vectores..................................................212
-    Simulacion................................................231
-    Representacion............................................260
+    Vectores..................................................216
+    Simulacion................................................235
+    Representacion............................................263
+
+        Espectro Optico...................................272
+        Frecuencia........................................298
+        Both N y S........................................313
 
 """
 
@@ -119,7 +123,6 @@ tfinal = ttran + nv*tventana# Tiempo total que simulamos
 delta = 0.25 #???d-2???? # Tiempo de muestreo para la FFT (ns)
 tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
-
 """
 
 nWindw = 1 # numero de ventanas (para promediar) N natural
@@ -147,7 +150,7 @@ tIeV = (tIntev * iBias) / (e*vAct)
 #   tIntev cLoss 2 sqrt(2) vRF
 # ------------------------------
 #       e vAct (z0 + zL)
-amplit = (tIntev * cLoss * 2 * np.sqrt(2) * vRF) / (e * vAct * (z0 + zL))
+amplit = (tIntev * cLoss * 2.0 * np.sqrt(2) * vRF) / (e * vAct * (z0 + zL))
 
 angFreq = 2 * np.pi * fR
 
@@ -182,14 +185,14 @@ btGmm = beta * gamma
 #    alpha      dg
 #   ------- vg ---- tIntev Gamma
 #      2        dN
-aphvgTGmm = (alpha / 2) * vgTGmm
+aphvgTGmm = (alpha / 2.0) * vgTGmm
 
 #    alpha      dg
 #   ------- vg ---- tIntev Gamma Ntr
 #      2        dN
 aphvgTGmmN = aphvgTGmm * nTr
 
-aphintTtau = (alpha / 2) * intTtau
+aphintTtau = (alpha / 2.0) * intTtau
 
 #       TEMPERATURE TERM
 #
@@ -259,13 +262,68 @@ for win in range(0, nWindw):
 ##  Representacion de los Datos
 #########################################
 
+#-------------------------------------------------------------------------------
+# Espectro optico frente a la longitud de onda
+#
+#   EL espectro optico se obtiene realizando la transformada de Fourier del
+#   campo optico total (opField). Para la obtencion de la longitud de onda se
+#   obtienen las frecuencias de la transformada de Fourier y se le suma la
+#   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
+#-------------------------------------------------------------------------------
+"""
 fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
 fftTime = np.fft.fftshift(fftTime)
 
+# freqTotal = frecuencia maxima de la FFT + frecuancia de emision del laser +
+#                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
+freqTotal = max(fftTime) + f0 + dfdT*tempIntev
+fftTime += freqTotal
+
+fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
+
 fig = plt.figure(figsize=(8,6))
-plt.plot(fftTime, abs(TFprom))
-plt.xlabel("$\\nu$ [GHz]", fontsize=15)
+plt.plot(fftWL, abs(TFprom))
+plt.xlabel("$\\lambda$ [nm]", fontsize=15)
 plt.ylabel("EOP", fontsize=15)
 plt.title("Transformada de Fourier de $E(t)$")
 plt.show()
-fig.savefig("./Graficas/Efft.png")
+fig.savefig("./Graficas/EfftWL.png")
+"""
+#-----------------------------------------------------------------------
+# Variacion de la frecuencia en funcion del tiempo a partir de la fase
+#
+#                   1     d Phi
+#       freq(t) = ------ -------
+#                  2 pi    dt
+#-----------------------------------------------------------------------
+"""
+freqTime = 1/(2*np.pi) *( (alpha / 2.0) * ((gamma * vg * dGdN * (N - nTr)) -
+                                        (1/tauP)) + 2 * np.pi * dfdT * tempIntev )
+
+fig = plt.figure(figsize=(8,6))
+plt.plot(time, freqTime)
+plt.xlabel("tiempo [ns]", fontsize=15)
+plt.ylabel("$\\frac{d \Phi}{d t} [GHz]$", fontsize=15)
+plt.title("Frecuancia a partir de la fase optica $\\nu \\propto \\frac{d\Phi}{dt}$")
+plt.show()
+fig.savefig("./Graficas/FrecPhi.png")
+"""
+#--------------------------------------------------------
+#   Both carrier and photon density versus time
+#--------------------------------------------------------
+
+fig, ax1 = plt.subplots()
+ax1.plot(time, N, 'r', label="N(t)")
+ax1.set_xlabel("tiempo [ns]", fontsize=20)
+ax1.set_xlim(0, 1)
+ax1.set_ylabel("N(t) [$m^3$]", color='r', fontsize=20)
+ax1.tick_params('y', colors='r')
+
+ax2 = ax1.twinx()
+ax2.plot(time, S, 'b', label="S(t)")
+ax2.set_ylabel("S(t) [$m^3$]", color='b', fontsize=20)
+ax2.tick_params('y', colors='b')
+fig.tight_layout()
+plt.show()
+fig.savefig("./Graficas/BothNetS.png")
+
