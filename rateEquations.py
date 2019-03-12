@@ -71,7 +71,7 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = c0 / (1.546823 * 10**(-6))# emission frequency [GHz]
+f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
