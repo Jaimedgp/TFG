@@ -23,15 +23,15 @@
             Diego Chaves..............................97
 
         Muestreo..........................................115
-        Simulacion........................................144
+        Simulacion........................................143
 
-    Vectores..................................................216
-    Simulacion................................................235
-    Representacion............................................263
+    Vectores..................................................215
+    Simulacion................................................234
+    Representacion............................................264
 
-        Espectro Optico...................................272
-        Frecuencia........................................298
-        Both N y S........................................313
+        Espectro Optico...................................273
+        Frecuencia........................................299
+        Both N y S........................................314
 
 """
 
@@ -68,7 +68,7 @@ A = 0.28 # non-radiative coefficient [ns^-1]
 C = 9.0 *10**(-50) # Auger recombination coefficient [m^6 ns^-1]
 beta = 5.3 *10**(-6) #fraction of spontaneous emission coupled in2 lasing mode
 epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
-alpha = 3 # linewidth engancement factor
+alpha = 3.0 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
 f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
@@ -78,7 +78,7 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 #---------------------------------------------------
 
 iBias = 34 *10**(-12) # bias current [C ns^-1]
-fR = 5 #  [GHz]
+fR = 5.0 #  [GHz]
 vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
@@ -88,9 +88,9 @@ vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 ng = 3.5 # index of the 
 vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
 
-cLoss = 1 # loss coeficient accounting for the frequency
-zL = 50 # impedance of the laser module [ohms]
-z0 = 50 # generator output impedance [ohms]
+cLoss = 1.0 # loss coeficient accounting for the frequency
+zL = 50.0 # impedance of the laser module [ohms]
+z0 = 50.0 # generator output impedance [ohms]
 
 #---------------------------------------------------
 # Facilitados por las medidas de Diego Chaves
@@ -142,17 +142,17 @@ ndelta = 250.0 # ndelta*tIntev=delta
 ##      se computan antes para disminuir el numero de calculos
 ################################################################################
 
-#   Delta_t I_bias
-# -----------------
-#      e Vact
-tIeV = (tIntev * iBias) / (e*vAct)
-
-#   tIntev cLoss 2 sqrt(2) vRF
-# ------------------------------
-#       e vAct (z0 + zL)
-amplit = (tIntev * cLoss * 2.0 * np.sqrt(2) * vRF) / (e * vAct * (z0 + zL))
-
-angFreq = 2 * np.pi * fR
+#                  INTENSIDAD
+#
+#                 2 sqrt(2) vRF 
+# I_bias + cLoss --------------- sin(2 pi fR t)
+#                   z0 + zL
+current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
+                                                * np.pi * fR * t)) / (z0 + zL))
+#   tIntev
+# ----------
+#   e Vact
+eVinv = tIntev / (e*vAct)
 
 aTIntv = A * tIntev
 bTIntv = B * tIntev
@@ -233,8 +233,9 @@ opField[0] = np.sqrt(constP * S[0])
 ##  Iniciar Simulacion
 ############################
 
-sint = np.sin(angFreq*time)
 TFprom = 0
+
+currentTerm = eVinv * current(time)
 
 for win in range(0, nWindw):
     for i in range(0, nTime-1):
@@ -243,7 +244,7 @@ for win in range(0, nWindw):
 
         invS = 1 / ((1/S[i]) + epsilon)
 
-        N[i+1] = (N[i] + tIeV + amplit*sint[i] - aTIntv*N[i] - bTN -
+        N[i+1] = (N[i] + currentTerm[i] - aTIntv*N[i] - bTN -
                                     (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
 
         S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
@@ -270,12 +271,13 @@ for win in range(0, nWindw):
 #   obtienen las frecuencias de la transformada de Fourier y se le suma la
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
-"""
+
 fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
 fftTime = np.fft.fftshift(fftTime)
 
 # freqTotal = frecuencia maxima de la FFT + frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
+
 freqTotal = max(fftTime) + f0 + dfdT*tempIntev
 fftTime += freqTotal
 
@@ -287,8 +289,8 @@ plt.xlabel("$\\lambda$ [nm]", fontsize=15)
 plt.ylabel("EOP", fontsize=15)
 plt.title("Transformada de Fourier de $E(t)$")
 plt.show()
-fig.savefig("./Graficas/EfftWL.png")
-"""
+#fig.savefig("./Graficas/EfftWL_Prueba.png")
+
 #-----------------------------------------------------------------------
 # Variacion de la frecuencia en funcion del tiempo a partir de la fase
 #
@@ -311,7 +313,7 @@ fig.savefig("./Graficas/FrecPhi.png")
 #--------------------------------------------------------
 #   Both carrier and photon density versus time
 #--------------------------------------------------------
-
+"""
 fig, ax1 = plt.subplots()
 ax1.plot(time, N, 'r', label="N(t)")
 ax1.set_xlabel("tiempo [ns]", fontsize=20)
@@ -326,4 +328,4 @@ ax2.tick_params('y', colors='b')
 fig.tight_layout()
 plt.show()
 fig.savefig("./Graficas/BothNetS.png")
-
+"""
