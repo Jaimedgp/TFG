@@ -88,7 +88,7 @@ vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 ng = 3.5 # index of the 
 vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
 
-cLoss = 1.0 # loss coeficient accounting for the frequency
+cLoss = 1 # loss coeficient accounting for the frequency
 zL = 50.0 # impedance of the laser module [ohms]
 z0 = 50.0 # generator output impedance [ohms]
 
