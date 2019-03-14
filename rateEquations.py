@@ -267,16 +267,18 @@ for win in range(0, nWindw):
 # Espectro optico frente a la longitud de onda
 #
 #   EL espectro optico se obtiene realizando la transformada de Fourier del
-#   campo optico total (opField). Para la obtencion de la longitud de onda se
+#   campo optico total (opField). Las frecuencias han de ir en pasos de
+#   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
+#   transformada de fourier.  Para la obtencion de la longitud de onda se
 #   obtienen las frecuencias de la transformada de Fourier y se le suma la
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
 
-fftTime = np.linspace(-200, 200, nFFT)
+frecuencyLimits = 1 / (2*delta)
+fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
-# freqTotal = frecuencia maxima de la FFT + frecuancia de emision del laser +
+# freqTotal = frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
-
 freqTotal = f0 + dfdT*tempIntev
 fftTime += freqTotal
 
@@ -289,7 +291,7 @@ plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
 plt.title("$V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
-fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
+#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
 
 #-----------------------------------------------------------------------
 # Variacion de la frecuencia en funcion del tiempo a partir de la fase
