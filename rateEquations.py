@@ -79,7 +79,7 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 
 iBias = 34 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -105,7 +105,7 @@ dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
         the value has been obtain by a polynomial regression of a table of data
     (deltaT.txt) using a python script (getTemperature.py)
 """
-tempIntev = 1.9579185783
+tempIntev = 1.95791805783
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -257,7 +257,7 @@ for win in range(0, nWindw):
             opField[index] = np.sqrt(constP * S[i+1]) * np.exp(1j*Phi[i+1])
 
     transFourier = np.fft.fft(opField)
-    TFprom += np.fft.fftshift(transFourier)/nWindw
+    TFprom += np.fft.fftshift(transFourier)/float(nWindw)
 
 #########################################
 ##  Representacion de los Datos
@@ -272,24 +272,24 @@ for win in range(0, nWindw):
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
 
-fftTime = np.fft.fftfreq(nFFT, d=1/ndelta)
-fftTime = np.fft.fftshift(fftTime)
+fftTime = np.linspace(-200, 200, nFFT)
 
 # freqTotal = frecuencia maxima de la FFT + frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
 
-freqTotal = max(fftTime) + f0 + dfdT*tempIntev
+freqTotal = f0 + dfdT*tempIntev
 fftTime += freqTotal
 
 fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
 plt.plot(fftWL, abs(TFprom))
-plt.xlabel("$\\lambda$ [nm]", fontsize=15)
-plt.ylabel("EOP", fontsize=15)
-plt.title("Transformada de Fourier de $E(t)$")
+plt.xlabel("$\lambda$ [nm]", fontsize=15)
+plt.ylabel("PSD", fontsize=15)
+plt.yscale("log")
+plt.title("$V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
-#fig.savefig("./Graficas/EfftWL_Prueba.png")
+fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
 
 #-----------------------------------------------------------------------
 # Variacion de la frecuencia en funcion del tiempo a partir de la fase
