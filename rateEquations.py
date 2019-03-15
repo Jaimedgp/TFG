@@ -77,9 +77,9 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-iBias = 34 *10**(-12) # bias current [C ns^-1]
+iBias = 35 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -105,7 +105,7 @@ dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
         the value has been obtain by a polynomial regression of a table of data
     (deltaT.txt) using a python script (getTemperature.py)
 """
-tempIntev = 1.95791805783
+tempIntev = 2.09268916658557#1.95791805783
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -279,7 +279,7 @@ fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
 # freqTotal = frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
-freqTotal = f0 + dfdT*tempIntev
+freqTotal = f0# + dfdT*tempIntev
 fftTime += freqTotal
 
 fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
