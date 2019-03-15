@@ -279,8 +279,8 @@ fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
 # freqTotal = frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
-freqTotal = f0# + dfdT*tempIntev
-fftTime += freqTotal
+#freqTotal = f0# + dfdT*tempIntev
+fftTime += f0
 
 fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
 
@@ -289,7 +289,7 @@ plt.plot(fftWL, abs(TFprom))
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
-plt.title("$V_{RF} = $"+str(vRF*10**9)+" V")
+plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
 #fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
 
