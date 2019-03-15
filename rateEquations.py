@@ -12,27 +12,24 @@
                     |    INDICE   |
                     ---------------
 
-    CONSTANTES.................................................44
+    CONSTANTES.................................................41
 
-        Fisicas...........................................44
-        Articulo..........................................55
+        Fisicas...........................................41
+        Articulo..........................................52
 
-            Tabla.....................................59
-            Recopilado................................78
-            Angel Valle...............................86
-            Diego Chaves..............................97
+            Tabla.....................................56
+            Recopilado................................75
+            Angel Valle...............................83
+            Diego Chaves..............................94
 
-        Muestreo..........................................115
-        Simulacion........................................143
+        Muestreo..........................................112
+        Simulacion........................................140
 
-    Vectores..................................................215
-    Simulacion................................................234
-    Representacion............................................264
+    Vectores..................................................212
+    Simulacion................................................231
+    Representacion............................................261
 
-        Espectro Optico...................................273
-        Frecuencia........................................299
-        Both N y S........................................314
-
+        Espectro Optico...................................272
 """
 
 import numpy as np
@@ -292,42 +289,3 @@ plt.yscale("log")
 plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
 #fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
-
-#-----------------------------------------------------------------------
-# Variacion de la frecuencia en funcion del tiempo a partir de la fase
-#
-#                   1     d Phi
-#       freq(t) = ------ -------
-#                  2 pi    dt
-#-----------------------------------------------------------------------
-"""
-freqTime = 1/(2*np.pi) *( (alpha / 2.0) * ((gamma * vg * dGdN * (N - nTr)) -
-                                        (1/tauP)) + 2 * np.pi * dfdT * tempIntev )
-
-fig = plt.figure(figsize=(8,6))
-plt.plot(time, freqTime)
-plt.xlabel("tiempo [ns]", fontsize=15)
-plt.ylabel("$\\frac{d \Phi}{d t} [GHz]$", fontsize=15)
-plt.title("Frecuancia a partir de la fase optica $\\nu \\propto \\frac{d\Phi}{dt}$")
-plt.show()
-fig.savefig("./Graficas/FrecPhi.png")
-"""
-#--------------------------------------------------------
-#   Both carrier and photon density versus time
-#--------------------------------------------------------
-"""
-fig, ax1 = plt.subplots()
-ax1.plot(time, N, 'r', label="N(t)")
-ax1.set_xlabel("tiempo [ns]", fontsize=20)
-ax1.set_xlim(0, 1)
-ax1.set_ylabel("N(t) [$m^3$]", color='r', fontsize=20)
-ax1.tick_params('y', colors='r')
-
-ax2 = ax1.twinx()
-ax2.plot(time, S, 'b', label="S(t)")
-ax2.set_ylabel("S(t) [$m^3$]", color='b', fontsize=20)
-ax2.tick_params('y', colors='b')
-fig.tight_layout()
-plt.show()
-fig.savefig("./Graficas/BothNetS.png")
-"""
