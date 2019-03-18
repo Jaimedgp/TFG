@@ -76,7 +76,7 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 
 iBias = 35 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 0 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -122,7 +122,7 @@ tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 3 # numero de ventanas (para promediar) N natural
 tWindw = 40.96 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
@@ -130,7 +130,7 @@ nTime = int(tWindw / tIntev) # numero de pasos de integracion
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
-ndelta = 250.0 # ndelta*tIntev=delta
+ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
 ################################################################################
 ##  Constantes a user durante la simulacion
@@ -211,12 +211,11 @@ constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 ################################################################################
 
 time = np.linspace(0, tWindw, nTime)
-N = np.zeros(nTime)
-S = np.zeros(nTime)
-Phi = np.zeros(nTime)
+N = np.zeros(nFFT)
+S = np.zeros(nFFT)
+Phi = np.zeros(nFFT)
 
 opField = np.zeros(nFFT, dtype=complex)
-topField = np.linspace(0, tWindw, nFFT)
 
 # Se definen las condiciones iniciales para resolver la EDO
 N[0] = nTr
@@ -234,23 +233,32 @@ TFprom = 0
 currentTerm = eVinv * current(time)
 
 for win in range(0, nWindw):
-    for i in range(0, nTime-1):
 
-        bTN = bTIntv * N[i] * N[i]
+    tempN = N[0]
+    tempS = S[0]
+    tempPhi = Phi[0]
 
-        invS = 1 / ((1/S[i]) + epsilon)
+    for q in range(1, nFFT):
+        for k in range(0, ndelta):
 
-        N[i+1] = (N[i] + currentTerm[i] - aTIntv*N[i] - bTN -
-                                    (cTIntv*N[i]**3) - vgT*N[i]*invS + vgtN*invS)
+           bTN = bTIntv * tempN * tempN
 
-        S[i+1] = S[i] + vgTGmm*N[i]*invS - vgTGmmN*invS - intTtau*S[i] + btGmm*bTN
+           invS = 1 / ((1/tempS) + epsilon)
 
-        Phi[i+1] = Phi[i] + aphvgTGmm*N[i] - faseConstant
+           tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant)
 
-        if ((i+1) % ndelta) == 0:
+           tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
+                                + btGmm*bTN)
 
-            index = int((i+1)/ndelta)
-            opField[index] = np.sqrt(constP * S[i+1]) * np.exp(1j*Phi[i+1])
+           tempN = (tempN + currentTerm[(q-1)*ndelta+k] - aTIntv*tempN - bTN -
+                                                                (cTIntv*tempN**3) -
+                                                        vgT*tempN*invS + vgtN*invS)
+
+        N[q] += tempN/float(nWindw)
+        S[q] += tempS/float(nWindw)
+        Phi[q] += tempPhi/float(nWindw)
+
+        opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
     transFourier = np.fft.fft(opField)
     TFprom += np.fft.fftshift(transFourier)/float(nWindw)
