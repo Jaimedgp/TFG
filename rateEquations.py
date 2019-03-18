@@ -76,7 +76,7 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 
 iBias = 35 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -122,7 +122,7 @@ tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
-nWindw = 4 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 tWindw = 40.96 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
