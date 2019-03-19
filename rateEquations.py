@@ -74,9 +74,9 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-iBias = 35 *10**(-12) # bias current [C ns^-1]
+iBias = 34 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.8 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -102,7 +102,7 @@ dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
         the value has been obtain by a polynomial regression of a table of data
     (deltaT.txt) using a python script (getTemperature.py)
 """
-tempIntev = 2.09268916658557#1.95791805783
+tempIntev = 1.95791805783#2.09268916658557#
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -122,8 +122,8 @@ tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
-nWindw = 3 # numero de ventanas (para promediar) N natural
-tWindw = 40.96 # tiempo de la ventana [ns]
+nWindw = 1 # numero de ventanas (para promediar) N natural
+tWindw = 40.96 / 2.0 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
 nTime = int(tWindw / tIntev) # numero de pasos de integracion
@@ -131,6 +131,12 @@ nTime = int(tWindw / tIntev) # numero de pasos de integracion
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
+
+tTrans = 0.4 # tiempo del transitorio [ns]
+nTrans = int(tTrans / delta)
+
+tTotal = tWindw + tTrans
+nTotal = int(tTotal / tIntev)
 
 ################################################################################
 ##  Constantes a user durante la simulacion
@@ -205,24 +211,27 @@ faseConstant = aphvgTGmmN + aphintTtau - tmp
 #       Gamma tauP
 constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 
+#---------------------------------------------------------
+# Terminos de Ruido
+#---------------------------------------------------------
+
+#parte constante del termino de ruido del S(t)
+ruidoS = np.sqrt(2 * beta * gamma * bTIntv)
+
+# Parte constante del termino de ruido del Phi
+ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
+
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
 ##      densidad de fotones (S) y de la fase optica (Phi)
 ################################################################################
 
-time = np.linspace(0, tWindw, nTime)
+time = np.linspace(0, tTotal, nTotal)
 N = np.zeros(nFFT)
 S = np.zeros(nFFT)
 Phi = np.zeros(nFFT)
 
 opField = np.zeros(nFFT, dtype=complex)
-
-# Se definen las condiciones iniciales para resolver la EDO
-N[0] = nTr
-S[0] = 10**(20)
-Phi[0] = 0
-
-opField[0] = np.sqrt(constP * S[0])
 
 ############################
 ##  Iniciar Simulacion
@@ -234,23 +243,62 @@ currentTerm = eVinv * current(time)
 
 for win in range(0, nWindw):
 
-    tempN = N[0]
-    tempS = S[0]
-    tempPhi = Phi[0]
+    #---------------------------------------------------------
+    # Vectores Gaussianos N(0,1) para el  Ruido
+    #---------------------------------------------------------
+
+    X = np.random.normal(0, 1, nTotal)
+    Y = np.random.normal(0, 1, nTotal)
+
+    # Se definen las condiciones iniciales para resolver la EDO
+    tempN = nTr
+    tempS = float(10**(20))
+    tempPhi = 0
+
+    for q in range(0, nTrans):
+        for k in range(0, ndelta):
+
+            index = (q*ndelta) + k
+
+            bTN = bTIntv * tempN * tempN
+
+            invS = 1 / ((1/tempS) + epsilon)
+
+            tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant +
+                                            ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
+
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
+                                + btGmm*bTN +
+                     ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
+
+            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+                                                                (cTIntv*tempN**3) -
+                                                        vgT*tempN*invS + vgtN*invS)
+
+    N[0] = tempN
+    S[0] = tempS
+    Phi[0] = tempPhi
+    opField[0] = np.sqrt(constP * tempS)
+
+    usedIndex = nTrans*ndelta
 
     for q in range(1, nFFT):
         for k in range(0, ndelta):
 
-           bTN = bTIntv * tempN * tempN
+            index = (q-1)*ndelta + k + usedIndex
 
-           invS = 1 / ((1/tempS) + epsilon)
+            bTN = bTIntv * tempN * tempN
 
-           tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant)
+            invS = 1 / ((1/tempS) + epsilon)
 
-           tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                                + btGmm*bTN)
+            tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant +
+                                                ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
 
-           tempN = (tempN + currentTerm[(q-1)*ndelta+k] - aTIntv*tempN - bTN -
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
+                                + btGmm*bTN +
+                     ruidoS*tempN*np.sqrt(tempS)*X[index])
+
+            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                                                 (cTIntv*tempN**3) -
                                                         vgT*tempN*invS + vgtN*invS)
 
@@ -278,6 +326,9 @@ for win in range(0, nWindw):
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
 
+plt.plot(N)
+plt.show()
+
 frecuencyLimits = 1 / (2*delta)
 fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
@@ -296,3 +347,4 @@ plt.yscale("log")
 plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
 #fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
+
