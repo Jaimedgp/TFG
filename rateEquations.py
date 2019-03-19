@@ -76,7 +76,7 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 
 iBias = 34 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1.8 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -122,7 +122,7 @@ tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 2 # numero de ventanas (para promediar) N natural
 tWindw = 40.96 / 2.0 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
@@ -132,7 +132,7 @@ delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
-tTrans = 0.4 # tiempo del transitorio [ns]
+tTrans = 1.2 # tiempo del transitorio [ns]
 nTrans = int(tTrans / delta)
 
 tTotal = tWindw + tTrans
@@ -326,7 +326,7 @@ for win in range(0, nWindw):
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
 
-plt.plot(N)
+plt.plot(S)
 plt.show()
 
 frecuencyLimits = 1 / (2*delta)
