@@ -74,9 +74,9 @@ f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-iBias = 34 *10**(-12) # bias current [C ns^-1]
+iBias = 45 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
-vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -102,7 +102,7 @@ dfdT = -12.7 # temperature coefficient of the emission frequency [GHz/K]
         the value has been obtain by a polynomial regression of a table of data
     (deltaT.txt) using a python script (getTemperature.py)
 """
-tempIntev = 1.95791805783#2.09268916658557#
+tempIntev = 2.09268916658557 #1.95791805783
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -122,8 +122,8 @@ tr = tfinal-ttran # Tiempo real que se utiliza para la FFT
 no = int(tventana/delta) # N de valores de DFT (potencia de 2)
 """
 
-nWindw = 2 # numero de ventanas (para promediar) N natural
-tWindw = 40.96 / 2.0 # tiempo de la ventana [ns]
+nWindw = 1 # numero de ventanas (para promediar) N natural
+tWindw = 40.96 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
 nTime = int(tWindw / tIntev) # numero de pasos de integracion
@@ -201,7 +201,7 @@ aphintTtau = (alpha / 2.0) * intTtau
 #        df
 #  2 pi ---- TempIntev tIntev
 #        dT
-tmp = 2 * np.pi *dfdT * tempIntev * tIntev
+tmp = 2 * np.pi * tIntev * -47.0349688770657#-28.3905674923444#*dfdT * tempIntev
 
 # Fase constant
 faseConstant = aphvgTGmmN + aphintTtau - tmp
@@ -264,6 +264,7 @@ for win in range(0, nWindw):
 
             invS = 1 / ((1/tempS) + epsilon)
 
+            #tempPhi = (tempPhi + 0.000143566782738*tIntev + tmp +
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant +
                                             ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
 
@@ -291,16 +292,15 @@ for win in range(0, nWindw):
 
             invS = 1 / ((1/tempS) + epsilon)
 
+            #tempPhi = (tempPhi + 0.000143566782738*tIntev + tmp +
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseConstant +
-                                                ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                                        ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                                + btGmm*bTN +
-                     ruidoS*tempN*np.sqrt(tempS)*X[index])
+                            + btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
 
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                                                (cTIntv*tempN**3) -
-                                                        vgT*tempN*invS + vgtN*invS)
+                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
         N[q] += tempN/float(nWindw)
         S[q] += tempS/float(nWindw)
@@ -326,18 +326,15 @@ for win in range(0, nWindw):
 #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
 #-------------------------------------------------------------------------------
 
-plt.plot(S)
-plt.show()
-
 frecuencyLimits = 1 / (2*delta)
 fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
 # freqTotal = frecuancia de emision del laser +
 #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
-#freqTotal = f0# + dfdT*tempIntev
-fftTime += f0
+freqTotal = f0 + dfdT*tempIntev
+fftTime += f0# - (0.00014360262503/(2.0*np.pi)) #freqTotal
 
-fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
+fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
 plt.plot(fftWL, abs(TFprom))
@@ -347,4 +344,3 @@ plt.yscale("log")
 plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
 #fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
-
