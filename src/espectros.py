@@ -32,6 +32,16 @@
         Espectro Optico...................................272
 """
 
+frqMv = []
+tmpMv = []
+with open("./Table.txt", "r") as fr:
+    line = fr.readline()
+    while line != "":
+        val = line.split("\t")
+        frqMv.append(float(val[1]))
+        tmpMv.append(float(val[2]))
+        line = fr.readline()
+
 import numpy as np
 import matplotlib.pyplot as plt
 import cmath
@@ -68,13 +78,14 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3.0 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = c0 / (1.546823 * 10**(-6))# emission frequency at threshold [GHz]
+f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 
 #---------------------------------------------------
 # Recopilado por el articulo
 #---------------------------------------------------
 
-iBias = 45 *10**(-12) # bias current [C ns^-1]
+iBias = [i *10**(-12) for i in range(15, 70, 5) ] # bias current [C ns^-1]
+#iBias = 35 *10**(-12) # bias current [C ns^-1]
 fR = 5.0 #  [GHz]
 vRF = 0 *10**(-9) #RMS voltage value of the signal generator [V]
 
@@ -149,8 +160,6 @@ nTotal = int(tTotal / tIntev)
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
-                                                * np.pi * fR * t)) / (z0 + zL))
 #   tIntev
 # ----------
 #   e Vact
@@ -201,10 +210,6 @@ aphintTtau = (alpha / 2.0) * intTtau
 #        df
 #  2 pi ---- TempIntev tIntev
 #        dT
-tmp = 2 * np.pi * tIntev * -47.0349688770657#-28.3905674923444#*dfdT * tempIntev
-
-# Fase constant
-faseConstant = aphvgTGmmN + aphintTtau - tmp
 
 #        h f0 Vact
 # etaF -------------
@@ -226,7 +231,7 @@ ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
 ##      densidad de fotones (S) y de la fase optica (Phi)
 ################################################################################
 
-time = np.linspace(0, tTotal, nTotal)
+#time = np.linspace(0, tTotal, nTotal)
 N = np.zeros(nFFT)
 S = np.zeros(nFFT)
 Phi = np.zeros(nFFT)
@@ -236,12 +241,26 @@ opField = np.zeros(nFFT, dtype=complex)
 ############################
 ##  Iniciar Simulacion
 ############################
+fig = plt.figure(figsize=(8,6))
 
-TFprom = 0
+for i in range(len(iBias)):
+    TFprom = 0
 
-currentTerm = eVinv * current(time)
+    N = np.zeros(nFFT)
+    S = np.zeros(nFFT)
+    Phi = np.zeros(nFFT)
 
-for win in range(0, nWindw):
+    opField = np.zeros(nFFT, dtype=complex)
+
+
+    tmp = 2 * np.pi * tIntev * tmpMv[i]# -28.3905674923444#*dfdT * tempIntev
+
+    # Fase constant
+    faseConstant = aphvgTGmmN + aphintTtau - tmp
+
+    #current = lambda t: (iBias[i] + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
+    #                                            * np.pi * fR * t)) / (z0 + zL))
+    currentTerm = eVinv * iBias[i]#current(time)
 
     #---------------------------------------------------------
     # Vectores Gaussianos N(0,1) para el  Ruido
@@ -272,7 +291,7 @@ for win in range(0, nWindw):
                                 + btGmm*bTN +
                      ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
 
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+            tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
                                                                 (cTIntv*tempN**3) -
                                                         vgT*tempN*invS + vgtN*invS)
 
@@ -299,7 +318,7 @@ for win in range(0, nWindw):
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
                             + btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
 
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+            tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
         N[q] += tempN/float(nWindw)
@@ -311,36 +330,39 @@ for win in range(0, nWindw):
     transFourier = np.fft.fft(opField)
     TFprom += np.fft.fftshift(transFourier)/float(nWindw)
 
-#########################################
-##  Representacion de los Datos
-#########################################
+    #########################################
+    ##  Representacion de los Datos
+    #########################################
 
-#-------------------------------------------------------------------------------
-# Espectro optico frente a la longitud de onda
-#
-#   EL espectro optico se obtiene realizando la transformada de Fourier del
-#   campo optico total (opField). Las frecuencias han de ir en pasos de
-#   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
-#   transformada de fourier.  Para la obtencion de la longitud de onda se
-#   obtienen las frecuencias de la transformada de Fourier y se le suma la
-#   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
-#-------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------
+    # Espectro optico frente a la longitud de onda
+    #
+    #   EL espectro optico se obtiene realizando la transformada de Fourier del
+    #   campo optico total (opField). Las frecuencias han de ir en pasos de
+    #   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
+    #   transformada de fourier.  Para la obtencion de la longitud de onda se
+    #   obtienen las frecuencias de la transformada de Fourier y se le suma la
+    #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
+    #-------------------------------------------------------------------------------
 
-frecuencyLimits = 1 / (2*delta)
-fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
+    frecuencyLimits = 1 / (2*delta)
+    fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)
 
-# freqTotal = frecuancia de emision del laser +
-#                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
-freqTotal = f0 + dfdT*tempIntev
-fftTime += f0# - (0.00014360262503/(2.0*np.pi)) #freqTotal
+    # freqTotal = frecuancia de emision del laser +
+    #                          + frecuencia de la fase (freq = 1/2pi dPhi/dt)
+    freqTotal = f0 + dfdT*tempIntev
+    fftTime += f0 - (frqMv[i]/(2.0*np.pi))#0.00014360262503/(2.0*np.pi)) #freqTotal
 
-fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
+    fftWL = c0/fftTime *10**(9) # longitud de onda [nm]
 
-fig = plt.figure(figsize=(8,6))
-plt.plot(fftWL, abs(TFprom))
+    plt.plot(fftWL, abs(TFprom), label=str(iBias[i]))
+
+    print "%s \t %s" %(int(iBias[i]*10**(12)), fftWL[np.where(TFprom == max(TFprom))][0])
+
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
-plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
+plt.legend()
+#plt.title("$I_{Bias}$ = "+str(iBias*10**12)+" mA \t $V_{RF} = $"+str(vRF*10**9)+" V")
 plt.show()
-#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
+    #fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
