@@ -1,5 +1,5 @@
 ################################################################
-##      Datos obtenidos de la simulacion (phaseTerm.py) en la 
+##      Datos obtenidos de la simulacion (phaseTerm.py) en la
 ##  que se obtiene el valor del termino de la fase que no
 ##  depende ni de la diferencia de frecuencias ni de ruido y
 ##  que tiende a un valor constante.

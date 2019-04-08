@@ -1,39 +1,26 @@
-"""
-    Simulation of the rate equations used to discribe the dynamics of the
-    carrier density (N(t)), the photon density (S(t)) and optical phase (phi(t))
-
-    The simulation is done without taking into account the inyection terms
-
-    author: JaimeDGP
-    latest version: 19 April 2019
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import cmath
 
 from Constantes import *
-from getTempValues import getDeltaT
+from getTempValues import *
 
 iBias = 35 *10**(-12) # bias current [C ns^-1]
-vRF = 1.2 *10**(-9) #RMS voltage value of the signal generator [V]
 
-deltaT = getDeltaT(int(iBias * 10**(12)))
+deltaT = getDeltaT(int(iBias*10**12))
+deltaF = getConstante(int(iBias*10**12))
 
 faseTerm = faseConstant - pi2t * deltaT
 
+vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+
 nWindw = 1 # numero de ventanas (para promediar) N natural
+
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
+nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
 nTrans = int(tTrans / delta)
-
-periodos = 7 / fR
-nPeriodo = int(periodos / delta)
-
-tTotal = tTrans + periodos
-nTotal = int(tTotal / tIntev)
-
 
 #                  INTENSIDAD
 #
@@ -43,15 +30,14 @@ nTotal = int(tTotal / tIntev)
 current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
                                                 * np.pi * fR * t)) / (z0 + zL))
 
+
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
 ##      densidad de fotones (S) y de la fase optica (Phi)
 ################################################################################
 
 time = np.linspace(0, tTotal, nTotal)
-N = np.zeros(nPeriodo)
-S = np.zeros(nPeriodo)
-Phi = np.zeros(nPeriodo)
+opField = np.zeros(nFFT, dtype=complex)
 
 ############################
 ##  Iniciar Simulacion
@@ -72,7 +58,7 @@ for win in range(0, nWindw):
 
     # Se definen las condiciones iniciales para resolver la EDO
     tempN = nTr
-    tempS = float(10**20)
+    tempS = float(10**(20))
     tempPhi = 0
 
     for q in range(0, nTrans):
@@ -85,20 +71,21 @@ for win in range(0, nWindw):
             invS = 1 / ((1/tempS) + epsilon)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                    ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
+                                            ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                        btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
+                                + btGmm*bTN +
+                     ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
 
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+                                                                (cTIntv*tempN**3) -
+                                                        vgT*tempN*invS + vgtN*invS)
 
-    N[0] = tempN
-    S[0] = tempS
-    Phi[0] = tempPhi
+    opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
+
     usedIndex = nTrans*ndelta
 
-    for q in range(1, nPeriodo):
+    for q in range(1, nFFT):
         for k in range(0, ndelta):
 
             index = (q-1)*ndelta + k + usedIndex
@@ -110,33 +97,43 @@ for win in range(0, nWindw):
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
                                         ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                              btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
+                            + btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
 
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
-        N[q] += tempN/float(nWindw)
-        S[q] += tempS/float(nWindw)
-        Phi[q] += tempPhi/float(nWindw)
+        opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
+
+    transFourier = np.fft.fft(opField)
+    TFprom += abs(np.fft.fftshift(transFourier))/float(nWindw)
 
 #########################################
 ##  Representacion de los Datos
 #########################################
 
-timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
+#-------------------------------------------------------------------------------
+# Espectro optico frente a la longitud de onda
+#
+#   EL espectro optico se obtiene realizando la transformada de Fourier del
+#   campo optico total (opField). Las frecuencias han de ir en pasos de
+#   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
+#   transformada de fourier.  Para la obtencion de la longitud de onda se
+#   obtienen las frecuencias de la transformada de Fourier y se le suma la
+#   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
+#-------------------------------------------------------------------------------
+frecuencyLimits = 1 / (2*delta)
+fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)#, endpoint=True)
 
-fig, ax1 = plt.subplots()
-ax1.plot(timePeriod, N, 'r', label="N(t)")
-ax1.set_xlabel("tiempo [ns]", fontsize=20)
-ax1.set_xlim(0, 1)
-ax1.set_ylabel("N(t) [$m^3$]", color='r', fontsize=20)
-ax1.tick_params('y', colors='r')
+fftTime += f0 - (deltaF/(2.0*np.pi))
 
-ax2 = ax1.twinx()
-ax2.plot(timePeriod, S, 'b', label="S(t)")
-ax2.set_ylabel("S(t) [$m^3$]", color='b', fontsize=20)
-ax2.set_yscale('log')
-ax2.tick_params('y', colors='b')
-fig.tight_layout()
+fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
+
+fig = plt.figure(figsize=(8,6))
+plt.plot(fftWL, TFprom)
+plt.xlabel("$\lambda$ [nm]", fontsize=15)
+plt.ylabel("PSD", fontsize=15)
+plt.yscale("log")
+plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias*10**12, vRF*10**9))
 plt.show()
+#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
