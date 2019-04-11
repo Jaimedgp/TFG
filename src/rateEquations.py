@@ -28,7 +28,7 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
 nTrans = int(tTrans / delta)
 
-periodos = 7 / fR
+periodos = 3 / fR
 nPeriodo = int(periodos / delta)
 
 tTotal = tTrans + periodos

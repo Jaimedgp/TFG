@@ -14,13 +14,13 @@ faseTerm = faseConstant - pi2t * deltaT
 
 vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 5 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
-nTrans = int(tTrans / delta)
+nTrans = int(tTrans / tIntev)
 
 #                  INTENSIDAD
 #
@@ -62,33 +62,26 @@ for win in range(0, nWindw):
     tempPhi = 0
 
     for q in range(0, nTrans):
-        for k in range(0, ndelta):
 
-            index = (q*ndelta) + k
+        bTN = bTIntv * tempN * tempN
 
-            bTN = bTIntv * tempN * tempN
+        invS = 1 / ((1/tempS) + epsilon)
 
-            invS = 1 / ((1/tempS) + epsilon)
+        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+                            ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                            ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
+        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+                    btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                                + btGmm*bTN +
-                     ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
-
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                                                (cTIntv*tempN**3) -
-                                                        vgT*tempN*invS + vgtN*invS)
+        tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
+                            cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
     opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-
-    usedIndex = nTrans*ndelta
 
     for q in range(1, nFFT):
         for k in range(0, ndelta):
 
-            index = (q-1)*ndelta + k + usedIndex
+            index = (q-1)*ndelta + k + nTrans
 
             bTN = bTIntv * tempN * tempN
 
