@@ -64,6 +64,7 @@ tIntev = 1 *10**(-5) # tiempo de integracion [ns]
 nTime = int(tWindw / tIntev) # numero de pasos de integracion
 
 tTrans = 1.2 # tiempo del transitorio [ns]
+nTrans = int(tTrans / tIntev)
 
 tTotal = tWindw + tTrans
 nTotal = int(tTotal / tIntev)

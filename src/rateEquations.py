@@ -16,7 +16,7 @@ from Constantes import *
 from getTempValues import getDeltaT
 
 iBias = 35 *10**(-12) # bias current [C ns^-1]
-vRF = 1.2 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 deltaT = getDeltaT(int(iBias * 10**(12)))
 
@@ -26,9 +26,9 @@ nWindw = 1 # numero de ventanas (para promediar) N natural
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
-nTrans = int(tTrans / delta)
+#nTrans = int(tTrans / delta)
 
-periodos = 3 / fR
+periodos = 4 / fR
 nPeriodo = int(periodos / delta)
 
 tTotal = tTrans + periodos
@@ -49,9 +49,10 @@ current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
 ################################################################################
 
 time = np.linspace(0, tTotal, nTotal)
+I = np.zeros(nPeriodo)
 N = np.zeros(nPeriodo)
 S = np.zeros(nPeriodo)
-Phi = np.zeros(nPeriodo)
+dPhi = np.zeros(nPeriodo)
 
 ############################
 ##  Iniciar Simulacion
@@ -76,32 +77,27 @@ for win in range(0, nWindw):
     tempPhi = 0
 
     for q in range(0, nTrans):
-        for k in range(0, ndelta):
+        bTN = bTIntv * tempN * tempN
 
-            index = (q*ndelta) + k
+        invS = 1 / ((1/tempS) + epsilon)
 
-            bTN = bTIntv * tempN * tempN
+        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+                                ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
-            invS = 1 / ((1/tempS) + epsilon)
+        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+                    btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                    ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
-
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                        btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
-
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
+        tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
+                            (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+    I[0] = currentTerm[q]
     N[0] = tempN
     S[0] = tempS
-    Phi[0] = tempPhi
-    usedIndex = nTrans*ndelta
+    dPhi[0] = tempPhi
 
     for q in range(1, nPeriodo):
         for k in range(0, ndelta):
 
-            index = (q-1)*ndelta + k + usedIndex
+            index = (q-1)*ndelta + k + nTrans
 
             bTN = bTIntv * tempN * tempN
 
@@ -116,9 +112,10 @@ for win in range(0, nWindw):
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
+        I[q] = currentTerm[index]
         N[q] += tempN/float(nWindw)
         S[q] += tempS/float(nWindw)
-        Phi[q] += tempPhi/float(nWindw)
+        dPhi[q] += tempPhi/float(nWindw)
 
 #########################################
 ##  Representacion de los Datos
@@ -126,17 +123,31 @@ for win in range(0, nWindw):
 
 timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
 
-fig, ax1 = plt.subplots()
-ax1.plot(timePeriod, N, 'r', label="N(t)")
-ax1.set_xlabel("tiempo [ns]", fontsize=20)
-ax1.set_xlim(0, 1)
-ax1.set_ylabel("N(t) [$m^3$]", color='r', fontsize=20)
-ax1.tick_params('y', colors='r')
+fig, axs = plt.subplots(5, 1, sharex=True)
+# Remove horizontal space between axes
+fig.subplots_adjust(hspace=0)
 
-ax2 = ax1.twinx()
-ax2.plot(timePeriod, S, 'b', label="S(t)")
-ax2.set_ylabel("S(t) [$m^3$]", color='b', fontsize=20)
-ax2.set_yscale('log')
-ax2.tick_params('y', colors='b')
-fig.tight_layout()
+axs[0].plot(timePeriod, I, 'r')
+axs[0].set_ylabel("I(t) [$C ns^-1$]", color='r', fontsize=15)
+
+axs[1].plot(timePeriod, N, 'r')
+axs[1].set_ylabel("N(t) [$m^3$]", color='r', fontsize=15)
+
+axs[2].plot(timePeriod, S, 'b')
+axs[2].set_ylabel("S(t) [$m^3$]", color='b', fontsize=15)
+axs[2].set_yscale('log')
+
+axs[3].plot(timePeriod, N, 'r', label="N(t)")
+axs[3].set_ylabel("N(t) [$m^3$]", color='r', fontsize=15)
+axs[3].tick_params('y', colors='r')
+
+ax4 = axs[3].twinx()
+ax4.plot(timePeriod, S, 'b', label="S(t)")
+ax4.set_ylabel("S(t) [$m^3$]", color='b', fontsize=15)
+ax4.set_yscale('log')
+ax4.tick_params('y', colors='b')
+
+axs[4].plot(timePeriod, dPhi, 'r', label="N(t)")
+axs[4].set_ylabel("$\Phi$(t) [$m^3$]", color='r', fontsize=15)
+axs[4].tick_params('y', colors='r')
 plt.show()

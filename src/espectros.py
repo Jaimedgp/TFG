@@ -11,13 +11,11 @@ tmpMv = getDeltaT()
 
 iBias = [i *10**(-12) for i in range(15, 40, 5) ] # bias current [C ns^-1]
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 20 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
-
-nTrans = int(tTrans / delta)
 
 ############################
 ##  Iniciar Simulacion
@@ -47,7 +45,6 @@ for inten in iBias:
         #---------------------------------------------------------
         # Vectores Gaussianos N(0,1) para el  Ruido
         #---------------------------------------------------------
-
         X = np.random.normal(0, 1, nTotal)
         Y = np.random.normal(0, 1, nTotal)
 
@@ -57,32 +54,26 @@ for inten in iBias:
         tempPhi = 0
 
         for q in range(0, nTrans):
-            for k in range(0, ndelta):
+            bTN = bTIntv * tempN * tempN
 
-                index = (q*ndelta) + k
+            invS = 1 / ((1/tempS) + epsilon)
 
-                bTN = bTIntv * tempN * tempN
+            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+                                ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
-                invS = 1 / ((1/tempS) + epsilon)
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
+                                                intTtau*tempS + btGmm*bTN +
+                                ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
-                tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                    ruidoPhi*tempN*Y[index]/np.sqrt(abs(tempS)))
-
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
-                                                    intTtau*tempS + btGmm*bTN +
-                                    ruidoS*tempN*np.sqrt(abs(tempS))*X[index])
-
-                tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
+            tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
-        usedIndex = nTrans*ndelta
-
         for q in range(1, nFFT):
             for k in range(0, ndelta):
 
-                index = (q-1)*ndelta + k + usedIndex
+                index = (q-1)*ndelta + k + nTrans
 
                 bTN = bTIntv * tempN * tempN
 
@@ -104,9 +95,10 @@ for inten in iBias:
 
     fftWL = c0 *10**(9) / (fftTime - (frqMv[intensidad]/(2.0*np.pi))) # longitud de onda [nm]
 
-    WL.append(fftWL[np.where(TFprom == max(TFprom))][0])
-
+    WLmax = fftWL[np.where(TFprom == max(TFprom))]
+    WL.append(WLmax)
     plt.plot(fftWL, TFprom, label=str(intensidad))
+    plt.text(WLmax, max(TFprom), "%.2f" %(WLmax))
 
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)

@@ -12,15 +12,13 @@ deltaF = getConstante(int(iBias*10**12))
 
 faseTerm = faseConstant - pi2t * deltaT
 
-vRF = 1 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
 nWindw = 5 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
-
-nTrans = int(tTrans / tIntev)
 
 #                  INTENSIDAD
 #
@@ -29,7 +27,6 @@ nTrans = int(tTrans / tIntev)
 #                   z0 + zL
 current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
                                                 * np.pi * fR * t)) / (z0 + zL))
-
 
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
@@ -52,7 +49,6 @@ for win in range(0, nWindw):
     #---------------------------------------------------------
     # Vectores Gaussianos N(0,1) para el  Ruido
     #---------------------------------------------------------
-
     X = np.random.normal(0, 1, nTotal)
     Y = np.random.normal(0, 1, nTotal)
 
