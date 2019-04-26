@@ -32,7 +32,11 @@ epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3.0 # linewidth engancement factor
 
 etaF = 0.17 # in-fiber external quantum efficiency
-f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
+f0 = c0 / (1.546843 * 10**(-6)) # emission frequency at threshold [GHz]
+
+# TERMINOS DE INYECCION
+rSL = 0.1 # front facet reflectivity of the SL
+kc = 42.3 # master-slave coupling coefficient [ns^-1]
 
 #---------------------------------------------------
 # Recopilado por el articulo
@@ -50,6 +54,11 @@ vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
 cLoss = 1 # loss coeficient accounting for the frequency
 zL = 50.0 # impedance of the laser module [ohms]
 z0 = 50.0 # generator output impedance [ohms]
+
+# TERMINOS DE INYECCION
+phiInyct = 0 # Fase de la inyeccion
+sInyct = 3 *10**(21)# densidad de fotones de inyeccion
+deltaNu = 5 # detunning of the injected laser field with respect to the frequency of the SL
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -138,3 +147,13 @@ ruidoS = np.sqrt(2 * beta * gamma * bTIntv)
 
 # Parte constante del termino de ruido del Phi(t)
 ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
+
+#---------------------------------------------------------
+# Terminos de Ruido
+#---------------------------------------------------------
+
+ampltdS = 2 * kc * np.sqrt(sInyct) * tIntev
+
+ampltdPhi = -kc * np.sqrt(sInyct) * tIntev
+
+angConstnt = 2 * np.pi * deltaNu
