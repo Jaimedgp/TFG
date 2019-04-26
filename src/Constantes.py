@@ -38,7 +38,7 @@ f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-fR = 5.0 #  [GHz]
+fR = 0.5 #  [GHz]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle

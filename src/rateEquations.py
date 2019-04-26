@@ -16,7 +16,7 @@ from Constantes import *
 from getTempValues import getDeltaT
 
 iBias = 35 *10**(-12) # bias current [C ns^-1]
-vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = [0.05 *10**(-9), 1 *10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 
 deltaT = getDeltaT(int(iBias * 10**(12)))
 
@@ -28,7 +28,7 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
 #nTrans = int(tTrans / delta)
 
-periodos = 4 / fR
+periodos = 3 / fR
 nPeriodo = int(periodos / delta)
 
 tTotal = tTrans + periodos
@@ -40,7 +40,7 @@ nTotal = int(tTotal / tIntev)
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
+current = lambda t, vRFi: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRFi * np.sin(2
                                                 * np.pi * fR * t)) / (z0 + zL))
 
 ################################################################################
@@ -58,96 +58,107 @@ dPhi = np.zeros(nPeriodo)
 ##  Iniciar Simulacion
 ############################
 
-TFprom = 0
+derivAphvgTGmm = aphvgTGmm / tIntev
+derivFaseTerm = faseTerm / tIntev
+derivRuidoPhi = ruidoPhi / tIntev
 
-currentTerm = eVinv * current(time)
+fig, axs = plt.subplots(len(vRF), 4, sharex=True, figsize=(17, 10))
+# Remove horizontal space between axes
+#fig.subplots_adjust(vspace=1)
+fig.subplots_adjust(hspace=0.2)
+timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
 
-for win in range(0, nWindw):
+for i in range(len(vRF)):
+    inten = current(time, vRF[i])
+    currentTerm = eVinv * inten
 
-    #---------------------------------------------------------
-    # Vectores Gaussianos N(0,1) para el  Ruido
-    #---------------------------------------------------------
+    for win in range(0, nWindw):
 
-    X = np.random.normal(0, 1, nTotal)
-    Y = np.random.normal(0, 1, nTotal)
+        #---------------------------------------------------------
+        # Vectores Gaussianos N(0,1) para el  Ruido
+        #---------------------------------------------------------
 
-    # Se definen las condiciones iniciales para resolver la EDO
-    tempN = nTr
-    tempS = float(10**20)
-    tempPhi = 0
+        X = np.random.normal(0, 1, nTotal)
+        Y = np.random.normal(0, 1, nTotal)
 
-    for q in range(0, nTrans):
-        bTN = bTIntv * tempN * tempN
+        # Se definen las condiciones iniciales para resolver la EDO
+        tempN = nTr
+        tempS = float(10**20)
+        tempPhi = 0
 
-        invS = 1 / ((1/tempS) + epsilon)
-
-        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
-
-        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                    btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
-
-        tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
-                            (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-    I[0] = currentTerm[q]
-    N[0] = tempN
-    S[0] = tempS
-    dPhi[0] = tempPhi
-
-    for q in range(1, nPeriodo):
-        for k in range(0, ndelta):
-
-            index = (q-1)*ndelta + k + nTrans
-
+        for q in range(0, nTrans):
             bTN = bTIntv * tempN * tempN
 
             invS = 1 / ((1/tempS) + epsilon)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                                    ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                              btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
+                        btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+            tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
+                                    (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+        I[0] = inten[q]*10**(12)
+        N[0] = tempN
+        S[0] = tempS
+        dPhi[0] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
+                                    derivRuidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
-        I[q] = currentTerm[index]
-        N[q] += tempN/float(nWindw)
-        S[q] += tempS/float(nWindw)
-        dPhi[q] += tempPhi/float(nWindw)
+        for q in range(1, nPeriodo):
+            for k in range(0, ndelta):
 
-#########################################
-##  Representacion de los Datos
-#########################################
+                index = (q-1)*ndelta + k + nTrans
 
-timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
+                bTN = bTIntv * tempN * tempN
 
-fig, axs = plt.subplots(5, 1, sharex=True)
-# Remove horizontal space between axes
-fig.subplots_adjust(hspace=0)
+                invS = 1 / ((1/tempS) + epsilon)
 
-axs[0].plot(timePeriod, I, 'r')
-axs[0].set_ylabel("I(t) [$C ns^-1$]", color='r', fontsize=15)
+                tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+                                            ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
 
-axs[1].plot(timePeriod, N, 'r')
-axs[1].set_ylabel("N(t) [$m^3$]", color='r', fontsize=15)
+                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+                                btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
 
-axs[2].plot(timePeriod, S, 'b')
-axs[2].set_ylabel("S(t) [$m^3$]", color='b', fontsize=15)
-axs[2].set_yscale('log')
+                tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+                                    (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
-axs[3].plot(timePeriod, N, 'r', label="N(t)")
-axs[3].set_ylabel("N(t) [$m^3$]", color='r', fontsize=15)
-axs[3].tick_params('y', colors='r')
+            I[q] = inten[index]*10**(12)
+            N[q] = tempN
+            S[q] = tempS
+            dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
+                                            derivRuidoPhi*N[q]*Y[index]/np.sqrt(S[q]))
 
-ax4 = axs[3].twinx()
-ax4.plot(timePeriod, S, 'b', label="S(t)")
-ax4.set_ylabel("S(t) [$m^3$]", color='b', fontsize=15)
-ax4.set_yscale('log')
-ax4.tick_params('y', colors='b')
+    #########################################
+    ##  Representacion de los Datos
+    #########################################
 
-axs[4].plot(timePeriod, dPhi, 'r', label="N(t)")
-axs[4].set_ylabel("$\Phi$(t) [$m^3$]", color='r', fontsize=15)
-axs[4].tick_params('y', colors='r')
+    axs[i][0].set_ylabel("%.2f V" %(vRF[i] * 10**9), fontsize=15)
+
+    axs[i][0].plot(timePeriod, I, 'r')
+    axs[i][0].axhline(y=13.2, linestyle=":", color='k', linewidth=3)
+    axs[i][0].grid(linestyle='-.')
+
+    axs[i][1].plot(timePeriod, S, 'b')
+    axs[i][1].set_yscale('log')
+    axs[i][1].grid(linestyle='-.')
+
+    axs[i][2].plot(timePeriod, dPhi, 'r', label="N(t)")
+    axs[i][2].grid(linestyle='-.')
+    #axs[2][0].tick_params('y', colors='r')
+
+    axs[i][3].plot(timePeriod, N/nTr, 'r')
+    axs[i][3].grid(linestyle='-.')
+
+axs[0][0].set_title("I(t) [$mA$]", fontsize=15)
+axs[0][1].set_title("S(t) [$m^3$]", fontsize=15)
+axs[0][2].set_title("Chirp [GHz]", fontsize=15)
+axs[0][3].set_title("$N(t) / N_{Tr}$", fontsize=15)
+
+axs[-1][0].set_xlabel("t [ns]", fontsize=15)
+axs[-1][1].set_xlabel("t [ns]", fontsize=15)
+axs[-1][2].set_xlabel("t [ns]", fontsize=15)
+axs[-1][3].set_xlabel("t [ns]", fontsize=15)
+
+#fig.savefig("./Graficas/rateEquations.png", dpi=500)
 plt.show()

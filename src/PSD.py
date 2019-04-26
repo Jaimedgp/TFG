@@ -5,7 +5,7 @@ import cmath
 from Constantes import *
 from getTempValues import *
 
-iBias = 35 *10**(-12) # bias current [C ns^-1]
+iBias = 50 *10**(-12) # bias current [C ns^-1]
 
 deltaT = getDeltaT(int(iBias*10**12))
 deltaF = getConstante(int(iBias*10**12))
@@ -14,7 +14,7 @@ faseTerm = faseConstant - pi2t * deltaT
 
 vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 5 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)

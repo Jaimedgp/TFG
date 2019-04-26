@@ -11,7 +11,7 @@ tmpMv = getDeltaT()
 
 iBias = [i *10**(-12) for i in range(15, 40, 5) ] # bias current [C ns^-1]
 
-nWindw = 20 # numero de ventanas (para promediar) N natural
+nWindw = 10 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -20,7 +20,7 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 ############################
 ##  Iniciar Simulacion
 ############################
-fig = plt.figure(figsize=(8,6))
+fig = plt.figure(figsize=(9,6))
 
 WL = []
 
@@ -97,15 +97,17 @@ for inten in iBias:
 
     WLmax = fftWL[np.where(TFprom == max(TFprom))]
     WL.append(WLmax)
-    plt.plot(fftWL, TFprom, label=str(intensidad))
+    plt.plot(fftWL, TFprom, label="%i mA" %(intensidad))
     plt.text(WLmax, max(TFprom), "%.2f" %(WLmax))
 
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
+plt.xlim(1546.8, 1547.2)
+plt.ylim(1.3*10**(-6), 0.05)
 plt.legend()
-plt.show()
-#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
+#plt.show()
+fig.savefig("./Graficas/Espectros.png", dpi=300)
 
 with open("./Datos/Landas.txt", 'w') as fw:
     fw.write("""######################################################################
