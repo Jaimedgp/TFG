@@ -5,16 +5,16 @@ import cmath
 from Constantes import *
 from getTempValues import *
 
-iBias = 35 *10**(-12) # bias current [C ns^-1]
+iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 
-deltaT = getDeltaT(int(iBias*10**12))
-deltaF = getConstante(int(iBias*10**12))
+deltaT = getDeltaT(iBias)
+deltaF = getConstante(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
-vRF = [0.05 *10**(-9), 1 *10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 10 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -25,8 +25,8 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t, vRFi: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRFi * np.sin(2
-                                                * np.pi * fR * t)) / (z0 + zL))
+current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
+                                            np.sin(2 * np.pi * fR * t)) / rInt)
 
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
@@ -41,6 +41,7 @@ opField = np.zeros(nFFT, dtype=complex)
 ############################
 
 fig, axs = plt.subplots(1, len(vRF), sharex=True, figsize=(20, int(20/len(vRF))))
+fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 fig.subplots_adjust(left=0.05, right=0.96)
 
 frecuencyLimits = 1 / (2*delta)
@@ -76,10 +77,10 @@ for i in range(len(vRF)):
             invS = 1 / ((1/tempS) + epsilon)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
+                                        ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                        btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
+                            btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
             tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
@@ -96,18 +97,20 @@ for i in range(len(vRF)):
                 invS = 1 / ((1/tempS) + epsilon)
 
                 tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                            ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                                        ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
 
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                                + btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
+                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
+                                                    intTtau*tempS + btGmm*bTN +
+                                        ruidoS*tempN*np.sqrt(tempS)*X[index])
 
                 tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                    (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
         transFourier = np.fft.fft(opField)
-        TFprom += abs(np.fft.fftshift(transFourier))/float(nWindw)
+        TFprom += (abs(np.fft.fftshift(transFourier)) *
+                   abs(np.fft.fftshift(transFourier))/float(nWindw))
 
     #########################################
     ##  Representacion de los Datos
@@ -131,4 +134,3 @@ for i in range(len(vRF)):
     axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9))
 
 plt.show()
-#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
