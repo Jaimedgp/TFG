@@ -5,14 +5,14 @@ import cmath
 from Constantes import *
 from getTempValues import *
 
-iBias = 50 *10**(-12) # bias current [C ns^-1]
+iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 
-deltaT = getDeltaT(int(iBias*10**12))
-deltaF = getConstante(int(iBias*10**12))
+deltaT = getDeltaT(iBias)
+deltaF = getConstante(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
-vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.5 *10**(-9) #RMS voltage value of the signal generator [V]
 
 nWindw = 1 # numero de ventanas (para promediar) N natural
 
@@ -25,8 +25,8 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRF * np.sin(2
-                                                * np.pi * fR * t)) / (z0 + zL))
+current = lambda t: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRF *
+                                            np.sin(2 * np.pi * fR * t)) / rInt)
 
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
@@ -64,13 +64,13 @@ for win in range(0, nWindw):
         invS = 1 / ((1/tempS) + epsilon)
 
         tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                            ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
+                                        ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
 
         tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                    btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
+                            btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
 
         tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
-                            cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
+                                cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
     opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
@@ -95,7 +95,8 @@ for win in range(0, nWindw):
         opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
     transFourier = np.fft.fft(opField)
-    TFprom += abs(np.fft.fftshift(transFourier))/float(nWindw)
+    TFprom += (abs(np.fft.fftshift(transFourier)) *
+               abs(np.fft.fftshift(transFourier))/float(nWindw))
 
 #########################################
 ##  Representacion de los Datos
@@ -123,6 +124,6 @@ plt.plot(fftWL, TFprom)
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
-plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias*10**12, vRF*10**9))
+plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9),
+                                                                fontsize = 20)
 plt.show()
-#fig.savefig("./Graficas/"+str(int(vRF*10**10))+"dV/EfftWL.png")
