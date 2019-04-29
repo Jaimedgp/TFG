@@ -38,7 +38,10 @@ f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-fR = 0.5 #  [GHz]
+fR = 5.0 # [GHz]
+rInt = 142.25 # [Ohm]
+#fR = 0.5 # [GHz]
+#rInt = 103.36 # [Ohm]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -48,8 +51,6 @@ ng = 3.5 # index of the
 vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
 
 cLoss = 1 # loss coeficient accounting for the frequency
-zL = 50.0 # impedance of the laser module [ohms]
-z0 = 50.0 # generator output impedance [ohms]
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
