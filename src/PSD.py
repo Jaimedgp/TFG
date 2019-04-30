@@ -12,9 +12,9 @@ deltaF = getConstante(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
-vRF = 1.2 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 0.4 *10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 20 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -98,7 +98,7 @@ for win in range(0, nWindw):
     transFourier = np.fft.fft(opField)
     TFprom += (abs(np.fft.fftshift(transFourier)) *
                abs(np.fft.fftshift(transFourier))/float(nWindw))
-    angProm += np.angle(np.fft.fftshift(transFourier))/float(nWindw)
+    #angProm += np.angle(np.fft.fftshift(transFourier))/float(nWindw)
 
 #########################################
 ##  Representacion de los Datos
@@ -122,11 +122,11 @@ fftTime += f0 - (deltaF/(2.0*np.pi))
 fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
-plt.plot(fftWL, angProm)
+#plt.plot(fftWL, angProm)
 plt.plot(fftWL, TFprom)
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
-#plt.yscale("log")
+plt.yscale("log")
 plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9),
                                                                 fontsize = 20)
 plt.show()
