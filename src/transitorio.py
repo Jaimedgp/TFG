@@ -18,7 +18,7 @@ from getTempValues import getDeltaT
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0 #RMS voltage value of the signal generator [V]
 
-deltaT = getDeltaT(int(iBias))
+deltaT = getDeltaT(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
