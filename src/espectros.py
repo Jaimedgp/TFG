@@ -11,7 +11,7 @@ tmpMv = getDeltaT()
 
 iBias = [i *10**(-12) for i in range(15, 40, 5) ] # bias current [C ns^-1]
 
-nWindw = 10 # numero de ventanas (para promediar) N natural
+nWindw = 20 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -91,7 +91,8 @@ for inten in iBias:
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
 
         transFourier = np.fft.fft(opField)
-        TFprom += abs(np.fft.fftshift(transFourier)/float(nWindw))
+        TFprom += (abs(np.fft.fftshift(transFourier)) *
+                       abs(np.fft.fftshift(transFourier))/float(nWindw))
 
     fftWL = c0 *10**(9) / (fftTime - (frqMv[intensidad]/(2.0*np.pi))) # longitud de onda [nm]
 
@@ -104,7 +105,7 @@ plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
 plt.yscale("log")
 plt.xlim(1546.8, 1547.2)
-plt.ylim(1.3*10**(-6), 0.05)
+plt.ylim(0.9*10**(-12), 0.003)
 plt.legend()
 #plt.show()
 fig.savefig("./Graficas/Espectros.png", dpi=300)
