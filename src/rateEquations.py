@@ -62,11 +62,10 @@ derivAphvgTGmm = aphvgTGmm / tIntev
 derivFaseTerm = faseTerm / tIntev
 derivRuidoPhi = ruidoPhi / tIntev
 
-fig, axs = plt.subplots(len(vRF), 4, sharex=True, figsize=(17, 10))
+fig, axs = plt.subplots(len(vRF), 4, sharex=True, sharey="col", figsize=(17, 10))
 # Remove horizontal space between axes
 fig.subplots_adjust(hspace=0.2)
 
-limits = [[None, None],[None, None],[None, None],[None, None]]
 timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
 
 for i in range(len(vRF)):
@@ -141,38 +140,14 @@ for i in range(len(vRF)):
     axs[i][0].axhline(y=14.8, linestyle=":", color='k', linewidth=3)
     axs[i][0].grid(linestyle='-.')
 
-    if limits[0][0] > axs[i][0].get_ylim()[0] or not limits[0][1]:
-        limits[0][0] = axs[i][0].get_ylim()[0]
-    if limits[0][1] < axs[i][0].get_ylim()[1]:
-        limits[0][1] = axs[i][0].get_ylim()[1]
-
     axs[i][1].plot(timePeriod, S, 'b')
     axs[i][1].grid(linestyle='-.')
-
-    if limits[1][0] > axs[i][1].get_ylim()[0] or not limits[1][1]:
-        limits[1][0] = axs[i][1].get_ylim()[0]
-    if limits[1][1] < axs[i][1].get_ylim()[1]:
-        limits[1][1] = axs[i][1].get_ylim()[1]
 
     axs[i][2].plot(timePeriod, dPhi, 'r', label="N(t)")
     axs[i][2].grid(linestyle='-.')
 
-    if limits[2][0] > axs[i][2].get_ylim()[0] or not limits[2][1]:
-        limits[2][0] = axs[i][2].get_ylim()[0]
-    if limits[2][1] < axs[i][2].get_ylim()[1]:
-        limits[2][1] = axs[i][2].get_ylim()[1]
-
     axs[i][3].plot(timePeriod, N/nTr, 'r')
     axs[i][3].grid(linestyle='-.')
-
-    if limits[3][0] > axs[i][3].get_ylim()[0] or not limits[3][1]:
-        limits[3][0] = axs[i][3].get_ylim()[0]
-    if limits[3][1] < axs[i][3].get_ylim()[1]:
-        limits[3][1] = axs[i][3].get_ylim()[1]
-
-for i in range(len(vRF)):
-	for j in range(0, 4):
-		axs[i][j].set_ylim(limits[j])
 
 axs[0][0].set_title("I(t) [$mA$]", fontsize=15)
 axs[0][1].set_title("S(t) [$m^3$]", fontsize=15)
