@@ -15,10 +15,10 @@ import cmath
 from Constantes import *
 from getTempValues import getDeltaT
 
-iBias = 30 *10**(-12) # bias current [C ns^-1]
+iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0 #RMS voltage value of the signal generator [V]
 
-deltaT = getDeltaT(int(iBias * 10**(12)))
+deltaT = getDeltaT(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
@@ -37,14 +37,13 @@ tTotal = tTrans + tWindw
 nTotal = int(tTotal / tIntev)
 nTotalD = int(tTotal / delta)
 
-
 #                  INTENSIDAD
 #
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t, vRFi: (iBias + (cLoss * 2.0 * np.sqrt(2) * vRFi * np.sin(2
-                                                * np.pi * fR * t)) / (z0 + zL))
+current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
+                                            np.sin(2 * np.pi * fR * t)) / rInt)
 
 ################################################################################
 ##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
@@ -66,7 +65,7 @@ derivFaseTerm = faseTerm / tIntev
 derivRuidoPhi = ruidoPhi / tIntev
 
 fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 20))
-fig.subplots_adjust(hspace=0)
+fig.subplots_adjust(hspace=0.1)
 
 inten = current(time, vRF)
 currentTerm = eVinv * inten
@@ -88,7 +87,6 @@ for win in range(0, nWindw):
     for q in range(0, nTrans):
         for j in range(0, ndelta):
             totalIndex = q*ndelta + j
-            #currentTerm[totalIndex] = eVinv * 5 * 10**(-12)
 
             bTN = bTIntv * tempN * tempN
 
@@ -102,7 +100,7 @@ for win in range(0, nWindw):
 
             tempN = (tempN + currentTerm[totalIndex] - aTIntv*tempN - bTN -
                                     (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-        I[q] = 30
+        I[q] = iBias
         N[q] = tempN
         S[q] = tempS
         dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
@@ -126,11 +124,12 @@ for win in range(0, nWindw):
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
-        I[q] = inten[index]*10**(12)
+        I[q] = iBias
         N[q] = tempN
         S[q] = tempS
         dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
                                         derivRuidoPhi*N[q]*Y[index]/np.sqrt(S[q]))
+I[0] = 0
 
 #########################################
 ##  Representacion de los Datos
@@ -138,7 +137,7 @@ for win in range(0, nWindw):
 
 timePeriod = np.linspace(0, tTotal, nTotalD)
 
-axs[0].set_title("%i mA" %(iBias * 10**12), fontsize=15)
+fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 
 axs[0].plot(timePeriod, I, 'r')
 axs[0].axhline(y=13.2, linestyle=":", color='k', linewidth=3)
@@ -153,6 +152,7 @@ axs[2].grid(linestyle='-.')
 
 axs[3].plot(timePeriod, dPhi, 'r', label="N(t)")
 axs[3].grid(linestyle='-.')
+axs[3].set_ylim([-40, 20])
 
 axs[0].set_ylabel("I(t) [$mA$]", fontsize=15)
 axs[1].set_ylabel("S(t) [$m^3$]", fontsize=15)
