@@ -17,7 +17,7 @@ vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10
 fR = 0.5 # [GHz]
 rInt = 103.36 # [Ohm]
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 10 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -143,7 +143,7 @@ for i in range(len(vRF)):
     axs[1][i].set_yscale("log")
     axs[1][i].set_xlabel("WL [nm]", fontsize=15)
 
-axs[0][0].set_ylabel("Power [Algo]", fontsize=15)
+axs[0][0].set_ylabel("Power [$J ns^{-1}$]", fontsize=15)
 axs[1][0].set_ylabel("PSD", fontsize=15)
 plt.show()
 
