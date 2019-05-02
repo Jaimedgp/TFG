@@ -137,11 +137,13 @@ for i in range(len(vRF)):
 
     axs[0][i].plot(tmP, P, 'r')
     axs[0][i].grid(linestyle='-.')
-    #axs[0][i].set_xlim(min(tmS), max(tmS))
+    axs[0][i].set_xlabel("time [ns]", fontsize=15)
 
-    axs[1][i].plot(fftWL, TFprom, 'r')
+    axs[1][i].plot(fftWL, TFprom, 'b')
     axs[1][i].set_yscale("log")
-    #axs[0][i].set_xlim(min(fftWL), max(fftWL))
+    axs[1][i].set_xlabel("WL [nm]", fontsize=15)
 
+axs[0][0].set_ylabel("Power [Algo]", fontsize=15)
+axs[1][0].set_ylabel("PSD", fontsize=15)
 plt.show()
 
