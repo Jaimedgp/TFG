@@ -40,7 +40,8 @@ opField = np.zeros(nFFT, dtype=complex)
 ##  Iniciar Simulacion
 ############################
 
-fig, axs = plt.subplots(1, len(vRF), sharex=True, figsize=(20, int(20/len(vRF))))
+fig, axs = plt.subplots(1, len(vRF), sharex=True,
+                                              figsize=(20, int(20/len(vRF))))
 fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 fig.subplots_adjust(left=0.05, right=0.96)
 
@@ -77,10 +78,10 @@ for i in range(len(vRF)):
             sqrtS = np.sqrt(abs(tempS))
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[q]/sqrtS)
+                                                    ruidoPhi*tempN*Y[q]/sqrtS)
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
+                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
 
             tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
@@ -97,11 +98,10 @@ for i in range(len(vRF)):
                 sqrtS = np.sqrt(tempS)
 
                 tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/sqrtS)
+                                                ruidoPhi*tempN*Y[index]/sqrtS)
 
                 tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
-                                                    intTtau*tempS + btGmm*bTN +
-                                        ruidoS*tempN*sqrtS*X[index])
+                        intTtau*tempS + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
                 tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)

@@ -33,10 +33,8 @@ for inten in iBias:
     intensidad = int(inten *10**(12))
     opField = np.zeros(nFFT, dtype=complex)
 
-    tmp = pi2t * tmpMv[intensidad]
-
     # Fase constant
-    faseTerm = faseConstant - tmp
+    faseTerm = faseConstant - pi2t * tmpMv[intensidad]
 
     currentTerm = eVinv * inten
 
@@ -60,11 +58,10 @@ for inten in iBias:
             sqrtS = np.sqrt(abs(tempS))
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                ruidoPhi*tempN*Y[q]/sqrtS)
+                                                    ruidoPhi*tempN*Y[q]/sqrtS)
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
-                                                intTtau*tempS + btGmm*bTN +
-                                ruidoS*tempN*sqrtS*X[q])
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
 
             tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
@@ -81,10 +78,10 @@ for inten in iBias:
                 sqrtS = np.sqrt(tempS)
 
                 tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/sqrtS)
+                                                ruidoPhi*tempN*Y[index]/sqrtS)
 
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                            + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
+                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
+                        intTtau*tempS + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
                 tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)

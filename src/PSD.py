@@ -65,10 +65,10 @@ for win in range(0, nWindw):
         sqrtS = np.sqrt(abs(tempS))
 
         tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[q]/sqrtS)
+                                                    ruidoPhi*tempN*Y[q]/sqrtS)
 
         tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
+                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
 
         tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
@@ -85,10 +85,10 @@ for win in range(0, nWindw):
             sqrtS = np.sqrt(tempS)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/sqrtS)
+                                                ruidoPhi*tempN*Y[index]/sqrtS)
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS
-                            + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
+                                    + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
@@ -98,7 +98,6 @@ for win in range(0, nWindw):
     transFourier = np.fft.fft(opField)
     TFprom += (abs(np.fft.fftshift(transFourier)) *
                abs(np.fft.fftshift(transFourier))/float(nWindw))
-    #angProm += np.angle(np.fft.fftshift(transFourier))/float(nWindw)
 
 #########################################
 ##  Representacion de los Datos
@@ -122,7 +121,6 @@ fftTime += f0 - (deltaF/(2.0*np.pi))
 fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
-#plt.plot(fftWL, angProm)
 plt.plot(fftWL, TFprom)
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
