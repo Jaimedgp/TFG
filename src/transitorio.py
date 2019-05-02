@@ -89,14 +89,14 @@ for win in range(0, nWindw):
             totalIndex = q*ndelta + j
 
             bTN = bTIntv * tempN * tempN
-
             invS = 1 / ((1/tempS) + epsilon)
+            sqrtS = np.sqrt(abs(tempS))
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                    ruidoPhi*tempN*Y[totalIndex]/np.sqrt(abs(tempS)))
+                                    ruidoPhi*tempN*Y[totalIndex]/sqrtS)
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                        btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[totalIndex])
+                        btGmm*bTN + ruidoS*tempN*sqrtS*X[totalIndex])
 
             tempN = (tempN + currentTerm[totalIndex] - aTIntv*tempN - bTN -
                                     (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
@@ -104,7 +104,7 @@ for win in range(0, nWindw):
         N[q] = tempN
         S[q] = tempS
         dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
-                                    derivRuidoPhi*tempN*Y[totalIndex]/np.sqrt(abs(tempS)))
+                                    derivRuidoPhi*tempN*Y[totalIndex]/sqrtS)
 
     for q in range(nTrans, nTotalD):
         for k in range(0, ndelta):
@@ -112,14 +112,14 @@ for win in range(0, nWindw):
             index = (q-nTrans)*ndelta + k
 
             bTN = bTIntv * tempN * tempN
-
             invS = 1 / ((1/tempS) + epsilon)
+            sqrtS = np.sqrt(tempS)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                                        ruidoPhi*tempN*Y[index]/sqrtS)
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                            btGmm*bTN + ruidoS*tempN*np.sqrt(tempS)*X[index])
+                            btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
             tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)

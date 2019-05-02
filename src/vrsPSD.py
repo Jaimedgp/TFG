@@ -73,14 +73,14 @@ for i in range(len(vRF)):
         for q in range(0, nTrans):
 
             bTN = bTIntv * tempN * tempN
-
             invS = 1 / ((1/tempS) + epsilon)
+            sqrtS = np.sqrt(abs(tempS))
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[q]/np.sqrt(abs(tempS)))
+                                        ruidoPhi*tempN*Y[q]/sqrtS)
 
             tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                            btGmm*bTN + ruidoS*tempN*np.sqrt(abs(tempS))*X[q])
+                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
 
             tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
@@ -93,15 +93,15 @@ for i in range(len(vRF)):
                 index = (q-1)*ndelta + k + nTrans
 
                 bTN = bTIntv * tempN * tempN
-
                 invS = 1 / ((1/tempS) + epsilon)
+                sqrtS = np.sqrt(tempS)
 
                 tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                        ruidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                                        ruidoPhi*tempN*Y[index]/sqrtS)
 
                 tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
                                                     intTtau*tempS + btGmm*bTN +
-                                        ruidoS*tempN*np.sqrt(tempS)*X[index])
+                                        ruidoS*tempN*sqrtS*X[index])
 
                 tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
