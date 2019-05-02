@@ -5,20 +5,12 @@ import cmath
 from Constantes import *
 from getTempValues import *
 
-iBias = 50  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
+iBias = [30, 50]  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
+colors = ['b', 'r']
 
-deltaT = getDeltaT(iBias)
-deltaF = getConstante(iBias)
+vRF = 1.0 * 10**(-9) #RMS voltage value of the signal generator [V]
 
-faseTerm = faseConstant - pi2t * deltaT
-
-vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
-
-fR = 0.5 # [GHz]
-rInt = 103.36 # [Ohm]
-
-nWindw = 1 # numero de ventanas (para promediar) N natural
-
+nWindw = 1
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
@@ -28,7 +20,7 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 #                 2 sqrt(2) vRF 
 # I_bias + cLoss --------------- sin(2 pi fR t)
 #                   z0 + zL
-current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
+current = lambda t, currnt: (currnt*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRF *
                                             np.sin(2 * np.pi * fR * t)) / rInt)
 
 ################################################################################
@@ -37,9 +29,6 @@ current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
 ################################################################################
 
 time = np.linspace(0, tTotal, nTotal)
-opField = np.zeros(nFFT, dtype=complex)
-P = np.zeros(nFFT)
-tmP = np.zeros(nFFT)
 
 #-------------------------------------------------------------------------------
 # Espectro optico frente a la longitud de onda
@@ -54,21 +43,26 @@ tmP = np.zeros(nFFT)
 frecuencyLimits = 1 / (2*delta)
 fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)#, endpoint=True)
 
-fftTime += f0 - (deltaF/(2.0*np.pi))
-
-fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
+opField = np.zeros(nFFT, dtype=complex)
+tmP = np.zeros(nFFT)
 
 ############################
 ##  Iniciar Simulacion
 ############################
 
-fig, axs = plt.subplots(2, len(vRF), figsize=(17, 10))
+fig, axs = plt.subplots(1, 2, figsize=(17, 10))
 # Remove horizontal space between axes
 fig.subplots_adjust(hspace=0.2)
 
-for i in range(len(vRF)):
-    inten = current(time, vRF[i])
+for i in range(len(iBias)):
+    deltaT = getDeltaT(iBias[i])
+    deltaF = getConstante(iBias[i])
+
+    faseTerm = faseConstant - pi2t * deltaT
+
+    inten = current(time, iBias[i])
     currentTerm = eVinv * inten
+    P = np.zeros(nFFT)
     TFprom = 0
 
     for win in range(0, nWindw):
@@ -132,18 +126,23 @@ for i in range(len(vRF)):
     #########################################
     ##  Representacion de los Datos
     #########################################
+    fftTimeI = fftTime + f0 - (deltaF/(2.0*np.pi))
 
-    axs[0][i].set_title("%.2f V" %(vRF[i] * 10**9), fontsize=15)
+    fftWL = (c0/fftTimeI) *10**(9) # longitud de onda [nm]
 
-    axs[0][i].plot(tmP, P, 'r')
-    axs[0][i].grid(linestyle='-.')
-    axs[0][i].set_xlabel("time [ns]", fontsize=15)
+    axs[0].plot(tmP, P, colors[i], label="%i mA" %(iBias[i]))
+    axs[1].plot(fftWL, TFprom, colors[i], label="%i mA" %(iBias[i]))
 
-    axs[1][i].plot(fftWL, TFprom, 'b')
-    axs[1][i].set_yscale("log")
-    axs[1][i].set_xlabel("WL [nm]", fontsize=15)
+axs[0].grid(linestyle='-.')
+axs[0].set_xlabel("time [ns]", fontsize=15)
 
-axs[0][0].set_ylabel("Power [$J ns^{-1}$]", fontsize=15)
-axs[1][0].set_ylabel("PSD", fontsize=15)
+axs[1].set_yscale("log")
+axs[1].set_xlabel("WL [nm]", fontsize=15)
+
+axs[0].set_ylabel("Power [$J ns^{-1}$]", fontsize=15)
+axs[1].set_ylabel("PSD", fontsize=15)
+
+axs[0].legend()
+axs[1].legend()
 plt.show()
 
