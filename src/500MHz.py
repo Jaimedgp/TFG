@@ -17,7 +17,7 @@ vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10
 fR = 0.5 # [GHz]
 rInt = 103.36 # [Ohm]
 
-nWindw = 5 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -38,8 +38,8 @@ current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
 
 time = np.linspace(0, tTotal, nTotal)
 opField = np.zeros(nFFT, dtype=complex)
-S = np.zeros(nFFT)
-tmS = np.zeros(nFFT)
+P = np.zeros(nFFT)
+tmP = np.zeros(nFFT)
 
 #-------------------------------------------------------------------------------
 # Espectro optico frente a la longitud de onda
@@ -100,8 +100,8 @@ for i in range(len(vRF)):
                                     cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        S[0] += tempS/float(nWindw)
-        tmS[0] = time[q]
+        P[0] += (constP * tempS)/float(nWindw)
+        tmP[0] = time[q]
 
         for q in range(1, nFFT):
             for k in range(0, ndelta):
@@ -122,8 +122,8 @@ for i in range(len(vRF)):
                                     (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            S[q] += tempS/float(nWindw)
-            tmS[q] = time[index]
+            P[q] += (constP * tempS)/float(nWindw)
+            tmP[q] = time[index]
 
         transFourier = np.fft.fft(opField)
         TFprom += (abs(np.fft.fftshift(transFourier)) *
@@ -135,7 +135,7 @@ for i in range(len(vRF)):
 
     axs[0][i].set_title("%.2f V" %(vRF[i] * 10**9), fontsize=15)
 
-    axs[0][i].plot(tmS, S, 'r')
+    axs[0][i].plot(tmP, P, 'r')
     axs[0][i].grid(linestyle='-.')
     #axs[0][i].set_xlim(min(tmS), max(tmS))
 
