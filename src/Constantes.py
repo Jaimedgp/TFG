@@ -58,8 +58,8 @@ cLoss = 1 # loss coeficient accounting for the frequency
 
 # TERMINOS DE INYECCION
 phiInyct = 0 # Fase de la inyeccion
-sInyct = 3 *10**(21)# densidad de fotones de inyeccion
-deltaNu = 5 # detunning of the injected laser field with respect to the frequency of the SL
+sInyct = 3.0 *10**(21)# densidad de fotones de inyeccion
+deltaNu = 5 # detunning of the injected laser field with respect to the frequency of the SL [GHz]
 
 ################################################################################
 ##  Valores del muestreo para la simulacion
@@ -150,7 +150,7 @@ ruidoS = np.sqrt(2 * beta * gamma * bTIntv)
 ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
 
 #---------------------------------------------------------
-# Terminos de Ruido
+# Terminos de Inyeccion
 #---------------------------------------------------------
 
 ampltdS = 2 * kc * np.sqrt(sInyct) * tIntev
