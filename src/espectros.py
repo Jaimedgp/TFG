@@ -107,8 +107,8 @@ plt.yscale("log")
 plt.xlim(1546.8, 1547.2)
 plt.ylim(0.9*10**(-12), 0.003)
 plt.legend()
-#plt.show()
-fig.savefig("./Graficas/Espectros.png", dpi=300)
+plt.show()
+#fig.savefig("./Graficas/Espectros.png", dpi=300)
 
 with open("./Datos/Landas.txt", 'w') as fw:
     fw.write("""######################################################################
