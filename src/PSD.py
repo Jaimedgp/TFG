@@ -121,7 +121,7 @@ fftTime += f0 - (deltaF/(2.0*np.pi))
 fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
-fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 plt.plot(fftWL, TFprom)
 plt.xlabel("$\lambda$ [nm]", fontsize=15)

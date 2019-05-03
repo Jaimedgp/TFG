@@ -52,7 +52,7 @@ tmP = np.zeros(nFFT)
 
 fig, axs = plt.subplots(1, 2, figsize=(17, 10))
 # Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 for i in range(len(iBias)):
     deltaT = getDeltaT(iBias[i])
@@ -94,7 +94,7 @@ for i in range(len(iBias)):
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        P[0] += (constP * tempS)/float(nWindw)
+        P[0] += (constP * tempS *10**(9))/float(nWindw)
         tmP[0] = time[q]
 
         for q in range(1, nFFT):
@@ -116,7 +116,7 @@ for i in range(len(iBias)):
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            P[q] += (constP * tempS)/float(nWindw)
+            P[q] += (constP * tempS *10**(9))/float(nWindw)
             tmP[q] = time[index]
 
         transFourier = np.fft.fft(opField)
@@ -139,7 +139,7 @@ axs[0].set_xlabel("time [ns]", fontsize=15)
 axs[1].set_yscale("log")
 axs[1].set_xlabel("WL [nm]", fontsize=15)
 
-axs[0].set_ylabel("Power [$J ns^{-1}$]", fontsize=15)
+axs[0].set_ylabel("Power [$W$]", fontsize=15)
 axs[1].set_ylabel("PSD", fontsize=15)
 
 axs[0].legend()

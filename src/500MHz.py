@@ -64,7 +64,7 @@ fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig, axs = plt.subplots(2, len(vRF), figsize=(17, 10))
 # Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 for i in range(len(vRF)):
     inten = current(time, vRF[i])
@@ -100,7 +100,7 @@ for i in range(len(vRF)):
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        P[0] += (constP * tempS)/float(nWindw)
+        P[0] += (constP * tempS *10**(9))/float(nWindw)
         tmP[0] = time[q]
 
         for q in range(1, nFFT):
@@ -122,7 +122,7 @@ for i in range(len(vRF)):
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            P[q] += (constP * tempS)/float(nWindw)
+            P[q] += (constP * tempS *10**(9))/float(nWindw)
             tmP[q] = time[index]
 
         transFourier = np.fft.fft(opField)
@@ -143,7 +143,7 @@ for i in range(len(vRF)):
     axs[1][i].set_yscale("log")
     axs[1][i].set_xlabel("WL [nm]", fontsize=15)
 
-axs[0][0].set_ylabel("Power [$J ns^{-1}$]", fontsize=15)
+axs[0][0].set_ylabel("Power [$W$]", fontsize=15)
 axs[1][0].set_ylabel("PSD", fontsize=15)
 plt.show()
 

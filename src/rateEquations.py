@@ -64,7 +64,7 @@ derivRuidoPhi = ruidoPhi / tIntev
 fig, axs = plt.subplots(len(vRF), 4, sharex=True, sharey="col",
                                                             figsize=(17, 10))
 # Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 timePeriod = np.linspace(tTrans, tTotal, nPeriodo)
 
