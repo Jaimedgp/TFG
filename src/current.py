@@ -52,7 +52,7 @@ tmP = np.zeros(nFFT)
 
 fig, axs = plt.subplots(1, 2, figsize=(17, 10))
 # Remove horizontal space between axes
-fig.subplots_adjust(hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
 
 for i in range(len(iBias)):
     deltaT = getDeltaT(iBias[i])

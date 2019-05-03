@@ -21,6 +21,7 @@ ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 ##  Iniciar Simulacion
 ############################
 fig = plt.figure(figsize=(9,6))
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
 
 WL = []
 

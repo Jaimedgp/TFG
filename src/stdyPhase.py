@@ -122,6 +122,8 @@ fftTime += f0 - (deltaF/(2.0*np.pi))
 fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig, ax1 = plt.subplots()
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+
 ax1.plot(fftWL, angProm, "r")
 ax1.set_xlabel("$\lambda$ [nm]", fontsize=15)
 ax1.set_ylabel("FFT Phase [rad]", fontsize=15)

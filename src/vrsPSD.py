@@ -43,7 +43,7 @@ opField = np.zeros(nFFT, dtype=complex)
 fig, axs = plt.subplots(1, len(vRF), sharex=True,
                                               figsize=(20, int(20/len(vRF))))
 fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
-fig.subplots_adjust(left=0.05, right=0.96)
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
 
 frecuencyLimits = 1 / (2*delta)
 fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)#, endpoint=True)

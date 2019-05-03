@@ -5,16 +5,16 @@ import cmath
 from Constantes import *
 from getTempValues import *
 
-iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
+iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 
 deltaT = getDeltaT(iBias)
 deltaF = getConstante(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
-vRF = 0.4 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
+nWindw = 5 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -121,6 +121,8 @@ fftTime += f0 - (deltaF/(2.0*np.pi))
 fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig = plt.figure(figsize=(8,6))
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
+
 plt.plot(fftWL, TFprom)
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)

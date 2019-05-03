@@ -65,7 +65,7 @@ derivFaseTerm = faseTerm / tIntev
 derivRuidoPhi = ruidoPhi / tIntev
 
 fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 20))
-fig.subplots_adjust(hspace=0.1)
+fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.1)
 
 inten = current(time, vRF)
 currentTerm = eVinv * inten
