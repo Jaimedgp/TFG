@@ -10,7 +10,7 @@ colors = ['b', 'r']
 
 vRF = 1.0 * 10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 20
+nWindw = 1
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
@@ -94,7 +94,7 @@ for i in range(len(iBias)):
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        P[0] += (constP * tempS *10**(9))/float(nWindw)
+        P[0] += (constP * tempS *10**(12))/float(nWindw)
         tmP[0] = time[q]
 
         for q in range(1, nFFT):
@@ -116,7 +116,7 @@ for i in range(len(iBias)):
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            P[q] += (constP * tempS *10**(9))/float(nWindw)
+            P[q] += (constP * tempS *10**(12))/float(nWindw)
             tmP[q] = time[index]
 
         transFourier = np.fft.fft(opField)
@@ -135,11 +135,14 @@ for i in range(len(iBias)):
 
 axs[0].grid(linestyle='-.')
 axs[0].set_xlabel("time [ns]", fontsize=15)
+axs[0].set_xlim([1.2, 1.8])
 
 axs[1].set_yscale("log")
 axs[1].set_xlabel("WL [nm]", fontsize=15)
+axs[1].set_xlim([1546.1, 1547.6])
+axs[1].set_ylim([10**(-14), 0.7*10**(-3)])
 
-axs[0].set_ylabel("Power [$W$]", fontsize=15)
+axs[0].set_ylabel("Power [mW]", fontsize=15)
 axs[1].set_ylabel("PSD", fontsize=15)
 
 axs[0].legend()
