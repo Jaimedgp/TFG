@@ -22,7 +22,6 @@ deltaT = getDeltaT(iBias)
 
 faseTerm = faseConstant - pi2t * deltaT
 
-nWindw = 1 # numero de ventanas (para promediar) N natural
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
 
@@ -73,62 +72,60 @@ for i in range(len(vRF)):
     inten = current(time, vRF[i])
     currentTerm = eVinv * inten
 
-    for win in range(0, nWindw):
+    #---------------------------------------------------------
+    # Vectores Gaussianos N(0,1) para el  Ruido
+    #---------------------------------------------------------
+    X = np.random.normal(0, 1, nTotal)
+    Y = np.random.normal(0, 1, nTotal)
 
-        #---------------------------------------------------------
-        # Vectores Gaussianos N(0,1) para el  Ruido
-        #---------------------------------------------------------
-        X = np.random.normal(0, 1, nTotal)
-        Y = np.random.normal(0, 1, nTotal)
+    # Se definen las condiciones iniciales para resolver la EDO
+    tempN = nTr
+    tempS = float(10**20)
+    tempPhi = 0
 
-        # Se definen las condiciones iniciales para resolver la EDO
-        tempN = nTr
-        tempS = float(10**20)
-        tempPhi = 0
+    for q in range(0, nTrans):
 
-        for q in range(0, nTrans):
+        bTN = bTIntv * tempN * tempN
+        invS = 1 / ((1/tempS) + epsilon)
+        sqrtS = np.sqrt(abs(tempS))
+
+        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+                                                    ruidoPhi*tempN*Y[q]/sqrtS)
+
+        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
+
+        tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
+                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
+
+    I[0] = inten[q]*10**(12)
+    N[0] = tempN
+    S[0] = tempS
+    dPhi[0] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
+                                                derivRuidoPhi*tempN*Y[q]/sqrtS)
+
+    for q in range(1, nPeriodo):
+        for k in range(0, ndelta):
+
+            index = (q-1)*ndelta + k + nTrans
 
             bTN = bTIntv * tempN * tempN
             invS = 1 / ((1/tempS) + epsilon)
-            sqrtS = np.sqrt(abs(tempS))
+            sqrtS = np.sqrt(tempS)
 
             tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                    ruidoPhi*tempN*Y[q]/sqrtS)
-
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
-
-            tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
-        I[0] = inten[q]*10**(12)
-        N[0] = tempN
-        S[0] = tempS
-        dPhi[0] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
-                                                derivRuidoPhi*tempN*Y[q]/sqrtS)
-
-        for q in range(1, nPeriodo):
-            for k in range(0, ndelta):
-
-                index = (q-1)*ndelta + k + nTrans
-
-                bTN = bTIntv * tempN * tempN
-                invS = 1 / ((1/tempS) + epsilon)
-                sqrtS = np.sqrt(tempS)
-
-                tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
                                                 ruidoPhi*tempN*Y[index]/sqrtS)
 
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
+            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
                         intTtau*tempS + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
-                tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
-            I[q] = inten[index]*10**(12)
-            N[q] = tempN
-            S[q] = tempS
-            dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
+        I[q] = inten[index]*10**(12)
+        N[q] = tempN
+        S[q] = tempS
+        dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
                                     derivRuidoPhi*N[q]*Y[index]/np.sqrt(S[q]))
 
     #########################################
@@ -160,6 +157,4 @@ axs[-1][1].set_xlabel("t [ns]", fontsize=15)
 axs[-1][2].set_xlabel("t [ns]", fontsize=15)
 axs[-1][3].set_xlabel("t [ns]", fontsize=15)
 
-#fig.savefig("./Graficas/rateEquations.png", dpi=500)
-fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 plt.show()

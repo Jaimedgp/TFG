@@ -10,7 +10,7 @@ colors = ['b', 'r']
 
 vRF = 1.0 * 10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 1
+nWindw = 20
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta

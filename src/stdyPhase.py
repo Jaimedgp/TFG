@@ -14,7 +14,7 @@ faseTerm = faseConstant - pi2t * deltaT
 
 vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
 
-nWindw = 10 # numero de ventanas (para promediar) N natural
+nWindw = 40 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -134,7 +134,5 @@ ax2.plot(fftWL, TFprom, "b")
 ax2.set_ylabel("PSD", fontsize=15)
 ax2.set_yscale("log")
 ax2.tick_params('y', colors='b')
-fig.suptitle("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9),
-                                                                fontsize = 20)
 fig.tight_layout()
 plt.show()

@@ -23,7 +23,6 @@ deltaT = getDeltaT(iBias)
 faseTerm = faseConstant - pi2t * deltaT
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-nWindw = 1 # numero de ventanas (para promediar) N natural
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 ndelta = int(delta / tIntev)
 
@@ -70,64 +69,62 @@ fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.1)
 inten = current(time, vRF)
 currentTerm = eVinv * inten
 
-for win in range(0, nWindw):
+#---------------------------------------------------------
+# Vectores Gaussianos N(0,1) para el  Ruido
+#---------------------------------------------------------
 
-    #---------------------------------------------------------
-    # Vectores Gaussianos N(0,1) para el  Ruido
-    #---------------------------------------------------------
+X = np.random.normal(0, 1, nTotal)
+Y = np.random.normal(0, 1, nTotal)
 
-    X = np.random.normal(0, 1, nTotal)
-    Y = np.random.normal(0, 1, nTotal)
+# Se definen las condiciones iniciales para resolver la EDO
+tempN = nTr
+tempS = float(10**15)
+tempPhi = 0
 
-    # Se definen las condiciones iniciales para resolver la EDO
-    tempN = nTr
-    tempS = float(10**15)
-    tempPhi = 0
+for q in range(0, nTrans):
+    for j in range(0, ndelta):
+        totalIndex = q*ndelta + j
 
-    for q in range(0, nTrans):
-        for j in range(0, ndelta):
-            totalIndex = q*ndelta + j
+        bTN = bTIntv * tempN * tempN
+        invS = 1 / ((1/tempS) + epsilon)
+        sqrtS = np.sqrt(abs(tempS))
 
-            bTN = bTIntv * tempN * tempN
-            invS = 1 / ((1/tempS) + epsilon)
-            sqrtS = np.sqrt(abs(tempS))
-
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
                                             ruidoPhi*tempN*Y[totalIndex]/sqrtS)
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
                                 btGmm*bTN + ruidoS*tempN*sqrtS*X[totalIndex])
 
-            tempN = (tempN + currentTerm[totalIndex] - aTIntv*tempN - bTN -
+        tempN = (tempN + currentTerm[totalIndex] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-        I[q] = iBias
-        N[q] = tempN
-        S[q] = tempS
-        dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
+    I[q] = iBias
+    N[q] = tempN
+    S[q] = tempS
+    dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
                                         derivRuidoPhi*tempN*Y[totalIndex]/sqrtS)
 
-    for q in range(nTrans, nTotalD):
-        for k in range(0, ndelta):
+for q in range(nTrans, nTotalD):
+    for k in range(0, ndelta):
 
-            index = (q-nTrans)*ndelta + k
+        index = (q-nTrans)*ndelta + k
 
-            bTN = bTIntv * tempN * tempN
-            invS = 1 / ((1/tempS) + epsilon)
-            sqrtS = np.sqrt(tempS)
+        bTN = bTIntv * tempN * tempN
+        invS = 1 / ((1/tempS) + epsilon)
+        sqrtS = np.sqrt(tempS)
 
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
+        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
                                                 ruidoPhi*tempN*Y[index]/sqrtS)
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
+        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
                                         btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
 
-            tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
+        tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
-        I[q] = iBias
-        N[q] = tempN
-        S[q] = tempS
-        dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
+    I[q] = iBias
+    N[q] = tempN
+    S[q] = tempS
+    dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
                                     derivRuidoPhi*N[q]*Y[index]/np.sqrt(S[q]))
 I[0] = 0
 
@@ -136,8 +133,6 @@ I[0] = 0
 #########################################
 
 timePeriod = np.linspace(0, tTotal, nTotalD)
-
-fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 
 axs[0].plot(timePeriod, I, 'r')
 axs[0].axhline(y=13.2, linestyle=":", color='k', linewidth=3)

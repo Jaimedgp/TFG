@@ -14,7 +14,7 @@ faseTerm = faseConstant - pi2t * deltaT
 
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 
-nWindw = 10 # numero de ventanas (para promediar) N natural
+nWindw = 20 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -42,7 +42,6 @@ opField = np.zeros(nFFT, dtype=complex)
 
 fig, axs = plt.subplots(1, len(vRF), sharex=True,
                                               figsize=(20, int(20/len(vRF))))
-fig.suptitle("Corriente %.i mA" %(iBias), fontsize=25)
 fig.subplots_adjust(left=0.05, bottom=0.07, right=0.96, top=0.94, hspace=0.2)
 
 frecuencyLimits = 1 / (2*delta)
