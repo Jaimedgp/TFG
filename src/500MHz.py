@@ -13,11 +13,12 @@ deltaF = getConstante(iBias)
 faseTerm = faseConstant - pi2t * deltaT
 
 vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+#psdLimits = [[], [], [], []]
 
 fR = 0.5 # [GHz]
 rInt = 103.36 # [Ohm]
 
-nWindw = 20 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -64,7 +65,7 @@ fftWL = (c0/fftTime) *10**(9) # longitud de onda [nm]
 
 fig, axs = plt.subplots(2, len(vRF), figsize=(17, 10))
 # Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.98, top=0.94, hspace=0.2)
 
 for i in range(len(vRF)):
     inten = current(time, vRF[i])
@@ -100,7 +101,7 @@ for i in range(len(vRF)):
                                 cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
 
         opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        P[0] += (constP * tempS *10**(9))/float(nWindw)
+        P[0] += (constP * tempS *10**(12))/float(nWindw)
         tmP[0] = time[q]
 
         for q in range(1, nFFT):
@@ -122,7 +123,7 @@ for i in range(len(vRF)):
                                 (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
 
             opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            P[q] += (constP * tempS *10**(9))/float(nWindw)
+            P[q] += (constP * tempS *10**(12))/float(nWindw)
             tmP[q] = time[index]
 
         transFourier = np.fft.fft(opField)
@@ -138,12 +139,14 @@ for i in range(len(vRF)):
     axs[0][i].plot(tmP, P, 'r')
     axs[0][i].grid(linestyle='-.')
     axs[0][i].set_xlabel("time [ns]", fontsize=15)
+    axs[0][i].set_xlim([1.5, 7.5])
 
     axs[1][i].plot(fftWL, TFprom, 'b')
     axs[1][i].set_yscale("log")
     axs[1][i].set_xlabel("WL [nm]", fontsize=15)
+    axs[1][i].set_xlim([1547.15, 1547.37])
+    axs[1][i].set_ylim(6.82*10**(-11))
 
-axs[0][0].set_ylabel("Power [$W$]", fontsize=15)
+axs[0][0].set_ylabel("Power [mW]", fontsize=15)
 axs[1][0].set_ylabel("PSD", fontsize=15)
 plt.show()
-
