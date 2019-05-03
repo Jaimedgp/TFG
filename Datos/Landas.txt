@@ -1,7 +1,7 @@
 ######################################################################
 ##		Datos de la longitud de onda de emision del laser para
 ##	diferentes corrientes I_Bias obtenidos por simulacion con un
-##	promedio a 10 ventanas
+##	promedio a 20 ventanas
 ##
 ##	Intensidad(mA)	Longitud de onda de pico(nm)
 ######################################################################
