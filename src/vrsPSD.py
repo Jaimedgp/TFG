@@ -13,8 +13,9 @@ deltaF = getConstante(iBias)
 faseTerm = faseConstant - pi2t * deltaT
 
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+colors = ['g', 'b', 'r']
 
-nWindw = 20 # numero de ventanas (para promediar) N natural
+nWindw = 1 # numero de ventanas (para promediar) N natural
 
 delta = 0.0025 # tiempo de muestreo para la FFT [ns]
 nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
@@ -126,10 +127,10 @@ for i in range(len(vRF)):
     #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
     #-------------------------------------------------------------------------------
 
-    axs[i].plot(fftWL, TFprom)
+    axs[i].plot(fftWL, TFprom, colors[i])
     axs[i].set_xlabel("$\lambda$ [nm]", fontsize=15)
     axs[i].set_ylabel("PSD", fontsize=15)
     axs[i].set_yscale("log")
-    axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9))
+    axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9), color=colors[i])
 
 plt.show()

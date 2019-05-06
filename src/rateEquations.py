@@ -17,6 +17,7 @@ from getTempValues import getDeltaT
 
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+colors = ['g', 'b', 'r']
 
 deltaT = getDeltaT(iBias)
 
@@ -61,7 +62,7 @@ derivAphvgTGmm = aphvgTGmm / tIntev
 derivFaseTerm = faseTerm / tIntev
 derivRuidoPhi = ruidoPhi / tIntev
 
-fig, axs = plt.subplots(len(vRF), 4, sharex=True, sharey="col",
+fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
                                                             figsize=(17, 10))
 # Remove horizontal space between axes
 fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
@@ -132,29 +133,27 @@ for i in range(len(vRF)):
     ##  Representacion de los Datos
     #########################################
 
-    axs[i][0].set_ylabel("%.2f V" %(vRF[i] * 10**9), fontsize=15)
+    axs[0][i].set_title("$V_{RF} = $%.2f V" %(vRF[i] * 10**9), color=colors[i], fontsize=15)
 
-    axs[i][0].plot(timePeriod, I, 'r')
-    axs[i][0].axhline(y=14.8, linestyle=":", color='k', linewidth=3)
-    axs[i][0].grid(linestyle='-.')
+    axs[0][i].plot(timePeriod, I, colors[i])
+    axs[0][i].axhline(y=14.8, linestyle=":", color='k', linewidth=3)
+    axs[0][i].grid(linestyle='-.')
 
-    axs[i][1].plot(timePeriod, S, 'b')
-    axs[i][1].grid(linestyle='-.')
+    axs[1][i].plot(timePeriod, S, colors[i])
+    axs[1][i].grid(linestyle='-.')
 
-    axs[i][2].plot(timePeriod, dPhi, 'r', label="N(t)")
-    axs[i][2].grid(linestyle='-.')
+    axs[2][i].plot(timePeriod, dPhi, colors[i], label="N(t)")
+    axs[2][i].grid(linestyle='-.')
 
-    axs[i][3].plot(timePeriod, N/nTr, 'r')
-    axs[i][3].grid(linestyle='-.')
+    axs[3][i].plot(timePeriod, N/nTr, colors[i])
+    axs[3][i].grid(linestyle='-.')
 
-axs[0][0].set_title("I(t) [$mA$]", fontsize=15)
-axs[0][1].set_title("S(t) [$m^3$]", fontsize=15)
-axs[0][2].set_title("Chirp [GHz]", fontsize=15)
-axs[0][3].set_title("$N(t) / N_{Tr}$", fontsize=15)
+axs[0][0].set_ylabel("I(t) [$mA$]", fontsize=15)
+axs[1][0].set_ylabel("S(t) [$m^3$]", fontsize=15)
+axs[2][0].set_ylabel("Chirp [GHz]", fontsize=15)
+axs[3][0].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 
-axs[-1][0].set_xlabel("t [ns]", fontsize=15)
-axs[-1][1].set_xlabel("t [ns]", fontsize=15)
-axs[-1][2].set_xlabel("t [ns]", fontsize=15)
-axs[-1][3].set_xlabel("t [ns]", fontsize=15)
+for i in range(len(vRF)):
+    axs[-1][i].set_xlabel("t [ns]", fontsize=15)
 
 plt.show()
