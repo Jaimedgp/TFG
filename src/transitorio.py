@@ -150,7 +150,7 @@ axs[3].grid(linestyle='-.')
 axs[3].set_ylim([-40, 20])
 
 axs[0].set_ylabel("I(t) [$mA$]", fontsize=15)
-axs[1].set_ylabel("S(t) [$m^3$]", fontsize=15)
+axs[1].set_ylabel("S(t) [$m^{-3}$]", fontsize=15)
 axs[2].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 axs[3].set_ylabel("Chirp [GHz]", fontsize=15)
 
