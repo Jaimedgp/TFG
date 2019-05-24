@@ -10,8 +10,12 @@
 
 import numpy as np
 
-from matplotlib import rcParams
-rcParams['font.family'] = 'serif'
+import matplotlib
+font = {'family' : 'serif',
+        'weight' : 'normal',
+        'size'   : 15}
+
+matplotlib.rc('font', **font)
 
 import matplotlib.pyplot as plt
 import cmath
@@ -176,3 +180,5 @@ for i in range(len(vRF)):
     axs[-1][i].set_xlabel("t [ns]", fontsize=15)
 
 plt.show()
+
+np.save('hola', [I, S, dPhi, N])

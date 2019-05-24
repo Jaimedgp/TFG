@@ -130,6 +130,8 @@ for i in range(len(vRF)):
     axs[i].plot(fftWL, TFprom, colors[i])
     axs[i].set_xlabel("$\lambda$ [nm]", fontsize=15)
     axs[i].set_ylabel("PSD", fontsize=15)
+    axs[i].set_xlim([1546.0, 1547.5])
+    axs[i].set_ylim([9*10**(-13), 0.003])
     axs[i].set_yscale("log")
     axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9), color=colors[i])
 
