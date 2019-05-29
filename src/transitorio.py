@@ -8,144 +8,63 @@
     latest version: 19 April 2019
 """
 
+import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
-import cmath
+import os.path
 
-from Constantes import *
-from getTempValues import getDeltaT
+from Constantes import nTr
+from simulacion import Simulacion
+
+font = {'family' : 'serif',
+        'weight' : 'normal',
+        'size'   : 15}
+matplotlib.rc('font', **font)
 
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0 #RMS voltage value of the signal generator [V]
+fR = 5.0
 
-deltaT = getDeltaT(iBias)
-
-faseTerm = faseConstant - pi2t * deltaT
-
-tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-delta = 0.0025 # tiempo de muestreo para la FFT [ns]
-ndelta = int(delta / tIntev)
-
-tWindw = 1.2
-nTime = int(tWindw / delta) # numero de pasos de integracion
-
-tTrans = 0.2
-nTrans = int(tTrans / delta)
-
-tTotal = tTrans + tWindw
-nTotal = int(tTotal / tIntev)
-nTotalD = int(tTotal / delta)
-
-#                  INTENSIDAD
-#
-#                 2 sqrt(2) vRF 
-# I_bias + cLoss --------------- sin(2 pi fR t)
-#                   z0 + zL
-current = lambda t, vRFi: (iBias*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRFi *
-                                            np.sin(2 * np.pi * fR * t)) / rInt)
-
-################################################################################
-##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
-##      densidad de fotones (S) y de la fase optica (Phi)
-################################################################################
-
-time = np.linspace(0, tTotal, nTotal)
-I = np.zeros(nTotalD)
-N = np.zeros(nTotalD)
-S = np.zeros(nTotalD)
-dPhi = np.zeros(nTotalD)
-
-############################
-##  Iniciar Simulacion
-############################
-
-derivAphvgTGmm = aphvgTGmm / tIntev
-derivFaseTerm = faseTerm / tIntev
-derivRuidoPhi = ruidoPhi / tIntev
+existData = False
 
 fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 20))
 fig.subplots_adjust(left=0.08, bottom=0.06, right=0.96, top=0.94, hspace=0.1)
 
-inten = current(time, vRF)
-currentTerm = eVinv * inten
+nameFile = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias, vRF *10**(12), fR)
 
-#---------------------------------------------------------
-# Vectores Gaussianos N(0,1) para el  Ruido
-#---------------------------------------------------------
+if os.path.isfile(nameFile) and existData:
 
-X = np.random.normal(0, 1, nTotal)
-Y = np.random.normal(0, 1, nTotal)
+    dataPSD = np.load(nameFile)
+    print "Opening file " + nameFile
 
-# Se definen las condiciones iniciales para resolver la EDO
-tempN = nTr
-tempS = float(10**15)
-tempPhi = 0
+    time, I, S, dPhi, N = dataPSD['time'], dataPSD['I'], dataPSD['S'], dataPSD['dPhi'], dataPSD['N']
 
-for q in range(0, nTrans):
-    for j in range(0, ndelta):
-        totalIndex = q*ndelta + j
+else:
+    laser = Simulacion(iBias, vRF, fR)
+    laser.rateEquations()
 
-        bTN = bTIntv * tempN * tempN
-        invS = 1 / ((1/tempS) + epsilon)
-        sqrtS = np.sqrt(abs(tempS))
+    time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N
 
-        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                            ruidoPhi*tempN*Y[totalIndex]/sqrtS)
+indexes = np.where(time < 1.2)
 
-        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                                btGmm*bTN + ruidoS*tempN*sqrtS*X[totalIndex])
+time = time[indexes]
+I = I[indexes]
+S = S[indexes]
+dPhi = dPhi[indexes]
+N = N[indexes]
 
-        tempN = (tempN + currentTerm[totalIndex] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-    I[q] = iBias
-    N[q] = tempN
-    S[q] = tempS
-    dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN - derivFaseTerm +
-                                        derivRuidoPhi*tempN*Y[totalIndex]/sqrtS)
-
-for q in range(nTrans, nTotalD):
-    for k in range(0, ndelta):
-
-        index = (q-nTrans)*ndelta + k
-
-        bTN = bTIntv * tempN * tempN
-        invS = 1 / ((1/tempS) + epsilon)
-        sqrtS = np.sqrt(tempS)
-
-        tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                ruidoPhi*tempN*Y[index]/sqrtS)
-
-        tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                                        btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
-
-        tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
-    I[q] = iBias
-    N[q] = tempN
-    S[q] = tempS
-    dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*N[q] - derivFaseTerm +
-                                    derivRuidoPhi*N[q]*Y[index]/np.sqrt(S[q]))
-I[0] = 0
-
-#########################################
-##  Representacion de los Datos
-#########################################
-
-timePeriod = np.linspace(0, tTotal, nTotalD)
-
-axs[0].plot(timePeriod, I, 'r')
+axs[0].plot(time, I, 'r')
 axs[0].axhline(y=13.2, linestyle=":", color='k', linewidth=3)
 axs[0].grid(linestyle='-.')
 
-axs[1].plot(timePeriod, S, 'b')
+axs[1].plot(time, S, 'b')
 axs[1].set_yscale('log')
 axs[1].grid(linestyle='-.')
 
-axs[2].plot(timePeriod, N/nTr, 'r')
+axs[2].plot(time, N/nTr, 'r')
 axs[2].grid(linestyle='-.')
 
-axs[3].plot(timePeriod, dPhi, 'r', label="N(t)")
+axs[3].plot(time, dPhi, 'r', label="N(t)")
 axs[3].grid(linestyle='-.')
 axs[3].set_ylim([-40, 20])
 

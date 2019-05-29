@@ -38,10 +38,8 @@ f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 # Recopilado por el articulo
 #---------------------------------------------------
 
-fR = 5.0 # [GHz]
-rInt = 142.25 # [Ohm]
-#fR = 0.5 # [GHz]
-#rInt = 103.36 # [Ohm]
+# rInt = {fR [GHz]: rInt [Ohms]}
+rIntLists = {5.0: 142.25, 0.5: 103.36} # [Ohm]
 
 #---------------------------------------------------
 # Facilitados por Angel Valle
@@ -59,16 +57,21 @@ cLoss = 1 # loss coeficient accounting for the frequency
 ##      muestre para la FFT y tiempos de integracion
 ################################################################################
 
-tWindw = 40.96 # tiempo de la ventana [ns]
+#tWindw = 40.96 # tiempo de la ventana [ns]
 
 tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-nTime = int(tWindw / tIntev) # numero de pasos de integracion
+#nWindw = int(tWindw / tIntev) # numero de pasos de integracion
 
-tTrans = 1.2 # tiempo del transitorio [ns]
-nTrans = int(tTrans / tIntev)
+delta = 0.0025 # tiempo de muestreo para la FFT [ns]
+ndelta = int(delta / tIntev) # ndelta*tIntev=delta
+#mWindw = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
 
-tTotal = tWindw + tTrans
-nTotal = int(tTotal / tIntev)
+#tTrans = 1.2 # tiempo del transitorio [ns]
+#mTrans = int(tTrans / delta)
+
+#tTotal = tWindw + tTrans
+#nTotal = int(tTotal / tIntev)
+#mTotal = int(tTotal / delta)
 
 ################################################################################
 ##  Constantes a user durante la simulacion
@@ -139,3 +142,10 @@ ruidoS = np.sqrt(2 * beta * gamma * bTIntv)
 
 # Parte constante del termino de ruido del Phi(t)
 ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
+
+#---------------------------------------------------------
+# Terminos de CHIRP
+#---------------------------------------------------------
+
+derivAphvgTGmm = aphvgTGmm / tIntev
+derivRuidoPhi = ruidoPhi / tIntev

@@ -1,104 +1,48 @@
+import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
-import cmath
+import os.path
 
-from Constantes import *
-from getTempValues import *
+#from Constantes import *
+from simulacion import Simulacion
 
-frqMv = getConstante()
-tmpMv = getDeltaT()
+font = {'family' : 'serif',
+        'weight' : 'normal',
+        'size'   : 15}
+matplotlib.rc('font', **font)
 
-
-iBias = [i *10**(-12) for i in range(15, 40, 5) ] # bias current [C ns^-1]
-
-nWindw = 20 # numero de ventanas (para promediar) N natural
-
-delta = 0.0025 # tiempo de muestreo para la FFT [ns]
-nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
-ndelta = int(delta / tIntev) # ndelta*tIntev=delta
-
-############################
-##  Iniciar Simulacion
-############################
-fig = plt.figure(figsize=(9,6))
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
+iBias = [i for i in range(15, 40, 5) ] # bias current [C ns^-1]
+vRF = 0 #RMS voltage value of the signal generator [V]
+fR = 5.0
+existData = True
 
 WL = []
 
-frecuencyLimits = 1 / (2*delta)
-fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT, endpoint=True)
-fftTime += f0
+fig = plt.figure(figsize=(9,6))
+fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
-for inten in iBias:
-    TFprom = 0
-    intensidad = int(inten *10**(12))
-    opField = np.zeros(nFFT, dtype=complex)
+for i in range(len(iBias)):
 
-    # Fase constant
-    faseTerm = faseConstant - pi2t * tmpMv[intensidad]
+    nameFilePSD = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias[i], vRF *10**(12), fR)
 
-    currentTerm = eVinv * inten
+    if os.path.isfile(nameFilePSD) and existData:
 
-    for win in range(nWindw):
+        dataPSD = np.load(nameFilePSD)
+        print "Opening file " + nameFilePSD
 
-        #---------------------------------------------------------
-        # Vectores Gaussianos N(0,1) para el  Ruido
-        #---------------------------------------------------------
-        X = np.random.normal(0, 1, nTotal)
-        Y = np.random.normal(0, 1, nTotal)
+        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
 
-        # Se definen las condiciones iniciales para resolver la EDO
-        tempN = nTr
-        tempS = float(10**(20))
-        tempPhi = 0
+    else:
+        laser = Simulacion(iBias[i], vRF, fR)
+        laser.allSimulation()
 
-        for q in range(0, nTrans):
-
-            bTN = bTIntv * tempN * tempN
-            invS = 1 / ((1/tempS) + epsilon)
-            sqrtS = np.sqrt(abs(tempS))
-
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                    ruidoPhi*tempN*Y[q]/sqrtS)
-
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
-
-            tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
-        opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-
-        for q in range(1, nFFT):
-            for k in range(0, ndelta):
-
-                index = (q-1)*ndelta + k + nTrans
-
-                bTN = bTIntv * tempN * tempN
-                invS = 1 / ((1/tempS) + epsilon)
-                sqrtS = np.sqrt(tempS)
-
-                tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                ruidoPhi*tempN*Y[index]/sqrtS)
-
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
-                        intTtau*tempS + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
-
-                tempN = (tempN + currentTerm - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
-            opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-
-        transFourier = np.fft.fft(opField)
-        TFprom += (abs(np.fft.fftshift(transFourier)) *
-                       abs(np.fft.fftshift(transFourier))/float(nWindw))
-
-    fftWL = c0 *10**(9) / (fftTime - (frqMv[intensidad]/(2.0*np.pi))) # longitud de onda [nm]
+        fftWL, TFprom = laser.fftWL, laser.TFprom
 
     WLmax = fftWL[np.where(TFprom == max(TFprom))]
     WL.append(WLmax)
-    plt.plot(fftWL, TFprom, label="%i mA" %(intensidad))
-    plt.text(WLmax, max(TFprom), "%.2f" %(WLmax))
+
+    plt.plot(fftWL, TFprom, label="%i mA" %(iBias[i]))
+    #plt.text(WLmax, max(TFprom), "%.2f" %(WLmax))
 
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)

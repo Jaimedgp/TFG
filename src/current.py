@@ -1,136 +1,57 @@
+import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
-import cmath
+import os.path
 
-from Constantes import *
-from getTempValues import *
+from Constantes import constP
+from simulacion import Simulacion
+
+font = {'family' : 'serif',
+        'weight' : 'normal',
+        'size'   : 15}
+matplotlib.rc('font', **font)
 
 iBias = [30, 50]  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-colors = ['b', 'r']
-
 vRF = 1.0 * 10**(-9) #RMS voltage value of the signal generator [V]
+fR = 5.0
+period = 3 / fR
 
-nWindw = 1
-delta = 0.0025 # tiempo de muestreo para la FFT [ns]
-nFFT = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
-ndelta = int(delta / tIntev) # ndelta*tIntev=delta
-
-#                  INTENSIDAD
-#
-#                 2 sqrt(2) vRF 
-# I_bias + cLoss --------------- sin(2 pi fR t)
-#                   z0 + zL
-current = lambda t, currnt: (currnt*10**(-12) + (cLoss * 2.0 * np.sqrt(2) * vRF *
-                                            np.sin(2 * np.pi * fR * t)) / rInt)
-
-################################################################################
-##  Inicializar los vectores de tiempo (time), de la densidad de portadores (N)
-##      densidad de fotones (S) y de la fase optica (Phi)
-################################################################################
-
-time = np.linspace(0, tTotal, nTotal)
-
-#-------------------------------------------------------------------------------
-# Espectro optico frente a la longitud de onda
-#
-#   EL espectro optico se obtiene realizando la transformada de Fourier del
-#   campo optico total (opField). Las frecuencias han de ir en pasos de
-#   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
-#   transformada de fourier.  Para la obtencion de la longitud de onda se
-#   obtienen las frecuencias de la transformada de Fourier y se le suma la
-#   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
-#-------------------------------------------------------------------------------
-frecuencyLimits = 1 / (2*delta)
-fftTime = np.linspace(-frecuencyLimits, frecuencyLimits, nFFT)#, endpoint=True)
-
-opField = np.zeros(nFFT, dtype=complex)
-tmP = np.zeros(nFFT)
-
-############################
-##  Iniciar Simulacion
-############################
+existData = True
 
 fig, axs = plt.subplots(1, 2, figsize=(17, 10))
 # Remove horizontal space between axes
 fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
+colors = ['b', 'r']
+
 for i in range(len(iBias)):
-    deltaT = getDeltaT(iBias[i])
-    deltaF = getConstante(iBias[i])
 
-    faseTerm = faseConstant - pi2t * deltaT
+    nameFileRateEq = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias[i], vRF *10**(12), fR)
+    nameFilePSD = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias[i], vRF *10**(12), fR)
 
-    inten = current(time, iBias[i])
-    currentTerm = eVinv * inten
-    P = np.zeros(nFFT)
-    TFprom = 0
+    if os.path.isfile(nameFilePSD) and existData:
 
-    for win in range(0, nWindw):
+        dataPSD = np.load(nameFilePSD)
+        print "Opening file " + nameFilePSD
 
-        #---------------------------------------------------------
-        # Vectores Gaussianos N(0,1) para el  Ruido
-        #---------------------------------------------------------
-        X = np.random.normal(0, 1, nTotal)
-        Y = np.random.normal(0, 1, nTotal)
+        dataRateEq = np.load(nameFileRateEq)
+        print "Opening file " + nameFileRateEq
 
-        # Se definen las condiciones iniciales para resolver la EDO
-        tempN = nTr
-        tempS = float(10**(20))
-        tempPhi = 0
+        time, S = dataRateEq['time'], dataRateEq['S']
+        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
 
-        for q in range(0, nTrans):
+    else:
+        laser = Simulacion(iBias[i], vRF, fR)
+        laser.allSimulation()
 
-            bTN = bTIntv * tempN * tempN
-            invS = 1 / ((1/tempS) + epsilon)
-            sqrtS = np.sqrt(abs(tempS))
+        time, S = laser.time, laser.S
+        fftWL, TFprom = laser.fftWL, laser.TFprom
 
-            tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                    ruidoPhi*tempN*Y[q]/sqrtS)
+    indexes = np.where((time > 1.2) & (time < period+1.2))
+    time = time[indexes]
+    power = constP * S[indexes] *10**(12)
 
-            tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS - intTtau*tempS +
-                                            btGmm*bTN + ruidoS*tempN*sqrtS*X[q])
-
-            tempN = (tempN + currentTerm[q] - aTIntv*tempN - bTN -
-                                cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
-
-        opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-        P[0] += (constP * tempS *10**(12))/float(nWindw)
-        tmP[0] = time[q]
-
-        for q in range(1, nFFT):
-            for k in range(0, ndelta):
-
-                index = (q-1)*ndelta + k + nTrans
-
-                bTN = bTIntv * tempN * tempN
-                invS = 1 / ((1/tempS) + epsilon)
-                sqrtS = np.sqrt(tempS)
-
-                tempPhi = (tempPhi + aphvgTGmm*tempN - faseTerm +
-                                                ruidoPhi*tempN*Y[index]/sqrtS)
-
-                tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS -
-                        intTtau*tempS + btGmm*bTN + ruidoS*tempN*sqrtS*X[index])
-
-                tempN = (tempN + currentTerm[index] - aTIntv*tempN - bTN -
-                                (cTIntv*tempN**3) - vgT*tempN*invS + vgtN*invS)
-
-            opField[q] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
-            P[q] += (constP * tempS *10**(12))/float(nWindw)
-            tmP[q] = time[index]
-
-        transFourier = np.fft.fft(opField)
-        TFprom += (abs(np.fft.fftshift(transFourier)) *
-                abs(np.fft.fftshift(transFourier))/float(nWindw))
-
-    #########################################
-    ##  Representacion de los Datos
-    #########################################
-    fftTimeI = fftTime + f0 - (deltaF/(2.0*np.pi))
-
-    fftWL = (c0/fftTimeI) *10**(9) # longitud de onda [nm]
-
-    axs[0].plot(tmP, P, colors[i], label="%i mA" %(iBias[i]))
+    axs[0].plot(time, power, colors[i], label="%i mA" %(iBias[i]))
     axs[1].plot(fftWL, TFprom, colors[i], label="%i mA" %(iBias[i]))
 
 axs[0].grid(linestyle='-.')
