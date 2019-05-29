@@ -166,6 +166,26 @@ class Simulacion():
             self.TFang += (np.angle(np.fft.fftshift(transFourier))
                            / float(self.numWindw))
 
+    def save(self):
+        nameRtEqtins = ("Data/RateEquations_%imA_%imV_%iGHZ"
+                        %(self.iBias, self.vRF*10**(12), self.fR))
+        np.savez(
+                    nameRtEqtins, time=self.time,
+                                I=self.I,
+                                N=self.N,
+                                S=self.S,
+                                dPhi=self.dPhi
+                )
+
+        namePSD = ("Data/PSD_%imA_%imV_%iGHZ"
+                   %(self.iBias, self.vRF*10**(12), self.fR))
+        np.savez(
+                    namePSD, fftWL=self.fftWL,
+                            fftFreq=self.fftFreq,
+                            TFprom=self.TFprom,
+                            TFang=self.TFang
+                )
+
 if __name__ == '__main__':
     iBias = 35
     vRF = 1.0 *10**(-9)
@@ -174,21 +194,4 @@ if __name__ == '__main__':
 
     laser = Simulacion(iBias, vRF, fR, numWindw)
     laser.allSimulation()
-
-    nameRtEqtins = ("Data/RateEquations_%imA_%imV_%iGHZ"
-                    %(iBias, vRF*10**(12), fR))
-    np.savez(
-                nameRtEqtins, time=laser.time,
-                              I=laser.I,
-                              N=laser.N,
-                              S=laser.S,
-                              dPhi=laser.dPhi
-            )
-
-    namePSD = "Data/PSD_%imA_%imV_%iGHZ" %(iBias, vRF*10**(12), fR)
-    np.savez(
-                namePSD, fftWL=laser.fftWL,
-                         fftFreq=laser.fftFreq,
-                         TFprom=laser.TFprom,
-                         TFang=laser.TFang
-            )
+    laser.save()
