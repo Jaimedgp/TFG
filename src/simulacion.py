@@ -171,19 +171,19 @@ class Simulacion():
                         %(self.iBias, self.vRF*10**(12), self.fR))
         np.savez(
                     nameRtEqtins, time=self.time,
-                                I=self.I,
-                                N=self.N,
-                                S=self.S,
-                                dPhi=self.dPhi
+                                  I=self.I,
+                                  N=self.N,
+                                  S=self.S,
+                                  dPhi=self.dPhi
                 )
 
         namePSD = ("Data/PSD_%imA_%imV_%iGHZ"
                    %(self.iBias, self.vRF*10**(12), self.fR))
         np.savez(
                     namePSD, fftWL=self.fftWL,
-                            fftFreq=self.fftFreq,
-                            TFprom=self.TFprom,
-                            TFang=self.TFang
+                             fftFreq=self.fftFreq,
+                             TFprom=self.TFprom,
+                             TFang=self.TFang
                 )
 
 if __name__ == '__main__':
