@@ -15,6 +15,7 @@ iBias = [i for i in range(15, 40, 5) ] # bias current [C ns^-1]
 vRF = 0 #RMS voltage value of the signal generator [V]
 fR = 5.0
 existData = True
+saveIt = False
 
 WL = []
 
@@ -33,8 +34,16 @@ for i in range(len(iBias)):
         fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
 
     else:
-        laser = Simulacion(iBias[i], vRF, fR)
-        laser.allSimulation()
+        existData = False
+
+        if saveIt:
+            nWindw = 10
+            laser = Simulacion(iBias[i], vRF, fR, nWindw)
+            laser.allSimulation()
+            laser.save()
+        else:
+            laser = Simulacion(iBias[i], vRF, fR)
+            laser.allSimulation()
 
         fftWL, TFprom = laser.fftWL, laser.TFprom
 
@@ -52,14 +61,16 @@ plt.ylim(0.9*10**(-12), 0.003)
 plt.legend()
 plt.show()
 #fig.savefig("./Graficas/Espectros.png", dpi=300)
-
-with open("./Datos/Landas.txt", 'w') as fw:
-    fw.write("""######################################################################
+if not existData and saveIt:
+    with open("../Datos/Landas.txt", 'w') as fw:
+        fw.write(
+"""######################################################################
 ##		Datos de la longitud de onda de emision del laser para
 ##	diferentes corrientes I_Bias obtenidos por simulacion con un
 ##	promedio a %s ventanas
 ##
 ##	Intensidad(mA)	Longitud de onda de pico(nm)
-######################################################################\n""" %(nWindw))
-    for i in range(len(iBias)):
-        fw.write("%i \t %.2f \n" %(iBias[i]*10**12, WL[i]))
+######################################################################\n"""
+%(nWindw))
+        for i in range(len(iBias)):
+            fw.write("%i \t %.2f \n" %(iBias[i]*10**12, WL[i]))
