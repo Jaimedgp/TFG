@@ -1,4 +1,6 @@
 import matplotlib
+import matplotlib.ticker as ticker
+from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 import matplotlib.pyplot as plt
 import os.path
@@ -21,7 +23,6 @@ colors = ['g', 'b', 'r']
 
 fig, axs = plt.subplots(1, len(vRF), sharex=True, sharey=True,
                                               figsize=(20, int(20/len(vRF))))
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 for i in range(len(vRF)):
 
@@ -58,9 +59,13 @@ for i in range(len(vRF)):
     axs[i].plot(fftWL, TFprom, colors[i])
     axs[i].set_xlabel("$\lambda$ [nm]", fontsize=15)
     axs[i].set_ylabel("PSD", fontsize=15)
-    #axs[i].set_xlim([1546.0, 1547.5])
+    axs[i].set_xlim([1546.0, 1547.75])
+    axs[i].xaxis.set_major_locator(ticker.MultipleLocator(0.5))
+    axs[i].xaxis.set_minor_locator(ticker.MultipleLocator(0.1))
+    #axs[i].xaxis.set_major_formatter(FormatStrFormatter('%0.2f'))
     #axs[i].set_ylim([9*10**(-15), 0.003])
     axs[i].set_yscale("log")
     axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9), color=colors[i])
 
+plt.tight_layout()
 plt.show()

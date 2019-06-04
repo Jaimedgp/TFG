@@ -19,8 +19,7 @@ saveIt = False
 
 WL = []
 
-fig = plt.figure(figsize=(9,6))
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
+fig = plt.figure(figsize=(11,8))
 
 for i in range(len(iBias)):
 
@@ -59,6 +58,7 @@ plt.yscale("log")
 plt.xlim(1546.8, 1547.2)
 plt.ylim(0.9*10**(-12), 0.003)
 plt.legend()
+plt.tight_layout()
 plt.show()
 #fig.savefig("./Graficas/Espectros.png", dpi=300)
 if not existData and saveIt:

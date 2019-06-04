@@ -16,11 +16,9 @@ vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10
 fR = 0.5 # [GHz]
 period = 3 / fR
 
-existData = True
+existData = False
 
-fig, axs = plt.subplots(2, len(vRF), figsize=(17, 10))
-# Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.98, top=0.94, hspace=0.2)
+fig, axs = plt.subplots(2, len(vRF), figsize=(20, 10))
 
 for i in range(len(vRF)):
 
@@ -68,4 +66,5 @@ for i in range(len(vRF)):
 
 axs[0][0].set_ylabel("Power [mW]", fontsize=15)
 axs[1][0].set_ylabel("PSD", fontsize=15)
+plt.tight_layout()
 plt.show()

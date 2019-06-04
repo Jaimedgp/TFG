@@ -40,8 +40,6 @@ existData = True
 
 fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
                                                             figsize=(17, 10))
-# Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
 for i in range(len(vRF)):
 
@@ -101,4 +99,5 @@ axs[3][0].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 for i in range(len(vRF)):
     axs[-1][i].set_xlabel("t [ns]", fontsize=15)
 
+plt.tight_layout()
 plt.show()

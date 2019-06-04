@@ -18,9 +18,7 @@ period = 3 / fR
 
 existData = True
 
-fig, axs = plt.subplots(1, 2, figsize=(17, 10))
-# Remove horizontal space between axes
-fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
+fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
 colors = ['b', 'r']
 
@@ -68,5 +66,6 @@ axs[1].set_ylabel("PSD", fontsize=15)
 
 axs[0].legend()
 axs[1].legend()
+plt.tight_layout()
 plt.show()
 

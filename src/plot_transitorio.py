@@ -27,8 +27,7 @@ fR = 5.0
 
 existData = False
 
-fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 20))
-fig.subplots_adjust(left=0.08, bottom=0.06, right=0.96, top=0.94, hspace=0.1)
+fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 10))
 
 nameFile = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias, vRF *10**(12), fR)
 
@@ -75,4 +74,5 @@ axs[3].set_ylabel("Chirp [GHz]", fontsize=15)
 
 axs[3].set_xlabel("t [ns]", fontsize=15)
 
+plt.tight_layout()
 plt.show()
