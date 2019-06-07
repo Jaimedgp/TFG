@@ -16,10 +16,12 @@ font = {'family' : 'serif',
 matplotlib.rc('font', **font)
 
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-vRF = 1.0 *10**(-9) #RMS voltage value of the signal generator [V]
+vRF = 0.0 *10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
+sInyct = float(4 * 10**(20))
+nuDetng = - 4.0
 
-existData = True
+existData = False
 
 nameFile = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias, vRF *10**(12), fR)
 
@@ -31,7 +33,7 @@ if os.path.isfile(nameFile) and existData:
     fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
 
 else:
-    laser = Simulacion(iBias, vRF, fR)
+    laser = Simulacion(iBias, vRF, fR, sInyct, nuDetng)
     laser.allSimulation()
 
     fftWL, TFprom = laser.fftWL, laser.TFprom

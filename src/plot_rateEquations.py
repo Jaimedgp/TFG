@@ -34,9 +34,11 @@ graphLabel = [
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 fR = 5.0
+sInyct = float(4 * 10**(32))
+nuDetng = - 2.0
 period = 3 / fR
 
-existData = True
+existData = False
 
 fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
                                                             figsize=(17, 10))
@@ -53,7 +55,7 @@ for i in range(len(vRF)):
         time, I, S, dPhi, N = dataPSD['time'], dataPSD['I'], dataPSD['S'], dataPSD['dPhi'], dataPSD['N']
 
     else:
-        laser = Simulacion(iBias, vRF[i], fR)
+        laser = Simulacion(iBias, vRF[i], fR, sInyct, nuDetng)
         laser.rateEquations()
 
         time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N

@@ -14,10 +14,12 @@ from getTempValues import *
 
 class Simulacion():
 
-    def __init__(self, iBias, vRF, fR, numWindw=1):
+    def __init__(self, iBias, vRF, fR, sInyct, nuDetng, numWindw=1):
         self.iBias = iBias
         self.vRF = vRF
         self.fR = fR
+        self.sInyct = sInyct
+        self.nuDetng = nuDetng
         self.numWindw = numWindw
 
         rInt = rIntLists[fR]
@@ -30,7 +32,8 @@ class Simulacion():
         #                   z0 + zL
         self.current = lambda t: (self.iBias*10**(-12)
                                   + (cLoss*2.0*np.sqrt(2)*self.vRF
-                                  * np.sin(2*np.pi*fR*t)) / rInt)
+                                  * np.sin(2*np.pi*fR*t)) / rInt
+                                 )
 
         self.tWindw = 40.96
         self.tTrans = 2.2
@@ -54,7 +57,7 @@ class Simulacion():
         """     de portadores (N) densidad de fotones (S) y de la fase """
         """      optica (Phi)                                          """
 
-        global mTrans, mTotal, nTotal, t
+        global mTrans, mTotal, nTotal, t, angInyect, senInyect, cosInyect
 
         mWindw = int(self.tWindw / delta)
         mTrans = int(self.tTrans / delta)
@@ -63,6 +66,9 @@ class Simulacion():
         mTotal = int(tTotal / delta)
 
         t = np.linspace(0, tTotal, nTotal)
+        angInyect = 2*np.pi*self.nuDetng*t
+        senInyect = np.sin(angInyect)
+        cosInyect = np.cos(angInyect)
         self.time = np.linspace(0, tTotal, mTotal)
         self.I = np.zeros(mTotal)
         self.N = np.zeros(mTotal)
@@ -74,13 +80,18 @@ class Simulacion():
     def allSimulation(self):
         self.setArrays()
 
+        ampInyect = kc*np.sqrt(self.sInyct)*tIntev
+        opFldInject = np.sqrt(rSL*constP*self.sInyct)*np.exp(1j*np.pi)
+
         derivFaseTerm = self.faseTerm / tIntev
         self.TFprom = 0
         self.TFang = 0
 
         frecuencyLimits = 1 / (2*delta)
         self.fftFreq = np.linspace(-frecuencyLimits, frecuencyLimits,
-                                   len(self.opField))#, endpoint=True)
+                                   len(self.opField)
+                                   #, endpoint=True)
+                                  )
 
         deltaF = getConstante(self.iBias)
         self.fftFreq += f0 - (deltaF/(2.0*np.pi))
@@ -107,24 +118,36 @@ class Simulacion():
                     bTN = bTIntv * tempN * tempN
                     invS = 1 / ((1/tempS) + epsilon)
                     sqrtS = np.sqrt(abs(tempS))
+                    cosPhi = np.cos(tempPhi)
+                    senPhi = np.sin(tempPhi)
 
                     tempPhi = (tempPhi + aphvgTGmm*tempN - self.faseTerm
-                               + ruidoPhi*tempN*Y[index]/sqrtS)
+                               + ruidoPhi*tempN*Y[index]/sqrtS
+                               - (ampInyect/sqrtS)*senPhi*cosInyect[index]
+                               + (ampInyect/sqrtS)*cosPhi*senInyect[index]
+                              )
 
                     tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS
                              - intTtau*tempS + btGmm*bTN
-                             + ruidoS*tempN*sqrtS*X[index])
+                             + ruidoS*tempN*sqrtS*X[index]
+                             + 2*ampInyect*sqrtS*cosPhi*cosInyect[index]
+                             + 2*ampInyect*sqrtS*senPhi*senInyect[index]
+                            )
 
                     tempN = (tempN + self.currentTerm[index] - aTIntv*tempN
-                             - bTN - cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS)
+                             - bTN - cTIntv*tempN**3 - vgT*tempN*invS + vgtN*invS
+                            )
 
                 self.I[q] = self.currentTerm[index] *10**(12) / eVinv
                 self.N[q] = tempN
                 self.S[q] = tempS
                 self.dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN
-                                - derivFaseTerm + derivRuidoPhi*tempN*Y[q]/sqrtS)
+                                - derivFaseTerm + derivRuidoPhi*tempN*Y[q]/sqrtS
+                               )
 
-            self.opField[0] = np.sqrt(constP * tempS) * np.exp(1j*tempPhi)
+            self.opField[0] = (np.sqrt(constP*tempS)*np.exp(1j*tempPhi)
+                               + opFldInject*np.exp(1j*angInyect[index])
+                              )
 
             for q in range(mTrans, mTotal):
                 for k in range(0, ndelta):
@@ -134,26 +157,39 @@ class Simulacion():
                     bTN = bTIntv * tempN * tempN
                     invS = 1 / ((1/tempS) + epsilon)
                     sqrtS = np.sqrt(tempS)
+                    cosPhi = np.cos(tempPhi)
+                    senPhi = np.sin(tempPhi)
 
                     tempPhi = (tempPhi + aphvgTGmm*tempN - self.faseTerm
-                               + ruidoPhi*tempN*Y[index]/sqrtS)
+                               + ruidoPhi*tempN*Y[index]/sqrtS
+                               - (ampInyect/sqrtS)*senPhi*cosInyect[index]
+                               + (ampInyect/sqrtS)*cosPhi*senInyect[index]
+                              )
 
                     tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS
                              - intTtau*tempS + btGmm*bTN
-                             + ruidoS*tempN*sqrtS*X[index])
+                             + ruidoS*tempN*sqrtS*X[index]
+                             + 2*ampInyect*sqrtS*cosPhi*cosInyect[index]
+                             + 2*ampInyect*sqrtS*senPhi*senInyect[index]
+                            )
 
                     tempN = (tempN + self.currentTerm[index]
                              - aTIntv*tempN - bTN - (cTIntv*tempN**3)
-                             - vgT*tempN*invS + vgtN*invS)
+                             - vgT*tempN*invS + vgtN*invS
+                            )
 
                 self.I[q] = self.currentTerm[index]*10**(12) / eVinv
                 self.N[q] = tempN
                 self.S[q] = tempS
                 self.dPhi[q] = ((derivAphvgTGmm*tempN - derivFaseTerm
                                  + derivRuidoPhi*tempN*Y[index]/np.sqrt(tempS))
-                                 / (2*np.pi))
+                                 / (2*np.pi)
+                               )
                 self.opField[q-mTrans] = (np.sqrt(constP*tempS)
-                                         * np.exp(1j*tempPhi))
+                                          * np.exp(1j*tempPhi)
+                                          + opFldInject
+                                          * np.exp(1j*angInyect[index])
+                                         )
 
             self.I[0] = 0
             self.N[0] = nTr
@@ -161,14 +197,17 @@ class Simulacion():
             transFourier = np.fft.fft(self.opField)
             self.TFprom += (abs(np.fft.fftshift(transFourier))
                             * abs(np.fft.fftshift(transFourier))
-                            / float(self.numWindw))
+                            / float(self.numWindw)
+                           )
 
             self.TFang += (np.angle(np.fft.fftshift(transFourier))
-                           / float(self.numWindw))
+                           / float(self.numWindw)
+                          )
 
     def save(self):
         nameRtEqtins = ("Data/RateEquations_%imA_%imV_%iGHZ"
-                        %(self.iBias, self.vRF*10**(12), self.fR))
+                        %(self.iBias, self.vRF*10**(12), self.fR)
+                       )
         np.savez(
                     nameRtEqtins, time=self.time,
                                   I=self.I,
@@ -178,7 +217,8 @@ class Simulacion():
                 )
 
         namePSD = ("Data/PSD_%imA_%imV_%iGHZ"
-                   %(self.iBias, self.vRF*10**(12), self.fR))
+                   %(self.iBias, self.vRF*10**(12), self.fR)
+                  )
         np.savez(
                     namePSD, fftWL=self.fftWL,
                              fftFreq=self.fftFreq,

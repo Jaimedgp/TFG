@@ -31,6 +31,9 @@ beta = 5.3 *10**(-6) #fraction of spontaneous emission coupled in2 lasing mode
 epsilon = 1.97 *10**(-23) # non-linear gain coefficient [m^3]
 alpha = 3.0 # linewidth engancement factor
 
+kc = 42.3 # master slave coupling coefficient [s^-1]
+rSL = 0.1 # front facet reflectivity of the SL
+
 etaF = 0.17 # in-fiber external quantum efficiency
 f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 
