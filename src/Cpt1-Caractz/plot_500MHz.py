@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os.path
 
+import sys
+sys.path.insert(0, '../')
+
 font = {'family' : 'serif',
         'weight' : 'normal',
         'size'   : 15}
@@ -11,19 +14,23 @@ matplotlib.rc('font', **font)
 from Constantes import constP
 from simulacion import Simulacion
 
-iBias = 50  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+# bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
+iBias = 50
+#RMS voltage value of the signal generator [V]
+vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]
 fR = 0.5 # [GHz]
 period = 3 / fR
 
-existData = False
+existData = True
 
 fig, axs = plt.subplots(2, len(vRF), figsize=(20, 10))
 
 for i in range(len(vRF)):
 
-    nameFileRateEq = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias, vRF[i] *10**(12), fR)
-    nameFilePSD = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias, vRF[i] *10**(12), fR)
+    nameFileRateEq = ("Data/RateEquations_%imA_%imV_%iGHZ.npz"
+                      %(iBias, vRF[i] *10**(12), fR))
+    nameFilePSD = ("Data/PSD_%imA_%imV_%iGHZ.npz"
+                   %(iBias, vRF[i] *10**(12), fR))
 
     if os.path.isfile(nameFilePSD) and existData:
 

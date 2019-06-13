@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os.path
 
+import sys
+sys.path.insert(0, '../')
+
 from Constantes import constP
 from simulacion import Simulacion
 
@@ -24,7 +27,8 @@ colors = ['b', 'r']
 
 for i in range(len(iBias)):
 
-    nameFileRateEq = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias[i], vRF *10**(12), fR)
+    nameFileRateEq = ("Data/RateEquations_%imA_%imV_%iGHZ.npz"
+                      %(iBias[i], vRF *10**(12), fR))
     nameFilePSD = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias[i], vRF *10**(12), fR)
 
     if os.path.isfile(nameFilePSD) and existData:

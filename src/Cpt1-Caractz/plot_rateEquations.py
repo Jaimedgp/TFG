@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os.path
 
+import sys
+sys.path.insert(0, '../')
+
 from simulacion import Simulacion
 from Constantes import nTr
 
@@ -34,11 +37,11 @@ graphLabel = [
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 fR = 5.0
-sInyct = float(4 * 10**(32))
-nuDetng = - 2.0
+sInyct = 0#float(4 * 10**(20))
+nuDetng = 0#- 4.0
 period = 3 / fR
 
-existData = False
+existData = True
 
 fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
                                                             figsize=(17, 10))

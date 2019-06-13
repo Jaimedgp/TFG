@@ -8,6 +8,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os.path
 
+import sys
+sys.path.insert(0, '../')
+
 from simulacion import Simulacion
 
 font = {'family' : 'serif',

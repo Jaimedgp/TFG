@@ -8,6 +8,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os.path
 
+import sys
+sys.path.insert(0, '../')
+
 from simulacion import Simulacion
 
 font = {'family' : 'serif',
@@ -18,8 +21,8 @@ matplotlib.rc('font', **font)
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0.0 *10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
-sInyct = float(4 * 10**(20))
-nuDetng = - 4.0
+sInyct = float(4 * 10**(22)) # 1 microW -> 4 * 10**(20)
+nuDetng = -27.93 # nu - nuTH + nuI
 
 existData = False
 
@@ -47,4 +50,5 @@ plt.ylabel("PSD")
 plt.yscale("log")
 plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9),
                                                                 fontsize = 20)
+plt.tight_layout()
 plt.show()
