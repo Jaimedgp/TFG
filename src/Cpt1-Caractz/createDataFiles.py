@@ -1,22 +1,18 @@
-"""
-    Programa principal para 
-
-"""
 __author__ = 'Jaime Diez G-P'
 __version__ = '1.0.0'
 __email__ = "jaimediezgp@gmail.com"
 __date__ = "May 27, 2019"
 
-from simulacion import Simulacion
+from simulation import Simulation
 
-def espectrosData():
+def opticalSpectra():
     iBias = [i for i in range(15, 40)]
     vRf = 0
     fR = 5.0
     numWindw = 10
 
     for intBias in iBias:
-        laser = Simulacion(intBias, vRF, fR, numWindw)
+        laser = Simulation(intBias, vRF, fR, numWindw)
         laser.allSimulation()
         laser.save()
 
@@ -27,7 +23,7 @@ def psdData():
     numWindw = 10
 
     for voltRF in vRF:
-        laser = Simulacion(intBias, voltRF, fR, numWindw)
+        laser = Simulation(intBias, voltRF, fR, numWindw)
         laser.allSimulation()
         laser.save()
 
@@ -38,7 +34,7 @@ def frequencyData():
     numWindw = 10
 
     for voltRF in vRF:
-        laser = Simulacion(intBias, voltRF, fR, numWindw)
+        laser = Simulation(intBias, voltRF, fR, numWindw)
         laser.allSimulation()
         laser.save()
 
@@ -49,13 +45,13 @@ def currentData():
     numWindw = 10
 
     for intBias in iBias:
-        laser = Simulacion(intBias, vRF, fR, numWindw)
+        laser = Simulation(intBias, vRF, fR, numWindw)
         laser.allSimulation()
         laser.save()
 
 if __name__ == '__main__':
 
-    espectrosData()
+    opticalSpectra()
     psdData()
     frequencyData()
     currentData()

@@ -11,7 +11,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -21,7 +21,7 @@ matplotlib.rc('font', **font)
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0.0 *10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
-sInyct = float(4 * 10**(22)) # 1 microW -> 4 * 10**(20)
+sInjct = float(4 * 10**(19)) # 1 microW -> 4 * 10**(20)
 nuDetng = -27.93 # nu - nuTH + nuI
 
 existData = False
@@ -33,18 +33,18 @@ if os.path.isfile(nameFile) and existData:
     dataPSD = np.load(nameFile)
     print "Opening file: " + nameFile
 
-    fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+    fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
 else:
-    laser = Simulacion(iBias, vRF, fR, sInyct, nuDetng)
+    laser = Simulation(iBias, vRF, fR, sInjct, nuDetng)
     laser.allSimulation()
 
-    fftWL, TFprom = laser.fftWL, laser.TFprom
+    fftWL, TFavg = laser.fftWL, laser.TFavg
 
 fig = plt.figure(figsize=(8,6))
 fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
-plt.plot(fftWL, TFprom)
+plt.plot(fftWL, TFavg)
 plt.xlabel("$\lambda$ [nm]")
 plt.ylabel("PSD")
 plt.yscale("log")

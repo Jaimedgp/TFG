@@ -6,7 +6,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -32,27 +32,26 @@ for i in range(len(iBias)):
         dataPSD = np.load(nameFilePSD)
         print "Opening file " + nameFilePSD
 
-        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+        fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
         existData = False
 
         if saveIt:
             nWindw = 10
-            laser = Simulacion(iBias[i], vRF, fR, nWindw)
+            laser = Simulation(iBias[i], vRF, fR, nWindw)
             laser.allSimulation()
             laser.save()
         else:
-            laser = Simulacion(iBias[i], vRF, fR)
+            laser = Simulation(iBias[i], vRF, fR)
             laser.allSimulation()
 
-        fftWL, TFprom = laser.fftWL, laser.TFprom
+        fftWL, TFavg = laser.fftWL, laser.TFavg
 
-    WLmax = fftWL[np.where(TFprom == max(TFprom))]
+    WLmax = fftWL[np.where(TFavg == max(TFavg))]
     WL.append(WLmax)
 
-    plt.plot(fftWL, TFprom, label="%i mA" %(iBias[i]))
-    #plt.text(WLmax, max(TFprom), "%.2f" %(WLmax))
+    plt.plot(fftWL, TFavg, label="%i mA" %(iBias[i]))
 
 plt.xlabel("$\lambda$ [nm]", fontsize=15)
 plt.ylabel("PSD", fontsize=15)
@@ -67,12 +66,11 @@ if not existData and saveIt:
     with open("../Datos/Landas.txt", 'w') as fw:
         fw.write(
 """######################################################################
-##		Datos de la longitud de onda de emision del laser para
-##	diferentes corrientes I_Bias obtenidos por simulacion con un
-##	promedio a %s ventanas
+##		Emission wavelength data for the laser at different currents
+##	I_Bias
 ##
-##	Intensidad(mA)	Longitud de onda de pico(nm)
+##	Intensity(mA)	Emission Wavelength(nm)
 ######################################################################\n"""
-%(nWindw))
+)
         for i in range(len(iBias)):
             fw.write("%i \t %.2f \n" %(iBias[i]*10**12, WL[i]))

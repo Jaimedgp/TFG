@@ -1,31 +1,40 @@
 """
-    Programa principal para 
+        Main program for the simulation of semiconductor laser by the
+    resolution of the sochastic diferential equations. The dynamics of a
+    semiconductor laser will be simulated in a discrete way subjected to a
+    modulation of high frequency current and to the injection of light from an
+    external laser. The optical frequency combs generated in the previous
+    system are light sources with a spectrum formed by lines regularly spaced
+    in frequency. These combs have applications in optical communications and
+    spectroscopy. The work will consist of writing the laser simulation code
+    including current modulation, intrinsic system noise and light injection
+    from an external laser.
 
 """
 __author__ = 'Jaime Diez G-P'
 __version__ = '1.0.0'
 __email__ = "jaimediezgp@gmail.com"
-__date__ = "May 27, 2019"
+__date__ = "Jun 13, 2019"
 
 import numpy as np
 
-from Constantes import *
+from Constants import *
 from getTempValues import *
 
-class Simulacion():
+class Simulation():
 
-    def __init__(self, iBias, vRF, fR, sInyct, nuDetng, numWindw=1):
+    def __init__(self, iBias, vRF, fR, sInjct=0, nuDetng=0, numWindw=1):
         self.iBias = iBias
         self.vRF = vRF
         self.fR = fR
-        self.sInyct = sInyct
+        self.sInjct = sInjct
         self.nuDetng = nuDetng
         self.numWindw = numWindw
 
         rInt = rIntLists[fR]
 
         deltaT = getDeltaT(self.iBias)
-        self.faseTerm = faseConstant - pi2t * deltaT
+        self.phaseTerm = phaseConstant - pi2t * deltaT
 
         #                 2 sqrt(2) vRF 
         # I_bias + cLoss --------------- sin(2 pi fR t)
@@ -53,22 +62,23 @@ class Simulacion():
         self.allSimulation()
 
     def setArrays(self):
-        """  Inicializar los vectores de tiempo (time), de la densidad """
-        """     de portadores (N) densidad de fotones (S) y de la fase """
-        """      optica (Phi)                                          """
+        """ Initialize values and array used in simulation to store    """
+        """     data as time (time), carrier density (N), photon       """
+        """       density (S), derivative optical phase (dPhi),        """
+        """            and total optical field (opField)               """
 
-        global mTrans, mTotal, nTotal, t, angInyect, senInyect, cosInyect
+        global mTrans, mTotal, nTotal, t, angInject, senInject, cosInject
 
         mWindw = int(self.tWindw / delta)
         mTrans = int(self.tTrans / delta)
         tTotal = self.tWindw + self.tTrans
-        nTotal = int(tTotal / tIntev)
         mTotal = int(tTotal / delta)
+        nTotal = mTotal*ndelta #int(tTotal / tIntev)
 
         t = np.linspace(0, tTotal, nTotal)
-        angInyect = 2*np.pi*self.nuDetng*t
-        senInyect = np.sin(angInyect)
-        cosInyect = np.cos(angInyect)
+        angInject = 2*np.pi*self.nuDetng*t
+        senInject = np.sin(angInject)
+        cosInject = np.cos(angInject)
         self.time = np.linspace(0, tTotal, mTotal)
         self.I = np.zeros(mTotal)
         self.N = np.zeros(mTotal)
@@ -80,32 +90,31 @@ class Simulacion():
     def allSimulation(self):
         self.setArrays()
 
-        ampInyect = kc*np.sqrt(self.sInyct)*tIntev
-        opFldInject = np.sqrt(rSL*constP*self.sInyct)*np.exp(1j*np.pi)
+        ampInject = kc*np.sqrt(self.sInjct)*tIntev
+        opFldInject = np.sqrt(rSL*constP*self.sInjct)*np.exp(1j*np.pi)
 
-        derivFaseTerm = self.faseTerm / tIntev
-        self.TFprom = 0
+        derivPhaseTerm = self.phaseTerm / tIntev
+        self.TFavg = 0
         self.TFang = 0
 
         frecuencyLimits = 1 / (2*delta)
         self.fftFreq = np.linspace(-frecuencyLimits, frecuencyLimits,
                                    len(self.opField)
-                                   #, endpoint=True)
                                   )
 
-        deltaF = getConstante(self.iBias)
+        deltaF = getConstants(self.iBias)
         self.fftFreq += f0 - (deltaF/(2.0*np.pi))
-        self.fftWL = (c0/self.fftFreq) *10**(9) # longitud de onda [nm]
+        self.fftWL = (c0/self.fftFreq) *10**(9) # Wavelength [nm]
 
         for win in range(0, self.numWindw):
 
             #---------------------------------------------------------
-            # Vectores Gaussianos N(0,1) para el  Ruido
+            # Gaussian arrays N(0,1) for the Noise
             #---------------------------------------------------------
             X = np.random.normal(0, 1, nTotal)
             Y = np.random.normal(0, 1, nTotal)
 
-            # Se definen las condiciones iniciales para resolver la EDO
+            # Initial conditions are defined in order to resolved the SDE
             tempN = nTr
             tempS = float(10**(15))
             tempPhi = 0
@@ -121,17 +130,17 @@ class Simulacion():
                     cosPhi = np.cos(tempPhi)
                     senPhi = np.sin(tempPhi)
 
-                    tempPhi = (tempPhi + aphvgTGmm*tempN - self.faseTerm
-                               + ruidoPhi*tempN*Y[index]/sqrtS
-                               - (ampInyect/sqrtS)*senPhi*cosInyect[index]
-                               + (ampInyect/sqrtS)*cosPhi*senInyect[index]
+                    tempPhi = (tempPhi + aphvgTGmm*tempN - self.phaseTerm
+                               + noisePhi*tempN*Y[index]/sqrtS
+                               - (ampInject/sqrtS)*senPhi*cosInject[index]
+                               + (ampInject/sqrtS)*cosPhi*senInject[index]
                               )
 
                     tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS
                              - intTtau*tempS + btGmm*bTN
-                             + ruidoS*tempN*sqrtS*X[index]
-                             + 2*ampInyect*sqrtS*cosPhi*cosInyect[index]
-                             + 2*ampInyect*sqrtS*senPhi*senInyect[index]
+                             + noiseS*tempN*sqrtS*X[index]
+                             + 2*ampInject*sqrtS*cosPhi*cosInject[index]
+                             + 2*ampInject*sqrtS*senPhi*senInject[index]
                             )
 
                     tempN = (tempN + self.currentTerm[index] - aTIntv*tempN
@@ -142,17 +151,13 @@ class Simulacion():
                 self.N[q] = tempN
                 self.S[q] = tempS
                 self.dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN
-                                - derivFaseTerm + derivRuidoPhi*tempN*Y[q]/sqrtS
+                                - derivPhaseTerm + derivNoisePhi*tempN*Y[q]/sqrtS
                                )
-
-            self.opField[0] = (np.sqrt(constP*tempS)*np.exp(1j*tempPhi)
-                               + opFldInject*np.exp(1j*angInyect[index])
-                              )
 
             for q in range(mTrans, mTotal):
                 for k in range(0, ndelta):
 
-                    index = q*ndelta + k + mTrans
+                    index = q*ndelta + k
 
                     bTN = bTIntv * tempN * tempN
                     invS = 1 / ((1/tempS) + epsilon)
@@ -160,17 +165,17 @@ class Simulacion():
                     cosPhi = np.cos(tempPhi)
                     senPhi = np.sin(tempPhi)
 
-                    tempPhi = (tempPhi + aphvgTGmm*tempN - self.faseTerm
-                               + ruidoPhi*tempN*Y[index]/sqrtS
-                               - (ampInyect/sqrtS)*senPhi*cosInyect[index]
-                               + (ampInyect/sqrtS)*cosPhi*senInyect[index]
+                    tempPhi = (tempPhi + aphvgTGmm*tempN - self.phaseTerm
+                               + noisePhi*tempN*Y[index]/sqrtS
+                               - (ampInject/sqrtS)*senPhi*cosInject[index]
+                               + (ampInject/sqrtS)*cosPhi*senInject[index]
                               )
 
                     tempS = (tempS + vgTGmm*tempN*invS - vgTGmmN*invS
                              - intTtau*tempS + btGmm*bTN
-                             + ruidoS*tempN*sqrtS*X[index]
-                             + 2*ampInyect*sqrtS*cosPhi*cosInyect[index]
-                             + 2*ampInyect*sqrtS*senPhi*senInyect[index]
+                             + noiseS*tempN*sqrtS*X[index]
+                             + 2*ampInject*sqrtS*cosPhi*cosInject[index]
+                             + 2*ampInject*sqrtS*senPhi*senInject[index]
                             )
 
                     tempN = (tempN + self.currentTerm[index]
@@ -181,21 +186,21 @@ class Simulacion():
                 self.I[q] = self.currentTerm[index]*10**(12) / eVinv
                 self.N[q] = tempN
                 self.S[q] = tempS
-                self.dPhi[q] = ((derivAphvgTGmm*tempN - derivFaseTerm
-                                 + derivRuidoPhi*tempN*Y[index]/np.sqrt(tempS))
+                self.dPhi[q] = ((derivAphvgTGmm*tempN - derivPhaseTerm
+                                 + derivNoisePhi*tempN*Y[index]/np.sqrt(tempS))
                                  / (2*np.pi)
                                )
                 self.opField[q-mTrans] = (np.sqrt(constP*tempS)
                                           * np.exp(1j*tempPhi)
                                           + opFldInject
-                                          * np.exp(1j*angInyect[index])
+                                          * np.exp(1j*angInject[index])
                                          )
 
             self.I[0] = 0
             self.N[0] = nTr
             self.S[0] = float(10**(15))
             transFourier = np.fft.fft(self.opField)
-            self.TFprom += (abs(np.fft.fftshift(transFourier))
+            self.TFavg += (abs(np.fft.fftshift(transFourier))
                             * abs(np.fft.fftshift(transFourier))
                             / float(self.numWindw)
                            )
@@ -222,7 +227,7 @@ class Simulacion():
         np.savez(
                     namePSD, fftWL=self.fftWL,
                              fftFreq=self.fftFreq,
-                             TFprom=self.TFprom,
+                             TFavg=self.TFavg,
                              TFang=self.TFang
                 )
 
@@ -232,6 +237,6 @@ if __name__ == '__main__':
     fR = 5.0
     numWindw = 1
 
-    laser = Simulacion(iBias, vRF, fR, numWindw)
+    laser = Simulation(iBias, vRF, fR, numWindw)
     laser.allSimulation()
-    laser.save()
+    #laser.save()

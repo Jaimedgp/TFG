@@ -11,7 +11,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -32,14 +32,14 @@ if os.path.isfile(nameFile) and existData:
     print "Opening file: " + nameFile
 
     fftWL = dataPSD['fftWL']
-    TFprom = dataPSD['TFprom']
+    TFavg = dataPSD['TFavg']
     TFang = dataPSD['TFang']
 
 else:
-    laser = Simulacion(iBias, vRF, fR)
+    laser = Simulation(iBias, vRF, fR)
     laser.allSimulation()
 
-    fftWL, TFprom, TFang = laser.fftWL, laser.TFprom, laser.TFang
+    fftWL, TFavg, TFang = laser.fftWL, laser.TFavg, laser.TFang
 
 fig, ax1 = plt.subplots(figsize=(8,6))
 
@@ -49,7 +49,7 @@ ax1.set_ylabel("FFT Phase [rad]", fontsize=15)
 ax1.tick_params('y', colors='r')
 
 ax2 = ax1.twinx()
-ax2.plot(fftWL, TFprom, "b")
+ax2.plot(fftWL, TFavg, "b")
 ax2.set_ylabel("PSD", fontsize=15)
 ax2.set_yscale("log")
 ax2.tick_params('y', colors='b')

@@ -1,7 +1,7 @@
 import numpy as np
 
 #####################################
-##       CONSTANTES FISICAS (PDB)
+##      PHYSICAL CONSTANTS  (PDB)
 #####################################
 
 c0 = 0.299792458 # speed of light in vacuum [m ns^-1]
@@ -9,7 +9,7 @@ e = 1.6021766208 *10**(-19) # electron charge [C]
 h = 6.626070040 *10**(-25) # Plank's constant [J ns]
 
 ################################################################################
-##    Datos tomados del articulo cientifico
+##    Data taken from the scientific report
 ##
 ##       NUMERICAL AND EXPERIMENTAL ANALYSIS OF OPTICAL FREQUECY COMB GENERATION
 ##                    IN GAIN-SWITCHED SEMICONDUCTOR LASERS
@@ -38,48 +38,34 @@ etaF = 0.17 # in-fiber external quantum efficiency
 f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 
 #---------------------------------------------------
-# Recopilado por el articulo
+# Provided by Dr. Angel Valle
 #---------------------------------------------------
 
 # rInt = {fR [GHz]: rInt [Ohms]}
 rIntLists = {5.0: 142.25, 0.5: 103.36} # [Ohm]
 
-#---------------------------------------------------
-# Facilitados por Angel Valle
-#---------------------------------------------------
-
-ng = 3.5 # index of the 
-vg = c0/ng #*10**(-9)# group velocity [m ns^-1]
+ng = 3.5 # index of the group
+vg = c0/ng # group velocity [m ns^-1]
 
 cLoss = 1 # loss coeficient accounting for the frequency
 
 ################################################################################
-##  Valores del muestreo para la simulacion
+##  Sampling values for simulation
 ##
-##      datos para el calculo de las ventanas de estudio, tiempos de
-##      muestre para la FFT y tiempos de integracion
+##      data for the calculation of the study windows, sample times
+##      for the FFT and integration times
 ################################################################################
 
-#tWindw = 40.96 # tiempo de la ventana [ns]
+tIntev = 1 *10**(-5) # integration time [ns]
 
-tIntev = 1 *10**(-5) # tiempo de integracion [ns]
-#nWindw = int(tWindw / tIntev) # numero de pasos de integracion
-
-delta = 0.0025 # tiempo de muestreo para la FFT [ns]
+delta = 0.0025 # sample time for FFT [ns]
 ndelta = int(delta / tIntev) # ndelta*tIntev=delta
-#mWindw = int(tWindw / delta) # numero de puntos de la FFT (potencia de 2)
-
-#tTrans = 1.2 # tiempo del transitorio [ns]
-#mTrans = int(tTrans / delta)
-
-#tTotal = tWindw + tTrans
-#nTotal = int(tTotal / tIntev)
-#mTotal = int(tTotal / delta)
 
 ################################################################################
-##  Constantes a user durante la simulacion
+##  Constants used during the simulation
 ##
-##      se computan antes para disminuir el numero de calculos
+##      some constants are computed before simultaion in order to 
+##      decrease computation time
 ################################################################################
 
 #   tIntev
@@ -128,8 +114,9 @@ aphvgTGmmN = aphvgTGmm * nTr
 aphintTtau = (alpha / 2.0) * intTtau
 
 pi2t = np.pi * 2 * tIntev
-# Fase constant
-faseConstant = aphvgTGmmN + aphintTtau
+
+# Constant Phase
+phaseConstant = aphvgTGmmN + aphintTtau
 
 #        h f0 Vact
 # etaF -------------
@@ -137,18 +124,18 @@ faseConstant = aphvgTGmmN + aphintTtau
 constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 
 #---------------------------------------------------------
-# Terminos de Ruido
+# Noise Terms
 #---------------------------------------------------------
 
-#parte constante del termino de ruido del S(t)
-ruidoS = np.sqrt(2 * beta * gamma * bTIntv)
+# contant part of S(t) noise term
+noiseS = np.sqrt(2 * beta * gamma * bTIntv)
 
-# Parte constante del termino de ruido del Phi(t)
-ruidoPhi = np.sqrt(beta * gamma * bTIntv / 2.0)
+# contant part of Phi(t) noise term
+noisePhi = np.sqrt(beta * gamma * bTIntv / 2.0)
 
 #---------------------------------------------------------
-# Terminos de CHIRP
+# CHIRP Term
 #---------------------------------------------------------
 
 derivAphvgTGmm = aphvgTGmm / tIntev
-derivRuidoPhi = ruidoPhi / tIntev
+derivNoisePhi = noisePhi / tIntev

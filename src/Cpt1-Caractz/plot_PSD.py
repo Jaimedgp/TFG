@@ -11,7 +11,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -29,20 +29,20 @@ nameFile = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias, vRF *10**(12), fR)
 if os.path.isfile(nameFile) and existData:
 
     dataPSD = np.load(nameFile)
-    print "Opening file: " + nameFile
+    print "Open file: " + nameFile
 
-    fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+    fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
 else:
-    laser = Simulacion(iBias, vRF, fR)
+    laser = Simulation(iBias, vRF, fR)
     laser.allSimulation()
 
-    fftWL, TFprom = laser.fftWL, laser.TFprom
+    fftWL, TFavg = laser.fftWL, laser.TFavg
 
 fig = plt.figure(figsize=(8,6))
 fig.subplots_adjust(left=0.05, bottom=0.08, right=0.96, top=0.94, hspace=0.2)
 
-plt.plot(fftWL, TFprom)
+plt.plot(fftWL, TFavg)
 plt.xlabel("$\lambda$ [nm]")
 plt.ylabel("PSD")
 plt.yscale("log")

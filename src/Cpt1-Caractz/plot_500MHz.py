@@ -11,8 +11,8 @@ font = {'family' : 'serif',
         'size'   : 15}
 matplotlib.rc('font', **font)
 
-from Constantes import constP
-from simulacion import Simulacion
+from Constants import constP
+from simulation import Simulation
 
 # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 iBias = 50
@@ -21,7 +21,7 @@ vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]
 fR = 0.5 # [GHz]
 period = 3 / fR
 
-existData = True
+existData = False
 
 fig, axs = plt.subplots(2, len(vRF), figsize=(20, 10))
 
@@ -35,20 +35,20 @@ for i in range(len(vRF)):
     if os.path.isfile(nameFilePSD) and existData:
 
         dataPSD = np.load(nameFilePSD)
-        print "Opening file " + nameFilePSD
+        print "Open file " + nameFilePSD
 
         dataRateEq = np.load(nameFileRateEq)
-        print "Opening file " + nameFileRateEq
+        print "Open file " + nameFileRateEq
 
         time, S = dataRateEq['time'], dataRateEq['S']
-        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+        fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
-        laser = Simulacion(iBias, vRF[i], fR)
+        laser = Simulation(iBias, vRF[i], fR)
         laser.allSimulation()
 
         time, S = laser.time, laser.S
-        fftWL, TFprom = laser.fftWL, laser.TFprom
+        fftWL, TFavg = laser.fftWL, laser.TFavg
 
     indexes = np.where((time > 1.2) & (time < period+1.2))
     time = time[indexes]
@@ -65,7 +65,7 @@ for i in range(len(vRF)):
     axs[0][i].set_xlabel("time [ns]", fontsize=15)
     axs[0][i].set_xlim([1.5, 7.5])
 
-    axs[1][i].plot(fftWL, TFprom, 'b')
+    axs[1][i].plot(fftWL, TFavg, 'b')
     axs[1][i].set_yscale("log")
     axs[1][i].set_xlabel("WL [nm]", fontsize=15)
     axs[1][i].set_xlim([1547.15, 1547.37])

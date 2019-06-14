@@ -6,8 +6,8 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constantes import constP
-from simulacion import Simulacion
+from Constants import constP
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -34,27 +34,27 @@ for i in range(len(iBias)):
     if os.path.isfile(nameFilePSD) and existData:
 
         dataPSD = np.load(nameFilePSD)
-        print "Opening file " + nameFilePSD
+        print "Open file " + nameFilePSD
 
         dataRateEq = np.load(nameFileRateEq)
-        print "Opening file " + nameFileRateEq
+        print "Open file " + nameFileRateEq
 
         time, S = dataRateEq['time'], dataRateEq['S']
-        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+        fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
-        laser = Simulacion(iBias[i], vRF, fR)
+        laser = Simulation(iBias[i], vRF, fR)
         laser.allSimulation()
 
         time, S = laser.time, laser.S
-        fftWL, TFprom = laser.fftWL, laser.TFprom
+        fftWL, TFavg = laser.fftWL, laser.TFavg
 
     indexes = np.where((time > 1.2) & (time < period+1.2))
     time = time[indexes]
     power = constP * S[indexes] *10**(12)
 
     axs[0].plot(time, power, colors[i], label="%i mA" %(iBias[i]))
-    axs[1].plot(fftWL, TFprom, colors[i], label="%i mA" %(iBias[i]))
+    axs[1].plot(fftWL, TFavg, colors[i], label="%i mA" %(iBias[i]))
 
 axs[0].grid(linestyle='-.')
 axs[0].set_xlabel("time [ns]", fontsize=15)

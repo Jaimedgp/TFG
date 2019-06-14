@@ -1,3 +1,18 @@
+"""
+     Optical spectra againe a la longitud de onda
+
+       Optical spectra is obtained by the Fast Fourier transform (FFT) of the
+       total optical field (opField). Frequency has to go by steps of 1/2Ndelta in
+       interval [-1/2delta, 1/2delta], being delta the FFT's step.In order to
+       obtain the wavelength, the FFT's frequencies have been obtained and
+       added the total frequency (freqTotal). Frequencies are transform to
+       wavelength by c0.
+"""
+__author__ = 'Jaime Diez G-P'
+__version__ = '1.0.0'
+__email__ = "jaimediezgp@gmail.com"
+__date__ = "Jun 13, 2019"
+
 import matplotlib
 import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
@@ -8,7 +23,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -37,37 +52,21 @@ for i in range(len(vRF)):
         dataPSD = np.load(nameFile)
         print "Opening file: " + nameFile
 
-        fftWL, TFprom = dataPSD['fftWL'], dataPSD['TFprom']
+        fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
-        laser = Simulacion(iBias, vRF[i], fR)
+        laser = Simulation(iBias, vRF[i], fR)
         laser.allSimulation()
 
-        fftWL, TFprom = laser.fftWL, laser.TFprom
+        fftWL, TFavg = laser.fftWL, laser.TFavg
 
-    #########################################
-    ##  Representacion de los Datos
-    #########################################
 
-    #-------------------------------------------------------------------------------
-    # Espectro optico frente a la longitud de onda
-    #
-    #   EL espectro optico se obtiene realizando la transformada de Fourier del
-    #   campo optico total (opField). Las frecuencias han de ir en pasos de
-    #   1/2Ndelta en el intervalo [-1/2delta, 1/2delta], siendo delta el paso de la
-    #   transformada de fourier.  Para la obtencion de la longitud de onda se
-    #   obtienen las frecuencias de la transformada de Fourier y se le suma la
-    #   frecuencia total (freqTotal) y se pasa a longitud de onda con c0
-    #-------------------------------------------------------------------------------
-
-    axs[i].plot(fftWL, TFprom, colors[i])
+    axs[i].plot(fftWL, TFavg, colors[i])
     axs[i].set_xlabel("$\lambda$ [nm]", fontsize=15)
     axs[i].set_ylabel("PSD", fontsize=15)
     axs[i].set_xlim([1546.0, 1547.75])
     axs[i].xaxis.set_major_locator(ticker.MultipleLocator(0.5))
     axs[i].xaxis.set_minor_locator(ticker.MultipleLocator(0.1))
-    #axs[i].xaxis.set_major_formatter(FormatStrFormatter('%0.2f'))
-    #axs[i].set_ylim([9*10**(-15), 0.003])
     axs[i].set_yscale("log")
     axs[i].set_title("$V_{RF} = $ %.2f V" %(vRF[i]*10**9), color=colors[i])
 

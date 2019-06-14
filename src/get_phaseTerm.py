@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cmath
 
-from Constantes import *
+from Constants import *
 
 
 iBias = [i *10**(-12) for i in range(15, 70, 5) ] # bias current [C ns^-1]

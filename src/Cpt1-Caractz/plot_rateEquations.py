@@ -15,8 +15,8 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from simulacion import Simulacion
-from Constantes import nTr
+from simulation import Simulation
+from Constants import nTr
 
 font = {
     'family' : 'serif',
@@ -37,8 +37,6 @@ graphLabel = [
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 fR = 5.0
-sInyct = 0#float(4 * 10**(20))
-nuDetng = 0#- 4.0
 period = 3 / fR
 
 existData = True
@@ -48,17 +46,22 @@ fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
 
 for i in range(len(vRF)):
 
-    nameFile = "Data/RateEquations_%imA_%imV_%iGHZ.npz" %(iBias, vRF[i] *10**(12), fR)
+    nameFile = ("Data/RateEquations_%imA_%imV_%iGHZ.npz"
+                %(iBias, vRF[i] *10**(12), fR))
 
     if os.path.isfile(nameFile) and existData:
 
         dataPSD = np.load(nameFile)
         print "Opening file " + nameFile
 
-        time, I, S, dPhi, N = dataPSD['time'], dataPSD['I'], dataPSD['S'], dataPSD['dPhi'], dataPSD['N']
+        time = dataPSD['time']
+        I = dataPSD['I']
+        S = dataPSD['S']
+        dPhi = dataPSD['dPhi']
+        N = dataPSD['N']
 
     else:
-        laser = Simulacion(iBias, vRF[i], fR, sInyct, nuDetng)
+        laser = Simulation(iBias, vRF[i], fR, sInyct, nuDetng)
         laser.rateEquations()
 
         time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N
@@ -79,7 +82,6 @@ for i in range(len(vRF)):
     axs[0][i].grid(linestyle='-.')
     axs[0][i].annotate(graphLabel[0][i], (0.9, 0.85),
                                             xycoords='axes fraction', size=20)
-    #axs[0][i].text(0.25, 0.75, graphLabel[0][i])
 
     axs[1][i].plot(time, S, colors[i])
     axs[1][i].grid(linestyle='-.')

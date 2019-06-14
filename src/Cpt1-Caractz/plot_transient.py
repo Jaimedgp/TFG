@@ -1,12 +1,16 @@
 """
     Simulation of the rate equations used to discribe the dynamics of the
     carrier density (N(t)), the photon density (S(t)) and optical phase (phi(t))
+    in the transient interval.
 
     The simulation is done without taking into account the inyection terms
 
-    author: JaimeDGP
-    latest version: 19 April 2019
 """
+
+__author__ = 'Jaime Diez G-P'
+__version__ = '1.0.0'
+__email__ = "jaimediezgp@gmail.com"
+__date__ = "Jun 13, 2019"
 
 import matplotlib
 import numpy as np
@@ -16,8 +20,8 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constantes import nTr
-from simulacion import Simulacion
+from Constants import nTr
+from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -39,10 +43,14 @@ if os.path.isfile(nameFile) and existData:
     dataPSD = np.load(nameFile)
     print "Opening file " + nameFile
 
-    time, I, S, dPhi, N = dataPSD['time'], dataPSD['I'], dataPSD['S'], dataPSD['dPhi'], dataPSD['N']
+    time = dataPSD['time']
+    I = dataPSD['I']
+    S = dataPSD['S']
+    dPhi = dataPSD['dPhi']
+    N = dataPSD['N']
 
 else:
-    laser = Simulacion(iBias, vRF, fR)
+    laser = Simulation(iBias, vRF, fR)
     laser.rateEquations()
 
     time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N

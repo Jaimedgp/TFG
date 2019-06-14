@@ -1,5 +1,5 @@
-def getDeltaT(intensidad='all'):
-    diccionario = {15 : -2.48084192117676
+def getDeltaT(intensity='all'):
+    dictionary = {15 : -2.48084192117676
 ,					20 : -7.6866446317581
 ,					25 : -13.4333756989217
 ,					30 : -20.0729501617316
@@ -11,12 +11,12 @@ def getDeltaT(intensidad='all'):
 ,					60 : -78.8296360661043
 ,					60 : -91.5736228900787
 }
-    if intensidad == "all":
-        return diccionario
+    if intensity == "all":
+        return dictionary
     else:
-        return diccionario[intensidad]
-def getConstante(intensidad='all'):
-    diccionario = {15 : 1.70250205341e-06,
+        return dictionary[intensity]
+def getConstants(intensity='all'):
+    dictionary = {15 : 1.70250205341e-06,
 					20 : 3.75210165491e-05,
 					25 : 7.28923756371e-05,
 					30 : 0.000108250702381,
@@ -28,7 +28,7 @@ def getConstante(intensidad='all'):
 					60 : 0.000320293403128,
 					60 : 0.000355618826099}
 
-    if intensidad == "all":
-        return diccionario
+    if intensity == "all":
+        return dictionary
     else:
-        return diccionario[intensidad]
+        return dictionary[intensity]
