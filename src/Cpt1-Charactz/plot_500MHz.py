@@ -21,7 +21,7 @@ vRF = [0.05 *10**(-9), 0.4 *10**(-9), 1.0 * 10**(-9), 1.2 * 10**(-9)]
 fR = 0.5 # [GHz]
 period = 3 / fR
 
-existData = False
+existData = True
 
 fig, axs = plt.subplots(2, len(vRF), figsize=(20, 10))
 
