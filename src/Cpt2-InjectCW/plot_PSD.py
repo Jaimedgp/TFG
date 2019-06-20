@@ -22,16 +22,18 @@ iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0.0 *10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
 sInjct = float(4 * 10**(19)) # 1 microW -> 4 * 10**(20)
-nuDetng = -27.93 # nu - nuTH + nuI
+# detuning of the injected laser field with respect to the emission frequency
+nuDetng = -2 # [GHz]
 
-existData = False
+existData = True
 
-nameFile = "Data/PSD_%imA_%imV_%iGHZ.npz" %(iBias, vRF *10**(12), fR)
+oderMg = np.log10(sInjct / 4)
+nameFile = ("Data/PSD_%iS_%iGHz.npz" %(oderMg, nuDetng))
 
 if os.path.isfile(nameFile) and existData:
 
     dataPSD = np.load(nameFile)
-    print "Opening file: " + nameFile
+    print "Open file: " + nameFile
 
     fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
