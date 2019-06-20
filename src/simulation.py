@@ -28,7 +28,11 @@ class Simulation():
         self.vRF = vRF
         self.fR = fR
         self.sInjct = sInjct
-        self.nuDetng = nuDetng
+        self.nuDetngEmssFrq = nuDetng
+        # detuning of the injected laser field with respect to the frequency of the
+        # slaver laser (SL) at threshold
+        # = detuning respect to emission freq - emission freq + freq at threshold
+        self.nuDetng = nuDetng - f0 + (c0/(1.54705*10**(-6))) # nu - nuTH + nuI
         self.numWindw = numWindw
 
         rInt = rIntLists[fR]
@@ -210,9 +214,17 @@ class Simulation():
                           )
 
     def save(self):
-        nameRtEqtins = ("Data/RateEquations_%imA_%imV_%iGHZ"
-                        %(self.iBias, self.vRF*10**(12), self.fR)
-                       )
+        if self.sInjct == 0.0:
+            laserCharactz = ("_%imA_%imV_%iGHZ"
+                             %(self.iBias, self.vRF*10**(12), self.fR)
+                            )
+        else:
+            oderMg = np.log10(self.sInjct / 4)
+            laserCharactz = ("_%iS_%iGHz"
+                             %(oderMg, self.nuDetngEmssFrq)
+                            )
+
+        nameRtEqtins = "Data/RateEquations"+laserCharactz
         np.savez(
                     nameRtEqtins, time=self.time,
                                   I=self.I,
@@ -221,9 +233,7 @@ class Simulation():
                                   dPhi=self.dPhi
                 )
 
-        namePSD = ("Data/PSD_%imA_%imV_%iGHZ"
-                   %(self.iBias, self.vRF*10**(12), self.fR)
-                  )
+        namePSD = "Data/PSD"+laserCharactz
         np.savez(
                     namePSD, fftWL=self.fftWL,
                              fftFreq=self.fftFreq,
