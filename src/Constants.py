@@ -37,6 +37,7 @@ rSL = 0.1 # front facet reflectivity of the SL
 etaF = 0.17 # in-fiber external quantum efficiency
 f0 = c0 / (1.546843 * 10**(-6))# emission frequency at threshold [GHz]
 
+pht2muWatt = float(3.8979848173986477 * 10**(17))
 #---------------------------------------------------
 # Provided by Dr. Angel Valle
 #---------------------------------------------------
@@ -118,9 +119,9 @@ pi2t = np.pi * 2 * tIntev
 # Constant Phase
 phaseConstant = aphvgTGmmN + aphintTtau
 
-#        h f0 Vact
-# etaF -------------
-#       Gamma tauP
+#        h f0 Vact    T J m^3  T
+# etaF -------------  |------- |
+#       Gamma tauP    L  ns    J
 constP = (etaF * h * f0 * vAct) / (gamma * tauP)
 
 #---------------------------------------------------------

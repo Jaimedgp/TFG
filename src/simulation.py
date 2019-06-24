@@ -219,10 +219,11 @@ class Simulation():
                              %(self.iBias, self.vRF*10**(12), self.fR)
                             )
         else:
-            oderMg = np.log10(self.sInjct / 4)
-            laserCharactz = ("_%iS_%iGHz"
-                             %(oderMg, self.nuDetngEmssFrq)
+            powr = self.sInjct/pht2muWatt
+            laserCharactz = ("_%smuW_%iGHz"
+                             %(powr, self.nuDetngEmssFrq)
                             )
+            laserCharactz = laserCharactz.replace(".",",")
 
         nameRtEqtins = "Data/RateEquations"+laserCharactz
         np.savez(
