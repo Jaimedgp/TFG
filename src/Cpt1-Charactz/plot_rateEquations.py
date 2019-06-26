@@ -16,7 +16,6 @@ import sys
 sys.path.insert(0, '../')
 
 from simulation import Simulation
-from Constants import nTr
 
 font = {
     'family' : 'serif',
@@ -93,7 +92,7 @@ for i in range(len(vRF)):
     axs[2][i].annotate(graphLabel[2][i], (0.9, 0.85),
                                             xycoords='axes fraction', size=20)
 
-    axs[3][i].plot(time, N/nTr, colors[i])
+    axs[3][i].plot(time, N, colors[i])
     axs[3][i].grid(linestyle='-.')
     axs[3][i].annotate(graphLabel[3][i], (0.9, 0.85),
                                             xycoords='axes fraction', size=20)

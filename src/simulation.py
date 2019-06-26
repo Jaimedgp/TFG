@@ -12,9 +12,9 @@
 
 """
 __author__ = 'Jaime Diez G-P'
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 __email__ = "jaimediezgp@gmail.com"
-__date__ = "Jun 13, 2019"
+__date__ = "Jun 26, 2019"
 
 import numpy as np
 
@@ -23,11 +23,12 @@ from getTempValues import *
 
 class Simulation():
 
-    def __init__(self, iBias, vRF, fR, sInjct=0, nuDetng=0, numWindw=1):
+    def __init__(self, iBias, vRF, fR, pwrInjct=0, nuDetng=0, numWindw=1):
         self.iBias = iBias
         self.vRF = vRF
         self.fR = fR
-        self.sInjct = sInjct
+        self.pwrInjct = pwrInjct
+        self.sInjct = pwrInjct * pht2muWatt # 1 microW -> 3.8979848173986477 * 10**(17)
         self.nuDetngEmssFrq = nuDetng
         # detuning of the injected laser field with respect to the frequency of the
         # slaver laser (SL) at threshold
@@ -223,9 +224,8 @@ class Simulation():
                              %(self.iBias, self.vRF*10**(12), self.fR)
                             )
         else:
-            powr = self.sInjct/pht2muWatt
             laserCharactz = ("_%smuW_%sGHz"
-                             %(powr, self.nuDetngEmssFrq)
+                             %(self.pwrInjct, self.nuDetngEmssFrq)
                             )
             laserCharactz = laserCharactz.replace(".",",")
 
@@ -233,7 +233,7 @@ class Simulation():
         np.savez(
                     nameRtEqtins, time=self.time,
                                   I=self.I,
-                                  N=self.N,
+                                  N=self.N/nTr,
                                   S=self.S,
                                   dPhi=self.dPhi,
                                   Phi=self.Phi

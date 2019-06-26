@@ -22,9 +22,9 @@
 """
 
 __author__ = 'Jaime Diez G-P'
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 __email__ = "jaimediezgp@gmail.com"
-__date__ = "May 27, 2019"
+__date__ = "Jun 26, 2019"
 
 import numpy as np
 import matplotlib
@@ -34,7 +34,7 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constants import constP, f0, c0, nTr, pht2muWatt
+from Constants import constP, f0, c0, pht2muWatt
 from simulation import Simulation
 
 ###################################################
@@ -112,8 +112,7 @@ if os.path.isfile(nameFilePSD) and existData:
     fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
 else:
-    sInjct = pwrInjct * pht2muWatt # 1 microW -> 3.8979848173986477 * 10**(17)
-    laser = Simulation(iBias, vRF, fR, sInjct, nuDetng)
+    laser = Simulation(iBias, vRF, fR, pwrInjct, nuDetng)
     laser.allSimulation()
     laser.save()
 
@@ -147,11 +146,11 @@ ax1.set_xlim(1546.5, 1547.5)
 
 ax2 = plt.subplot2grid(gridsize, (2, 0), colspan=2, rowspan=1)
 ax2.plot(N, power)
-ax2.set_xlabel("t [ns]", fontsize=15)
+ax2.set_xlabel("$N(t) / N_{Tr}$", fontsize=15)
 ax2.set_ylabel("Power [mW]", fontsize=15)
 
 ax3 = plt.subplot2grid(gridsize, (2, 2), colspan=2, rowspan=1)
-ax3.plot(time, N/nTr)
+ax3.plot(time, N)
 ax3.set_xlabel("t [ns]", fontsize=15)
 ax3.set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 

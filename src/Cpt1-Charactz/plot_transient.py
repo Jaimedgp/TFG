@@ -20,7 +20,6 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constants import nTr
 from simulation import Simulation
 
 font = {'family' : 'serif',
@@ -71,7 +70,7 @@ axs[1].plot(time, S, 'b')
 axs[1].set_yscale('log')
 axs[1].grid(linestyle='-.')
 
-axs[2].plot(time, N/nTr, 'r')
+axs[2].plot(time, N, 'r')
 axs[2].grid(linestyle='-.')
 
 axs[3].plot(time, dPhi, 'r', label="N(t)")
