@@ -31,7 +31,7 @@ class Simulation():
         self.nuDetngEmssFrq = nuDetng
         # detuning of the injected laser field with respect to the frequency of the
         # slaver laser (SL) at threshold
-        # = detuning respect to emission freq - emission freq + freq at threshold
+        # = detuning respect to emission freq - freq at threshold + emission freq
         self.nuDetng = nuDetng - f0 + (c0/(1.54705*10**(-6))) # nu - nuTH + nuI
         self.numWindw = numWindw
 
@@ -88,6 +88,7 @@ class Simulation():
         self.N = np.zeros(mTotal)
         self.S = np.zeros(mTotal)
         self.dPhi = np.zeros(mTotal)
+        self.Phi = np.zeros(mTotal)
         self.opField = np.zeros(mWindw, dtype=complex)
         self.currentTerm = eVinv * self.current(t)
 
@@ -154,6 +155,7 @@ class Simulation():
                 self.I[q] = self.currentTerm[index] *10**(12) / eVinv
                 self.N[q] = tempN
                 self.S[q] = tempS
+                self.Phi[q] = tempPhi
                 self.dPhi[q] = (1/(2*np.pi))*(derivAphvgTGmm*tempN
                                 - derivPhaseTerm + derivNoisePhi*tempN*Y[q]/sqrtS
                                )
@@ -190,6 +192,7 @@ class Simulation():
                 self.I[q] = self.currentTerm[index]*10**(12) / eVinv
                 self.N[q] = tempN
                 self.S[q] = tempS
+                self.Phi[q] = tempPhi
                 self.dPhi[q] = ((derivAphvgTGmm*tempN - derivPhaseTerm
                                  + derivNoisePhi*tempN*Y[index]/np.sqrt(tempS))
                                  / (2*np.pi)
@@ -203,6 +206,7 @@ class Simulation():
             self.I[0] = 0
             self.N[0] = nTr
             self.S[0] = float(10**(15))
+            self.Phi[0] = 0
             transFourier = np.fft.fft(self.opField)
             self.TFavg += (abs(np.fft.fftshift(transFourier))
                             * abs(np.fft.fftshift(transFourier))
@@ -215,12 +219,12 @@ class Simulation():
 
     def save(self):
         if self.sInjct == 0.0:
-            laserCharactz = ("_%imA_%imV_%iGHZ"
+            laserCharactz = ("_%imA_%imV_%sGHZ"
                              %(self.iBias, self.vRF*10**(12), self.fR)
                             )
         else:
             powr = self.sInjct/pht2muWatt
-            laserCharactz = ("_%smuW_%iGHz"
+            laserCharactz = ("_%smuW_%sGHz"
                              %(powr, self.nuDetngEmssFrq)
                             )
             laserCharactz = laserCharactz.replace(".",",")
@@ -231,7 +235,8 @@ class Simulation():
                                   I=self.I,
                                   N=self.N,
                                   S=self.S,
-                                  dPhi=self.dPhi
+                                  dPhi=self.dPhi,
+                                  Phi=self.Phi
                 )
 
         namePSD = "Data/PSD"+laserCharactz
