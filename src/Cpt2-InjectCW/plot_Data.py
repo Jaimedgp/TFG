@@ -1,3 +1,26 @@
+"""
+        This script represent most representative data of the nonlinear dinamic
+        of the semiconductor laser in continuous wave (CW) with optical
+        injection cahracterized by power injection (pwrInjct) and the detuning
+        respect of the emission frequency (nuDetng)
+
+        The squeme used to plot the data is the following:
+
+                            +-------------------------+
+                            |                         |
+                            |                         |
+                            |          PSD            |
+                            |                         |
+                            |                         |
+                            +-------------------------+
+
+                +--------------+  +--------------+  +--------------+
+                |              |  |              |  |              |
+                |  power / N   |  |   N / time   |  | Phase / time |
+                |              |  |              |  |              |
+                +--------------+  +--------------+  +--------------+
+"""
+
 __author__ = 'Jaime Diez G-P'
 __version__ = '1.0.0'
 __email__ = "jaimediezgp@gmail.com"
@@ -14,25 +37,55 @@ sys.path.insert(0, '../')
 from Constants import constP, f0, c0, nTr, pht2muWatt
 from simulation import Simulation
 
+###################################################
+##     CHANGES THE FONT APPEARANCE IN GRAPHS     ##
+###################################################
+
 font = {'family' : 'serif',
         'weight' : 'normal',
         'size'   : 15}
 matplotlib.rc('font', **font)
 
+########################################
+##       LASER CHARACTERIZATION       ##
+######################################## 
+
+#----------------------------
+#   Slave laser
+#----------------------------
+
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0.0 #RMS voltage value of the signal generator [V]
 fR = 5.0
 
-period = 60 / fR
-transient = 1.2
+#----------------------------
+#   Master laser
+#----------------------------
 
 pwrInjct = 100
 # detuning of the injected laser field with respect to the emission frequency
 nuDetng = -2 # [GHz]
 
-existData = True
+#----------------------------
+#   Study interval
+#----------------------------
 
-#fig, axs = plt.subplots(2, 3, figsize=(20, 10))
+period = 60 / fR
+transient = 1.2
+
+########################################
+##          DATA COLLECTION           ##
+######################################## 
+#
+#   Check if the data is already saved in a numpy file (.npz) in folder Data/
+#   and if it exists, open the files and obtain the desired data. If it not
+#   exists, execute the simulation script in order to calculate the data.
+#
+#   The data files are identify by the injection parameters in their names
+#
+#-----------------------------------------------------------------------------
+
+existData = True
 
 nameFileRateEq = ("Data/RateEquations_%smuW_%sGHz"
                    %(pwrInjct, nuDetng)
@@ -68,11 +121,19 @@ else:
     N, Phi = laser.N, laser.Phi
     fftWL, TFavg = laser.fftWL, laser.TFavg
 
+#--------------------------------------------
+#  Takes the values of the study inteval 
+#--------------------------------------------
+
 indexes = np.where((time > transient) & (time < period+transient))
 time = time[indexes]
 power = constP * S[indexes] *10**(12)
 N = N[indexes]
 Phi = Phi[indexes] - 2*np.pi*(nuDetng - f0 + (c0/(1.54705*10**(-6))))*time
+
+########################################
+##          PLOT DATA                 ##
+######################################## 
 
 gridsize = (3, 6)
 fig = plt.figure(figsize=(20, 10))
