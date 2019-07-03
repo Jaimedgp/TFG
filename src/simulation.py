@@ -19,7 +19,7 @@ __date__ = "Jun 26, 2019"
 import numpy as np
 
 from Constants import *
-from getTempValues import *
+from getDictValues import *
 
 class Simulation():
 
@@ -33,12 +33,12 @@ class Simulation():
         # detuning of the injected laser field with respect to the frequency of the
         # slaver laser (SL) at threshold
         # = detuning respect to emission freq - freq at threshold + emission freq
-        self.nuDetng = nuDetng - f0 + (c0/(1.54705*10**(-6))) # nu - nuTH + nuI
+        self.nuDetng = nuDetng - f0 + (c0/emissnWL[self.iBias]) # nu - nuTH + nuI
         self.numWindw = numWindw
 
         rInt = rIntLists[fR]
 
-        deltaT = getDeltaT(self.iBias)
+        deltaT = deltaTs[self.iBias]
         self.phaseTerm = phaseConstant - pi2t * deltaT
 
         #                 2 sqrt(2) vRF 
@@ -104,12 +104,13 @@ class Simulation():
         self.TFang = 0
 
         frecuencyLimits = 1 / (2*delta)
-        self.fftFreq = np.linspace(-frecuencyLimits, frecuencyLimits,
+        self.fftFreq = np.linspace(-frecuencyLimits,
+                                    frecuencyLimits,
                                    len(self.opField)
                                   )
 
-        deltaF = getConstants(self.iBias)
-        self.fftFreq += f0 - (deltaF/(2.0*np.pi))
+        deltaFreq = deltaFreqs[self.iBias]
+        self.fftFreq += f0 - (deltaFreq/(2.0*np.pi))
         self.fftWL = (c0/self.fftFreq) *10**(9) # Wavelength [nm]
 
         for win in range(0, self.numWindw):

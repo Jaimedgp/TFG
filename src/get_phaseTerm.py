@@ -70,26 +70,3 @@ with open("./Datos/Table.txt", "w") as fw:
 """)
     for i in range(len(TotalC)):
         fw.write(curr[i] + "\t" + str(TotalC[i]) + "\t" + exp[i])
-
-with open("./src/getTempValues.py", 'w') as fw:
-    fw.write("""def getDeltaT(intensidad='all'):
-    diccionario = {""")
-
-    for i in range(len(TotalC)-1):
-        fw.write(curr[i] + " : " + exp[i] + ",\t\t\t\t\t")
-    fw.write(curr[i] + " : " + exp[-1] + "}\n")
-    fw.write("""    if intensidad == "all":
-        return diccionario
-    else:
-        return diccionario[intensidad]\n""")
-
-    fw.write("""def getConstante(intensidad='all'):
-    diccionario = {""")
-
-    for i in range(len(TotalC)-1):
-        fw.write(curr[i] + " : " + str(TotalC[i]) + ",\n\t\t\t\t\t")
-    fw.write(curr[i] + " : " + str(TotalC[-1]) + "}\n\n")
-    fw.write("""    if intensidad == "all":
-        return diccionario
-    else:
-        return diccionario[intensidad]\n""") 

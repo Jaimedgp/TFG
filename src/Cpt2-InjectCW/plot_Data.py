@@ -34,7 +34,8 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constants import constP, f0, c0, pht2muWatt
+from Constants import *
+from getDictValues import *
 from simulation import Simulation
 
 ###################################################
@@ -43,7 +44,8 @@ from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
-        'size'   : 15}
+        'size'   : 15
+       }
 matplotlib.rc('font', **font)
 
 ########################################
@@ -62,7 +64,7 @@ fR = 5.0
 #   Master laser
 #----------------------------
 
-pwrInjct = 100
+pwrInjct = 20
 # detuning of the injected laser field with respect to the emission frequency
 nuDetng = -2 # [GHz]
 
@@ -85,7 +87,7 @@ transient = 1.2
 #
 #-----------------------------------------------------------------------------
 
-existData = True
+existData = False
 
 nameFileRateEq = ("Data/RateEquations_%smuW_%sGHz"
                    %(pwrInjct, nuDetng)
@@ -114,7 +116,7 @@ if os.path.isfile(nameFilePSD) and existData:
 else:
     laser = Simulation(iBias, vRF, fR, pwrInjct, nuDetng)
     laser.allSimulation()
-    laser.save()
+    #laser.save()
 
     time, S = laser.time, laser.S
     N, Phi = laser.N, laser.Phi
@@ -162,6 +164,27 @@ ax4.set_ylabel("Chirp [GHz]", fontsize=15)
 title = ("Inyeccion de Luz con $P_{inj} = $ %s" %(pwrInjct)
          +"$\mu$W y detuning $\delta \\nu = $%s GHz" %(nuDetng))
 ax1.set_title(title, fontsize=25)
+
+#-----------------------------------------------
+#  Mark with an arrow the injection wavelength
+#-----------------------------------------------
+
+# Injection wavelength
+wLInject = (c0*10**(9))/(c0/emissnWL[iBias] + nuDetng)
+
+indexes = np.argmax(np.where((fftWL > wLInject)))
+yValue = max(TFavg[indexes-5:indexes+5])
+arrwPost = 40 * yValue
+arrwLngth = yValue-arrwPost
+arrwHdLngth = 3.5 * yValue
+
+ax1.arrow(x=wLInject, y=arrwPost,
+          dx=0, dy=arrwLngth,
+          length_includes_head=True,
+          head_width=0.01,
+          head_length=arrwHdLngth,
+          color='r'
+         )
 
 plt.tight_layout()
 plt.show()

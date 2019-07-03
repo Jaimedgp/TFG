@@ -34,7 +34,8 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from Constants import constP, f0, c0, pht2muWatt
+from Constants import *
+from getDictValues import *
 from simulation import Simulation
 
 ###################################################
@@ -43,7 +44,8 @@ from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
-        'size'   : 15}
+        'size'   : 15
+       }
 matplotlib.rc('font', **font)
 
 ########################################
@@ -56,15 +58,15 @@ matplotlib.rc('font', **font)
 
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 1.0*10**(-9) #RMS voltage value of the signal generator [V]
-fR = 5.0
+fR = 5.0 # [GHz]
 
 #----------------------------
 #   Master laser
 #----------------------------
 
-pwrInjct = 300
+pwrInjct = 100
 # detuning of the injected laser field with respect to the emission frequency
-nuDetng = -2 # [GHz]
+nuDetng = 5 # [GHz]
 
 #----------------------------
 #   Study interval
@@ -128,7 +130,7 @@ indexes = np.where((time > transient) & (time < period+transient))
 time = time[indexes]
 power = constP * S[indexes] *10**(12)
 N = N[indexes]
-Phi = Phi[indexes] - 2*np.pi*(nuDetng - f0 + (c0/(1.54705*10**(-6))))*time
+Phi = Phi[indexes] - 2*np.pi*(nuDetng - f0 + (c0/emissnWL[iBias]))*time
 
 ########################################
 ##          PLOT DATA                 ##
@@ -142,7 +144,6 @@ ax1.plot(fftWL, TFavg)
 ax1.set_yscale("log")
 ax1.set_xlabel("$\lambda$ [nm]")
 ax1.set_ylabel("PSD")
-ax1.set_xlim(1546.5, 1547.5)
 
 ax2 = plt.subplot2grid(gridsize, (2, 0), colspan=2, rowspan=1)
 ax2.plot(N, power)
@@ -155,13 +156,35 @@ ax3.set_xlabel("t [ns]", fontsize=15)
 ax3.set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 
 ax4 = plt.subplot2grid(gridsize, (2, 4), colspan=2, rowspan=1)
-ax4.plot(time, Phi/(2*np.pi))
+ax4.plot(time, Phi)
 ax4.set_xlabel("t [ns]", fontsize=15)
 ax4.set_ylabel("Chirp [GHz]", fontsize=15)
 
 title = ("Inyeccion de Luz con $P_{inj} = $ %s" %(pwrInjct)
-         +"$\mu$W y detuning $\delta \\nu = $%s GHz" %(nuDetng))
+         +"$\mu$W y detuning $\delta \\nu = $%s GHz" %(nuDetng)
+        )
 ax1.set_title(title, fontsize=25)
+
+#-----------------------------------------------
+#  Mark with an arrow the injection wavelength
+#-----------------------------------------------
+
+# Injection wavelength
+wLInject = (c0*10**(9))/(c0/emissnWL[iBias] + nuDetng)
+
+indexes = np.argmax(np.where((fftWL > wLInject)))
+yValue = max(TFavg[indexes-5:indexes+5])
+arrwPost = 40 * yValue
+arrwLngth = yValue-arrwPost
+arrwHdLngth = 3.5 * yValue
+
+ax1.arrow(x=wLInject, y=arrwPost,
+          dx=0, dy=arrwLngth,
+          length_includes_head=True,
+          head_width=0.01,
+          head_length=arrwHdLngth,
+          color='r'
+         )
 
 plt.tight_layout()
 plt.show()
