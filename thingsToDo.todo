@@ -1,0 +1,16 @@
+Lista con las cosas que tengo que hacer en el TFG
+
+Documento:
+    ☐ Preparar el Documento y la plantilla
+    ☐ Escribir introduccion
+
+Simulacion del Cpt1:
+    ☐ Acabar de mejorar las graficas 
+
+Archivo para guardar datos para Angel:
+    ☐ primer fichero: en la primera columna tiempo,                                 segunda corriente,                                      tercera potencia,                                       cuarta N(t)/N_tr.
+    ☐ segundo fichero: en la primera columna tiempo,                                 segunda chirping,                                       tercera fase                                            (respecto de la inyeccion).
+    ☐ tercer fichero: primera columna lamda,                                  segunda PSD.
+
+Simulacion del Cpt3:
+    ☐ PSD y power detuning -2 y (1, 100, 200, 300, 1000 y 20000)

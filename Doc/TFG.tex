@@ -1,0 +1,126 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+	\documentclass[a4paper, 11pt, oneside]{book}
+
+	%\usepackage[sc]{mathpazo} % Use the Palatino font
+	\usepackage[spanish]{babel}
+	\usepackage[utf8]{inputenc}
+	%\usepackage{lipsum}
+	%\usepackage{graphicx}
+	%%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+	%\linespread{1.15} % Line spacing - Palatino needs more space between lines
+	%\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+	%
+	%\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+	%\usepackage{multicol} % Used for the two-column layout of the document
+	%\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+	%\usepackage{mathtools}
+	%\usepackage{booktabs} % Horizontal rules in tables
+	%\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+	%\usepackage{hyperref} % For hyperlinks in the PDF
+	%\usepackage{wrapfig}
+	%%\usepackage[]{mcode} % For embebing matlab code
+	%\usepackage[makeroom]{cancel}
+	%
+	%%\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+	%\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
+	%
+	%\usepackage{abstract} % Allows abstract customization
+	%\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+	%\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+	%
+	%\usepackage{titlesec} % Allows customization of titles
+	%%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+	%%\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
+	%\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+	%\titleformat{\subsection}[block]{\large\centering}{\thesubsection.}{1em}{} % Change the look of the section titles
+	%
+	%\usepackage{fancyhdr} % Headers and footers
+	%\pagestyle{fancy} % All pages have headers and footers
+	%\fancyhead{} % Blank out the default header
+	%\fancyfoot{} % Blank out the default footer
+	%\fancyhead[C]{Titulo Corto% based on TRACS 
+	%\hspace{4pt} $\bullet$ \hspace{4pt} MES ANO } % Custom header text
+	%\fancyfoot[RO,LE]{\thepage} % Custom footer text
+	%
+	%\usepackage{cite}
+	%
+	%\DeclareGraphicsExtensions{.pdf,.png,.jpg} % Graphics type
+
+%----------------------------------------------------------------------------------------
+%	   METADATA
+%----------------------------------------------------------------------------------------
+
+	\title{
+		\textbf{TITULO}% Article title
+	}
+
+	\author{
+		\textsc{Jaime Diez Gonzalez-Pardo}\\
+
+		\thanks{A thank you or further information}\\ % Your name
+		
+		\fontsize{28pt}{10pt} Universidad de Cantabria \\ % Your institution
+		%\thanks{A thank you or further information}\\[2mm] % Your name
+		\normalsize gsdfgdfgdfgatura \\ 
+		\normalsize{Compañeros:} \textsc{NOMBRE COMPANEROS }\\%\normalsize \href{mailto:john@smith.com}{john@smith.com} % Your email address
+		%\vspace{5mm}
+	}
+
+	\date{\today}
+
+%----------------------------------------------------------------------------------------
+%      · DOCUMENT
+%----------------------------------------------------------------------------------------
+
+	\begin{document}
+
+		\begin{titlepage}
+
+			\LARGE Hola a todos
+		\end{titlepage}
+
+		%\maketitle % Insert title
+
+
+		\thispagestyle{fancy} % All pages have headers and footers
+
+		%----------------------------------------------------------------------------------------
+		%	  ARTICLE CONTENTS
+		%----------------------------------------------------------------------------------------
+
+				\chapter{Introduction} % Scope of the project = rad effects + minimization
+					\label{sec:Intro}
+
+				\chapter{Desarrollo Experimental}
+					
+				\chapter{Resultados}
+
+				\chapter{An\'alisis}
+
+				\chapter{Discusión}
+
+				\chapter{Conclusiones}
+
+		%----------------------------------------------------------------------------------------
+		%     BIBLIOGRAPHY
+		%----------------------------------------------------------------------------------------
+
+			\bibliographystyle{unsrt}
+			\bibliography{biblio}
+
+		%----------------------------------------------------------------------------------------
+		%     APPENDIX
+		%----------------------------------------------------------------------------------------
+				
+			\newpage
+
+				\appendix
+
+	\end{document}
+
+%----------------------------------------------------------------------------------------
+%              END
+%----------------------------------------------------------------------------------------
