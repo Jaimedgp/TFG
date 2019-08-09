@@ -49,7 +49,7 @@ fR = 5.0 # [GHz]
 #   Master laser
 #----------------------------
 
-pwrInjct = 100
+pwrInjct = 300
 # detuning of the injected laser field with respect to the emission frequency
 nuDetng = -2 # [GHz]
 
