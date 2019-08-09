@@ -4,22 +4,22 @@
 
 	\documentclass[a4paper, 11pt, oneside]{book}
 
-	%\usepackage[sc]{mathpazo} % Use the Palatino font
+	\usepackage[sc]{mathpazo} % Use the Palatino font
 	\usepackage[spanish]{babel}
 	\usepackage[utf8]{inputenc}
-	%\usepackage{lipsum}
-	%\usepackage{graphicx}
-	%%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
-	%\linespread{1.15} % Line spacing - Palatino needs more space between lines
+	\usepackage{lipsum}
+	\usepackage{graphicx}
+	%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+	\linespread{1.15} % Line spacing - Palatino needs more space between lines
 	%\usepackage{microtype} % Slightly tweak font spacing for aesthetics
 	%
-	%\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+	\usepackage[hmarginratio=1:1,left=20mm, top=32mm,columnsep=20pt]{geometry} % Document margins
 	%\usepackage{multicol} % Used for the two-column layout of the document
 	%\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 	%\usepackage{mathtools}
 	%\usepackage{booktabs} % Horizontal rules in tables
-	%\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
-	%\usepackage{hyperref} % For hyperlinks in the PDF
+	\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+	\usepackage{hyperref} % For hyperlinks in the PDF
 	%\usepackage{wrapfig}
 	%%\usepackage[]{mcode} % For embebing matlab code
 	%\usepackage[makeroom]{cancel}
@@ -27,10 +27,10 @@
 	%%\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 	%\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
 	%
-	%\usepackage{abstract} % Allows abstract customization
-	%\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
-	%\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
-	%
+	\usepackage{abstract} % Allows abstract customization
+	\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+	\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+	%%
 	%\usepackage{titlesec} % Allows customization of titles
 	%%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
 	%%\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
@@ -45,7 +45,9 @@
 	%\hspace{4pt} $\bullet$ \hspace{4pt} MES ANO } % Custom header text
 	%\fancyfoot[RO,LE]{\thepage} % Custom footer text
 	%
-	%\usepackage{cite}
+	\usepackage{cite}
+
+	\graphicspath{{../Graphics/}}
 	%
 	%\DeclareGraphicsExtensions{.pdf,.png,.jpg} % Graphics type
 
@@ -54,18 +56,16 @@
 %----------------------------------------------------------------------------------------
 
 	\title{
-		\textbf{TITULO}% Article title
+		\selectfont\textbf{TITULO}% Article title
 	}
 
 	\author{
 		\textsc{Jaime Diez Gonzalez-Pardo}\\
-
-		\thanks{A thank you or further information}\\ % Your name
-		
+		%\thanks{A thank you or further information}\\ % Your name
 		\fontsize{28pt}{10pt} Universidad de Cantabria \\ % Your institution
 		%\thanks{A thank you or further information}\\[2mm] % Your name
 		\normalsize gsdfgdfgdfgatura \\ 
-		\normalsize{Compañeros:} \textsc{NOMBRE COMPANEROS }\\%\normalsize \href{mailto:john@smith.com}{john@smith.com} % Your email address
+		\normalsize{Compañeros:} \textsc{NOMBRE COMPANEROS }\\
 		%\vspace{5mm}
 	}
 
@@ -77,32 +77,123 @@
 
 	\begin{document}
 
-		\begin{titlepage}
+		\begin{titlepage} 
 
-			\LARGE Hola a todos
+			\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 
+			
+			\center % Centre everything on the page
+			
+			%------------------------------------------------
+			%	Headings
+			%------------------------------------------------
+			
+				%------------------------------------------------
+				%	Logo
+				%------------------------------------------------
+				
+					\begin{figure}[H]
+						\centering
+						\includegraphics[scale=0.6]{download.png}
+					\end{figure}
+
+					\textsc{\LARGE Facultad de Ciencias}\\[1.5cm] 
+			
+			
+			%------------------------------------------------
+			%	Title
+			%------------------------------------------------
+			
+				\HRule\\[0.4cm]
+				
+				{\huge\bfseries Simulación de peines de frecuencia óptica generados por láseres de semiconductor}\\[0.8cm] % Title of your document
+
+				{\huge Simulation of optical frequecy comb generate by semiconductor lasers}\\[0.4cm] % Title of your document
+				
+				\HRule\\[1.5cm]
+
+				{\Large Trabajo de Fin de Grado para acceder al}\\[0.4cm]
+
+				{\LARGE\bfseries Grado en Física}\\[3cm]
+			
+			%------------------------------------------------
+			%	Author(s)
+			%------------------------------------------------
+			
+				\begin{flushright}
+					\large
+					\textit{Autor}\\
+					Jaime \textsc{DÍEZ GONZÁLEZ-PARDO} \\ % Your name
+					\large
+					\textit{Director}\\
+					Dr. Á.A. \textsc{VALLE GUTIERREZ} % Supervisor's name
+				\end{flushright}
+			
+			%------------------------------------------------
+			%	Date
+			%------------------------------------------------
+			
+				\vfill\vfill\vfill % Position the date 3/4 down the remaining page
+				
+				{\large\today} % Date, change the \today to a set date if you want to be precise
+				
+			%----------------------------------------------------------------------------------------
+			
+				\vfill % Push the date up 1/4 of the remaining page
+		
 		\end{titlepage}
 
-		%\maketitle % Insert title
+		\abstract{
+			\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
 
+				Hola
 
-		\thispagestyle{fancy} % All pages have headers and footers
+		}
+
+		\renewcommand{\abstractname}{Abstract}
+		\renewcommand{\abstracttextfont}{\normalfont\small\itshape}
+
+		\abstract{
+			\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
+
+				Hola
+
+		}
+
+		%\thispagestyle{fancy} % All pages have headers and footers
+
+		\tableofcontents
+
+		\listoffigures
 
 		%----------------------------------------------------------------------------------------
 		%	  ARTICLE CONTENTS
 		%----------------------------------------------------------------------------------------
 
-				\chapter{Introduction} % Scope of the project = rad effects + minimization
-					\label{sec:Intro}
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{Introduction} % Scope of the project = rad effects + minimization
 
-				\chapter{Desarrollo Experimental}
-					
-				\chapter{Resultados}
+		%	\addtocontents{toc}{\vspace{0.1cm}}
+		%	\chapter{Introduction} % Scope of the project = rad effects + minimization
+		%		\label{sec:Intro}
+%
+		%	\addtocontents{toc}{\vspace{0.1cm}}
+		%	\chapter{Modelo Computacional}
+		%		
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{OFC (Gain Switching)}
 
-				\chapter{An\'alisis}
-
-				\chapter{Discusión}
-
-				\chapter{Conclusiones}
+				\input{Resultados/OFC-GS.tex}	
+				
+		%	\addtocontents{toc}{\vspace{0.1cm}}
+		%	\chapter{Inyeccion}
+%
+		%	\addtocontents{toc}{\vspace{0.1cm}}
+		%	\chapter{Inyeccion en OFC}
+%
+		%	\cite{rosado2018experimental}
+%
+		%	\addtocontents{toc}{\vspace{0.1cm}}
+		%	\chapter{Conclusiones}
 
 		%----------------------------------------------------------------------------------------
 		%     BIBLIOGRAPHY
