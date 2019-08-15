@@ -5,11 +5,11 @@
 	\documentclass[a4paper, 11pt, oneside]{book}
 
 	\usepackage[sc]{mathpazo} % Use the Palatino font
-	\usepackage[spanish]{babel}
+	\usepackage[spanish, es-tabla]{babel}
 	\usepackage[utf8]{inputenc}
 	\usepackage{lipsum}
 	\usepackage{graphicx}
-	%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+	\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 	\linespread{1.15} % Line spacing - Palatino needs more space between lines
 	%\usepackage{microtype} % Slightly tweak font spacing for aesthetics
 	%
@@ -20,6 +20,7 @@
 	%\usepackage{booktabs} % Horizontal rules in tables
 	\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
 	\usepackage{hyperref} % For hyperlinks in the PDF
+	\usepackage{appendix}
 	%\usepackage{wrapfig}
 	%%\usepackage[]{mcode} % For embebing matlab code
 	%\usepackage[makeroom]{cancel}
@@ -46,6 +47,8 @@
 	%\fancyfoot[RO,LE]{\thepage} % Custom footer text
 	%
 	\usepackage{cite}
+	\usepackage{listings}
+	\usepackage{color}
 
 	\graphicspath{{../Graphics/}}
 	%
@@ -55,21 +58,21 @@
 %	   METADATA
 %----------------------------------------------------------------------------------------
 
-	\title{
-		\selectfont\textbf{TITULO}% Article title
-	}
-
-	\author{
-		\textsc{Jaime Diez Gonzalez-Pardo}\\
-		%\thanks{A thank you or further information}\\ % Your name
-		\fontsize{28pt}{10pt} Universidad de Cantabria \\ % Your institution
-		%\thanks{A thank you or further information}\\[2mm] % Your name
-		\normalsize gsdfgdfgdfgatura \\ 
-		\normalsize{Compañeros:} \textsc{NOMBRE COMPANEROS }\\
-		%\vspace{5mm}
-	}
-
-	\date{\today}
+	%\title{
+	%	\selectfont\textbf{TITULO}% Article title
+	%}
+%
+	%\author{
+	%	\textsc{Jaime Diez Gonzalez-Pardo}\\
+	%	%\thanks{A thank you or further information}\\ % Your name
+	%	\fontsize{28pt}{10pt} Universidad de Cantabria \\ % Your institution
+	%	%\thanks{A thank you or further information}\\[2mm] % Your name
+	%	\normalsize gsdfgdfgdfgatura \\ 
+	%	\normalsize{Compañeros:} \textsc{NOMBRE COMPANEROS }\\
+	%	%\vspace{5mm}
+	%}
+%
+	%\date{\today}
 
 %----------------------------------------------------------------------------------------
 %      · DOCUMENT
@@ -150,7 +153,6 @@
 		}
 
 		\renewcommand{\abstractname}{Abstract}
-		\renewcommand{\abstracttextfont}{\normalfont\small\itshape}
 
 		\abstract{
 			\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
@@ -170,30 +172,69 @@
 		%----------------------------------------------------------------------------------------
 
 			\addtocontents{toc}{\vspace{0.1cm}}
-			\chapter{Introduction} % Scope of the project = rad effects + minimization
+			\chapter{Introducción} % Scope of the project = rad effects + minimization
+				\label{sec:Intro}
 
-		%	\addtocontents{toc}{\vspace{0.1cm}}
-		%	\chapter{Introduction} % Scope of the project = rad effects + minimization
-		%		\label{sec:Intro}
+				%\input{}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Láseres de Semiconductor}
+					
+					%\input{}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Procesos Estocásticos}
+					
+					%\input{}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Dinámica No Lineal}
+					
+					%\input{}
 %
-		%	\addtocontents{toc}{\vspace{0.1cm}}
-		%	\chapter{Modelo Computacional}
-		%		
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Peines de Frecuencia Óptica}
+					
+					\input{Introduccion/OFC.tex}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Objetivo del Estudio}
+					
+					%\input{}
+				
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{Modelo Computacional}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{RoF}
+				
+					%\input{}
+
+				\addtocontents{toc}{\vspace{0.1cm}}
+				\section{Código de la Simulación}
+				
+					%\input{}
+				
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{OFC (Gain Switching)}
 
 				\input{Resultados/OFC-GS.tex}	
+
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{Inyeccion de Luz}
+
+				\input{Resultados/Inyeccion.tex}
+
 				
-		%	\addtocontents{toc}{\vspace{0.1cm}}
-		%	\chapter{Inyeccion}
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{Inyeccion de luz en OFC}
+
+				%\input{Resultados/.tex}
 %
-		%	\addtocontents{toc}{\vspace{0.1cm}}
-		%	\chapter{Inyeccion en OFC}
+				%\cite{rosado2018experimental}
 %
-		%	\cite{rosado2018experimental}
-%
-		%	\addtocontents{toc}{\vspace{0.1cm}}
-		%	\chapter{Conclusiones}
+			\addtocontents{toc}{\vspace{0.1cm}}
+			\chapter{Conclusiones}
 
 		%----------------------------------------------------------------------------------------
 		%     BIBLIOGRAPHY
@@ -209,6 +250,10 @@
 			\newpage
 
 				\appendix
+
+					\chapter{Código de la simulación}
+
+						\input{Apendices/Code.tex}
 
 	\end{document}
 
