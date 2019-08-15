@@ -8,6 +8,7 @@ __version__ = '2.0.0'
 __email__ = "jaimediezgp@gmail.com"
 __date__ = "Aug 14, 2019"
 
+import threading
 import sys
 sys.path.insert(0, '../')
 
@@ -43,8 +44,7 @@ lasers = []
 for i in range(len(pwrInjct)):
     lasers.append(Simulation(iBias, vRF, fR, pwrInjct[i], nuDetng))
 
-    thread = threading.Thread(target=lasers[i].allSimulation())
-    jobs.append(thread)
+    lasers[i].allSimulation()
 
 #----------------------------
 #   Master laser
@@ -54,20 +54,11 @@ pwrInjct = [50, 200, 1000]
 # detuning of the injected laser field with respect to the emission frequency
 nuDetng = 5 # [GHz]
 
-for i in range(len(pwrInjct), len(pwrInjct)+2):
-    lasers.append(Simulation(iBias, vRF, fR, pwrInjct[i], nuDetng))
+for i in range(len(pwrInjct)):
+    laser = Simulation(iBias, vRF, fR, pwrInjct[i], nuDetng)
 
-    thread = threading.Thread(target=lasers[i].allSimulation())
-    jobs.append(thread)
-
-#start the threads (i.e. calculate the random number lists)
-for j in jobs:
-    j.start()
-
-# Ensure all of the threads have finished
-for j in jobs:
-    j.join()
-
+    laser.allSimulation()
+    lasers.append(laser)
 
 for i in range(len(lasers)):
     lasers[i].save()

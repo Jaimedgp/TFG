@@ -43,17 +43,7 @@ lasers = []
 for i in range(len(pwrInjct)):
     lasers.append(Simulation(iBias, vRF, fR, pwrInjct[i], nuDetng))
 
-    thread = threading.Thread(target=lasers[i].allSimulation())
-    jobs.append(thread)
-
-#start the threads (i.e. calculate the random number lists)
-for j in jobs:
-    j.start()
-
-# Ensure all of the threads have finished
-for j in jobs:
-    j.join()
-
+    lasers[i].allSimulation()
 
 for i in range(len(lasers)):
     lasers[i].save()
