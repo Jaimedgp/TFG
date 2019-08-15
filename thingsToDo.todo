@@ -1,16 +1,26 @@
 Lista con las cosas que tengo que hacer en el TFG
 
 Documento:
-    ☐ Preparar el Documento y la plantilla
     ☐ Escribir introduccion
+    ☐ Poner todas las graficas
+    ☐ Ver como poner las unidades del PSD
+    ☐ fijarme como ponen las graficas en el articulo
 
 Simulacion del Cpt1:
+    ☐ Poner los numeros de las graficas a 20
+    ☐ ver como mezclar exp con sim
     ☐ Acabar de mejorar las graficas 
 
-Archivo para guardar datos para Angel:
-    ☐ primer fichero: en la primera columna tiempo,                                 segunda corriente,                                      tercera potencia,                                       cuarta N(t)/N_tr.
-    ☐ segundo fichero: en la primera columna tiempo,                                 segunda chirping,                                       tercera fase                                            (respecto de la inyeccion).
-    ☐ tercer fichero: primera columna lamda,                                  segunda PSD.
+Simulacion del Cpt2:
+    ☐ Simulaciones para -2GHz con 1, 20, 100, 200,...
+    ☐ Simulaciones para 5GHz con 50 y 100
+    ☐ Grafica con todos los COMBs
+    ☐ Ver como poner las rateEq
+    ☐ Mejorar el mapa de las zonas de NLD
 
 Simulacion del Cpt3:
-    ☐ PSD y power detuning -2 y (1, 100, 200, 300, 1000 y 20000)
+    ☐ Simulaciones para -2GHz con 1, 100, 200, 300, ...
+    ☐ Poner todas las graficas bien
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
