@@ -10,13 +10,13 @@ __date__ = "Aug 14, 2019"
 
 import numpy as np
 import matplotlib
-from matplotlib.patches import Arrow
 import matplotlib.pyplot as plt
 import os.path
 
 import sys
 sys.path.insert(0, '../')
 
+from matplotlib.patches import Arrow
 from Constants import *
 from getDictValues import *
 from simulation import Simulation
@@ -31,22 +31,21 @@ font = {'family' : 'serif',
        }
 matplotlib.rc('font', **font)
 
-zones = ['CH-IR', "IL", "P1"]
-colors = ['g', 'b', 'r']
-graphLabel = [
-    ['(a)', '(b)', '(c)'],
-    ['(d)', '(e)', '(f)'],
-    ['(g)', '(h)', '(i)']
-]
+colors = ['g', 'b']
 
-psdLim = [[[1546.80, 1547.33], [5.920*10**(-11), 0.0409]],
-          [[1546.80, 1547.35], [6.574*10**(-12), 0.0389]],
-          [[1546.58, 1547.51], [2.427*10**(-12), 0.0718]],
-         ]
 ########################################
 ##       LASER CHARACTERIZATION       ##
 ######################################## 
 
+zones = ["P1", "P2L"]
+graphLabel = [
+    ['(a)', '(b)', '(c)'],
+    ['(d)', '(e)', '(f)']
+]
+psdLim = [
+           [[1546.25, 1547.67], [2.085*10**(-13), 0.0133]],#1 microW
+           [[1546.29, 1547.63], [7.282*10**(-14), 0.0043]]
+         ]
 #----------------------------
 #   Slave laser
 #----------------------------
@@ -59,7 +58,7 @@ fR = 5.0
 #   Master laser
 #----------------------------
 
-pwrInjct = [20, 100, 1000]
+pwrInjct = [100, 200]
 # detuning of the injected laser field with respect to the emission frequency
 
 nuDetng = -2 # [GHz]
@@ -68,7 +67,7 @@ nuDetng = -2 # [GHz]
 #   Study interval
 #----------------------------
 
-period = 10 / fR
+period = 6 / fR
 transient = 1.2
 
 ########################################
@@ -84,7 +83,7 @@ transient = 1.2
 #-----------------------------------------------------------------------------
 existData = True
 
-fig, axs = plt.subplots(3, len(pwrInjct), figsize=(17, 10))
+fig, axs = plt.subplots(len(pwrInjct), 3, figsize=(17, 10))
 
 for i in range(len(pwrInjct)):
 
@@ -109,7 +108,7 @@ for i in range(len(pwrInjct)):
         print "Opening file " + nameFileRateEq
 
         time, S = dataRateEq['time'], dataRateEq['S']
-        N, Phi = dataRateEq['N'], dataRateEq['Phi']
+        N = dataRateEq['N']
         fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
@@ -117,19 +116,19 @@ for i in range(len(pwrInjct)):
         laser.rateEquations()
 
         time, S = laser.time, laser.S
-        N, Phi = laser.N, laser.Phi
+        N = laser.N
         fftWL, TFavg = laser.fftWL, laser.TFavg
 
     #--------------------------------------------
     #  Takes the values of the study inteval 
     #--------------------------------------------
 
-    indexes = np.where((time > transient) & (time < period+transient))
+    indexes = np.where((time > 1.2) & (time < period+1.2))
 
+    power = constP * S *10**(12)
     time = time[indexes]
-    power = constP * S[indexes] *10**(12)
-    N = N[indexes]
-    Phi = Phi[indexes] - 2*np.pi*(nuDetng - f0 + (c0/(1.54705*10**(-6))))*time
+    powerSp = power[indexes]
+    NSp = N[indexes]
 
 ########################################
 ##          PLOT DATA                 ##
@@ -148,47 +147,50 @@ for i in range(len(pwrInjct)):
     yStart = yValue*10**(-length)
 
     arrow = Arrow(x=wLInject, y=yStart,
-                  dx=0, dy=yValue-yStart,
-                  width=0.02,
-                  color='c'
-                 )
+                dx=0, dy=yValue-yStart,
+                width=0.02,
+                color='c'
+                )
 
-    axs[0][i].set_title("$P_{Iny}$ = %i $\mu$W" %(pwrInjct[i]), color=colors[i])
-    axs[0][i].plot(fftWL, TFavg, colors[i])
-    axs[0][i].set_yscale('log')
-    axs[0][i].add_patch(arrow)
-    axs[0][i].set_xlim(psdLim[i][0])
-    axs[0][i].set_ylim(psdLim[i][1])
-    axs[0][i].annotate(zones[i], (0.1, 0.70), xycoords='axes fraction', size=20)
-    axs[0][i].annotate(graphLabel[0][i], (0.9, 0.85),
+    axs[i][0].plot(fftWL, TFavg, colors[i])
+    axs[i][0].set_yscale("log")
+    axs[i][0].set_ylabel("PSD")
+    axs[i][0].set_xlabel("$\lambda$ [nm]")
+    axs[i][0].add_patch(arrow)
+    axs[i][0].set_xlim(psdLim[i][0])
+    axs[i][0].set_ylim(psdLim[i][1])
+    axs[i][0].annotate(zones[i], (0.1, 0.70), xycoords='axes fraction', size=20)
+    axs[i][0].annotate(graphLabel[i][0], (0.9, 0.85),
                                            xycoords='axes fraction', size=20)
 
-    axs[1][i].plot(time, power, colors[i])
-    axs[1][i].grid(linestyle='-.')
-    axs[1][i].annotate(graphLabel[1][i], (0.9, 0.85),
+
+    axs[i][1].plot(time, powerSp, colors[i])
+    axs[i][1].set_ylabel("P(t) [$\mu$W]")
+    axs[i][1].set_xlabel("t [ns]")
+    axs[i][1].grid(linestyle='-.')
+    axs[i][1].annotate(graphLabel[i][1], (0.9, 0.85),
                                            xycoords='axes fraction', size=20)
 
-    axs[2][i].plot(time, Phi, colors[i], label="N(t)")
-    axs[2][i].grid(linestyle='-.')
-    axs[2][i].annotate(graphLabel[2][i], (0.9, 0.85),
-                                           xycoords='axes fraction', size=20)
 
-axs[1][0].get_shared_x_axes().join(axs[1][0], axs[1][1], axs[1][2])
-axs[2][0].get_shared_x_axes().join(axs[2][0], axs[2][1], axs[2][2])
+    axs[i][2].plot(NSp, powerSp, colors[i])
+    axs[i][2].set_xlabel("N(t)/$N_{Tr}$")
+    axs[i][2].set_ylabel("P(t) [$\mu$W]")
+    axs[i][2].annotate(graphLabel[i][2], (0.9, 0.85),
+                                            xycoords='axes fraction', size=20)
 
-axs[1][2].get_shared_y_axes().join(axs[1][2], axs[1][0], axs[1][1])
+    axs[0][1].get_shared_x_axes().join(axs[0][1], axs[1][1])
+    #axs[2][i].plot(time, NSp, colors[i], label="N(t)")
+    #axs[2][i].grid(linestyle='-.')
+    #axs[2][i].annotate(graphLabel[2][i], (0.9, 0.85),
+    #                                        xycoords='axes fraction', size=20)
 
-axs[0][0].set_ylabel("PSD")
-axs[1][0].set_ylabel("P(t) [mW]")
-axs[2][0].set_ylabel("$\Phi$")
+#axs[0][0].set_ylabel("I(t) [$mA$]", fontsize=15)
+#axs[1][0].set_ylabel("S(t) [$m^{-3}$]", fontsize=15)
+#axs[2][0].set_ylabel("Chirp [GHz]", fontsize=15)
+#axs[3][0].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
 
-for i in range(1, len(pwrInjct)):
-    for j in range(0, 3):
-        axs[i][j].set_xlabel("t [ns]")
-        axs[i][j].set_xlim([1.1, 3.5])
-
-for j in range(0, 3):
-    axs[0][j].set_xlabel("$\lambda$ [nm]")
+#for i in range(len(vRF)):
+#    axs[-1][i].set_xlabel("t [ns]", fontsize=15)
 
 plt.tight_layout()
 plt.show()

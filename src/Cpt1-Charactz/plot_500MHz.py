@@ -8,7 +8,7 @@ sys.path.insert(0, '../')
 
 font = {'family' : 'serif',
         'weight' : 'normal',
-        'size'   : 15}
+        'size'   : 20}
 matplotlib.rc('font', **font)
 
 from Constants import constP
@@ -58,20 +58,23 @@ for i in range(len(vRF)):
     ##  Representacion de los Datos
     #########################################
 
-    axs[0][i].set_title("%.2f V" %(vRF[i] * 10**9), fontsize=15)
+    axs[0][i].set_title("%.2f V" %(vRF[i] * 10**9))
 
     axs[0][i].plot(time, power, 'r')
     axs[0][i].grid(linestyle='-.')
-    axs[0][i].set_xlabel("time [ns]", fontsize=15)
+    axs[0][i].set_xlabel("t [ns]")
     axs[0][i].set_xlim([1.5, 7.5])
 
     axs[1][i].plot(fftWL, TFavg, 'b')
     axs[1][i].set_yscale("log")
-    axs[1][i].set_xlabel("WL [nm]", fontsize=15)
+    axs[1][i].set_xlabel("$\lambda$ [nm]")
     axs[1][i].set_xlim([1547.15, 1547.37])
     axs[1][i].set_ylim(6.82*10**(-11))
 
-axs[0][0].set_ylabel("Power [mW]", fontsize=15)
-axs[1][0].set_ylabel("PSD", fontsize=15)
+axs[0][0].set_ylabel("P(t) [mW]")
+axs[1][0].set_ylabel("PSD")
+
+axs[0][3].get_shared_y_axes().join(axs[0][0], axs[0][1], axs[0][2], axs[0][3])
+
 plt.tight_layout()
 plt.show()

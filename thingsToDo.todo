@@ -7,20 +7,20 @@ Documento:
     ☐ fijarme como ponen las graficas en el articulo
 
 Simulacion del Cpt1:
-    ☐ Poner los numeros de las graficas a 20
     ☐ ver como mezclar exp con sim
     ☐ Acabar de mejorar las graficas 
 
 Simulacion del Cpt2:
-    ☐ Simulaciones para -2GHz con 1, 20, 100, 200,...
-    ☐ Simulaciones para 5GHz con 50 y 100
-    ☐ Grafica con todos los COMBs
-    ☐ Ver como poner las rateEq
     ☐ Mejorar el mapa de las zonas de NLD
 
 Simulacion del Cpt3:
-    ☐ Simulaciones para -2GHz con 1, 100, 200, 300, ...
     ☐ Poner todas las graficas bien
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+    ✔ Poner los numeros de las graficas a 20 @done(2019-08-16 16:52)
+    ✔ Simulaciones para -2GHz con 1, 20, 100, 200,... @done(2019-08-16 16:53)
+    ✔ Simulaciones para 5GHz con 50 y 100 @done(2019-08-16 16:53)
+    ✔ Grafica con todos los COMBs @done(2019-08-19 16:35) @project(Simulacion
+    ✔ Ver como poner las rateEq @done(2019-08-19 16:35) @project(Simulacion del
+    ✔ Simulaciones para -2GHz con 1, 100, 200, 300, ... @done(2019-08-16 16:53)

@@ -15,7 +15,7 @@ from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
-        'size'   : 15}
+        'size'   : 20}
 matplotlib.rc('font', **font)
 
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
@@ -46,7 +46,6 @@ plt.plot(fftWL, TFavg)
 plt.xlabel("$\lambda$ [nm]")
 plt.ylabel("PSD")
 plt.yscale("log")
-plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9),
-                                                                fontsize = 20)
+plt.title("$I_{Bias}$ = %i mA \t $V_{RF} = $ %.1f V" %(iBias, vRF*10**9))
 plt.tight_layout()
 plt.show()

@@ -20,7 +20,7 @@ from simulation import Simulation
 font = {
     'family' : 'serif',
     'weight' : 'normal',
-    'size'   : 15
+    'size'   : 20
 }
 
 matplotlib.rc('font', **font)
@@ -73,8 +73,7 @@ for i in range(len(vRF)):
     dPhi = dPhi[indexes]
     N = N[indexes]
 
-    axs[0][i].set_title("$V_{RF} = $%.2f V" %(vRF[i] * 10**9), color=colors[i],
-                                                                    fontsize=15)
+    axs[0][i].set_title("$V_{RF} = $%.2f V" %(vRF[i] * 10**9), color=colors[i])
 
     axs[0][i].plot(time, I, colors[i])
     axs[0][i].axhline(y=14.8, linestyle=":", color='k', linewidth=3)
@@ -97,13 +96,13 @@ for i in range(len(vRF)):
     axs[3][i].annotate(graphLabel[3][i], (0.9, 0.85),
                                             xycoords='axes fraction', size=20)
 
-axs[0][0].set_ylabel("I(t) [$mA$]", fontsize=15)
-axs[1][0].set_ylabel("S(t) [$m^{-3}$]", fontsize=15)
-axs[2][0].set_ylabel("Chirp [GHz]", fontsize=15)
-axs[3][0].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
+axs[0][0].set_ylabel("I(t) [$mA$]")
+axs[1][0].set_ylabel("S(t) [$m^{-3}$]")
+axs[2][0].set_ylabel("Chirp [GHz]")
+axs[3][0].set_ylabel("$N(t) / N_{Tr}$")
 
 for i in range(len(vRF)):
-    axs[-1][i].set_xlabel("t [ns]", fontsize=15)
+    axs[-1][i].set_xlabel("t [ns]")
 
 plt.tight_layout()
 plt.show()
