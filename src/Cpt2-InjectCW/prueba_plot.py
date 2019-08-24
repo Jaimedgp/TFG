@@ -44,7 +44,7 @@ from simulation import Simulation
 
 font = {'family' : 'serif',
         'weight' : 'normal',
-        'size'   : 15
+        'size'   : 20
        }
 matplotlib.rc('font', **font)
 
@@ -64,7 +64,7 @@ fR = 5.0
 #   Master laser
 #----------------------------
 
-pwrInjct = 20
+pwrInjct = 8000
 # detuning of the injected laser field with respect to the emission frequency
 nuDetng = -2 # [GHz]
 
@@ -72,7 +72,7 @@ nuDetng = -2 # [GHz]
 #   Study interval
 #----------------------------
 
-period = 60 / fR
+period = 6 / fR
 transient = 1.2
 
 ########################################
@@ -87,7 +87,7 @@ transient = 1.2
 #
 #-----------------------------------------------------------------------------
 
-existData = False
+existData = True
 
 nameFileRateEq = ("Data/RateEquations_%smuW_%sGHz"
                    %(pwrInjct, nuDetng)

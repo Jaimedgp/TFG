@@ -16,7 +16,6 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from matplotlib.patches import Arrow
 from Constants import *
 from getDictValues import *
 from simulation import Simulation
@@ -135,23 +134,26 @@ for i in range(len(pwrInjct)):
         length = np.log10(max(TFavg) - min(TFavg)) / 2.0
         yStart = yValue*10**(-length)
 
-        arrow = Arrow(x=wLInject, y=yStart,
-                    dx=0, dy=yValue-yStart,
-                    width=0.02,
-                    color='c'
-                    )
-
         axs[i][j].set_title("$P_{Iny}$ = %i $\mu$W" %(pwrInjct[i][j]))
-        axs[i][j].plot(fftWL, TFavg, color='b')
+        axs[i][j].plot(fftWL, TFavg, color='#1f77b4')
         axs[i][j].set_yscale('log')
-        axs[i][j].add_patch(arrow)
         axs[i][j].set_xlabel("$\lambda$ [nm]")
         axs[i][j].set_ylabel("PSD")
         axs[i][j].set_xlim(psdLim[i][j][0])
         axs[i][j].set_ylim(psdLim[i][j][1])
-        axs[i][j].annotate(zones[i][j], (0.1, 0.70), xycoords='axes fraction', size=20)
+        axs[i][j].annotate(zones[i][j], (0.1, 0.70),
+                           xycoords='axes fraction',
+                           size=20
+                          )
         axs[i][j].annotate(labels[i][j], (0.9, 0.85),
-                                            xycoords='axes fraction', size=20)
+                           xycoords='axes fraction',
+                           size=20
+                          )
+        axs[i][j].annotate('', xy=(wLInject,yValue),
+                               xytext=(wLInject,yStart),
+                               arrowprops={'arrowstyle': '-|>', 'color':'r'},
+                               va='center'
+                          )
 
 plt.tight_layout()
 plt.show()

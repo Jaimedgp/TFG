@@ -14,7 +14,7 @@ font = {'family' : 'serif',
         'size'   : 20}
 matplotlib.rc('font', **font)
 
-iBias = [30, 50]  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
+iBias = [35, 50]  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 1.0 * 10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
 period = 3 / fR
@@ -23,7 +23,7 @@ existData = True
 
 fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
-colors = ['b', 'r']
+colors = ['#1f77b4', '#ff7f0e']
 
 for i in range(len(iBias)):
 

@@ -10,7 +10,6 @@ __date__ = "Aug 14, 2019"
 
 import numpy as np
 import matplotlib
-from matplotlib.patches import Arrow
 import matplotlib.pyplot as plt
 import os.path
 
@@ -32,7 +31,7 @@ font = {'family' : 'serif',
 matplotlib.rc('font', **font)
 
 zones = ['CH-IR', "IL", "P1"]
-colors = ['g', 'b', 'r']
+colors = ['g', '#1f77b4', '#ff7f0e']
 graphLabel = [
     ['(a)', '(b)', '(c)'],
     ['(d)', '(e)', '(f)'],
@@ -147,21 +146,19 @@ for i in range(len(pwrInjct)):
     length = np.log10(max(TFavg) - min(TFavg)) / 2.0
     yStart = yValue*10**(-length)
 
-    arrow = Arrow(x=wLInject, y=yStart,
-                  dx=0, dy=yValue-yStart,
-                  width=0.02,
-                  color='c'
-                 )
-
     axs[0][i].set_title("$P_{Iny}$ = %i $\mu$W" %(pwrInjct[i]), color=colors[i])
     axs[0][i].plot(fftWL, TFavg, colors[i])
     axs[0][i].set_yscale('log')
-    axs[0][i].add_patch(arrow)
     axs[0][i].set_xlim(psdLim[i][0])
     axs[0][i].set_ylim(psdLim[i][1])
     axs[0][i].annotate(zones[i], (0.1, 0.70), xycoords='axes fraction', size=20)
     axs[0][i].annotate(graphLabel[0][i], (0.9, 0.85),
                                            xycoords='axes fraction', size=20)
+    axs[0][i].annotate('', xy=(wLInject,yValue),
+                            xytext=(wLInject,yStart),
+                            arrowprops={'arrowstyle': '-|>', 'color':'r'},
+                            va='center'
+                        )
 
     axs[1][i].plot(time, power, colors[i])
     axs[1][i].grid(linestyle='-.')

@@ -25,7 +25,7 @@ font = {
 
 matplotlib.rc('font', **font)
 
-colors = ['g', 'b', 'r']
+colors = ['g', '#1f77b4', '#ff7f0e']
 graphLabel = [
     ['(a)', '(b)', '(c)'],
     ['(d)', '(e)', '(f)'],

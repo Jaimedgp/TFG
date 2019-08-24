@@ -60,12 +60,12 @@ for i in range(len(vRF)):
 
     axs[0][i].set_title("%.2f V" %(vRF[i] * 10**9))
 
-    axs[0][i].plot(time, power, 'r')
+    axs[0][i].plot(time, power, '#ff7f0e')
     axs[0][i].grid(linestyle='-.')
     axs[0][i].set_xlabel("t [ns]")
     axs[0][i].set_xlim([1.5, 7.5])
 
-    axs[1][i].plot(fftWL, TFavg, 'b')
+    axs[1][i].plot(fftWL, TFavg, '#1f77b4')
     axs[1][i].set_yscale("log")
     axs[1][i].set_xlabel("$\lambda$ [nm]")
     axs[1][i].set_xlim([1547.15, 1547.37])

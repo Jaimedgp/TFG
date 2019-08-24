@@ -38,7 +38,7 @@ fR = 5.0
 
 existData = True
 
-colors = ['g', 'b', 'r']
+colors = ['g', '#1f77b4', '#ff7f0e']
 
 fig, axs = plt.subplots(1, len(vRF), sharex=True, sharey=True,
                                               figsize=(20, int(20/len(vRF))))
@@ -55,8 +55,16 @@ for i in range(len(vRF)):
         fftWL, TFavg = dataPSD['fftWL'], dataPSD['TFavg']
 
     else:
+        sys.stdout.write("Simulating a (%imA %imV %iGHz) laser....." %(iBias,
+                                                                       vRF[i]
+                                                                    *10**(12),
+                                                                       fR))
+        sys.stdout.flush()
         laser = Simulation(iBias, vRF[i], fR)
         laser.allSimulation()
+        print "Done"
+        #sys.stdout.write("Done")
+        #sys.stdout.flush()
 
         fftWL, TFavg = laser.fftWL, laser.TFavg
 

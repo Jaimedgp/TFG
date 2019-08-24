@@ -27,6 +27,8 @@ font = {'family' : 'serif',
         'size'   : 15}
 matplotlib.rc('font', **font)
 
+colors = ['g', '#1f77b4', '#ff7f0e', 'r']
+
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
 vRF = 0 #RMS voltage value of the signal generator [V]
 fR = 5.0
@@ -62,18 +64,18 @@ S = S[indexes]
 dPhi = dPhi[indexes]
 N = N[indexes]
 
-axs[0].plot(time, I, 'r')
+axs[0].plot(time, I, colors[0])
 axs[0].axhline(y=13.2, linestyle=":", color='k', linewidth=3)
 axs[0].grid(linestyle='-.')
 
-axs[1].plot(time, S, 'b')
+axs[1].plot(time, S, colors[1])
 axs[1].set_yscale('log')
 axs[1].grid(linestyle='-.')
 
-axs[2].plot(time, N, 'r')
+axs[2].plot(time, N, colors[2])
 axs[2].grid(linestyle='-.')
 
-axs[3].plot(time, dPhi, 'r', label="N(t)")
+axs[3].plot(time, dPhi,colors[3], label="N(t)")
 axs[3].grid(linestyle='-.')
 axs[3].set_ylim([-40, 20])
 

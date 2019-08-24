@@ -5,22 +5,25 @@
 	\documentclass[a4paper, 11pt, oneside]{book}
 
 	\usepackage[sc]{mathpazo} % Use the Palatino font
-	\usepackage[spanish, es-tabla]{babel}
 	\usepackage[utf8]{inputenc}
+	\usepackage[spanish, es-tabla]{babel}
+	\decimalpoint
+	
 	\usepackage{lipsum}
 	\usepackage{graphicx}
 	\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 	\linespread{1.15} % Line spacing - Palatino needs more space between lines
 	%\usepackage{microtype} % Slightly tweak font spacing for aesthetics
 	%
-	\usepackage[hmarginratio=1:1,left=20mm, top=32mm,columnsep=20pt]{geometry} % Document margins
+	\usepackage[hmarginratio=1:1,left=20mm, top=22mm]{geometry} % Document margins
 	%\usepackage{multicol} % Used for the two-column layout of the document
-	%\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+	\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 	%\usepackage{mathtools}
 	%\usepackage{booktabs} % Horizontal rules in tables
 	\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
 	\usepackage{hyperref} % For hyperlinks in the PDF
 	\usepackage{appendix}
+	\usepackage{subcaption}
 	%\usepackage{wrapfig}
 	%%\usepackage[]{mcode} % For embebing matlab code
 	%\usepackage[makeroom]{cancel}
@@ -28,10 +31,10 @@
 	%%\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 	%\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
 	%
-	\usepackage{abstract} % Allows abstract customization
-	\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
-	\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
-	%%
+	%\usepackage{abstract} % Allows abstract customization
+	%\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+	%\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+	%%%
 	%\usepackage{titlesec} % Allows customization of titles
 	%%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
 	%%\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
@@ -145,22 +148,6 @@
 		
 		\end{titlepage}
 
-		\abstract{
-			\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
-
-				Hola
-
-		}
-
-		\renewcommand{\abstractname}{Abstract}
-
-		\abstract{
-			\addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
-
-				Hola
-
-		}
-
 		%\thispagestyle{fancy} % All pages have headers and footers
 
 		\tableofcontents
@@ -216,7 +203,7 @@
 					%\input{}
 				
 			\addtocontents{toc}{\vspace{0.1cm}}
-			\chapter{OFC (Gain Switching)}
+			\chapter{Láser en solitario}
 
 				\input{Resultados/OFC-GS.tex}	
 
@@ -235,6 +222,8 @@
 %
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Conclusiones}
+
+				hola a todos
 
 		%----------------------------------------------------------------------------------------
 		%     BIBLIOGRAPHY

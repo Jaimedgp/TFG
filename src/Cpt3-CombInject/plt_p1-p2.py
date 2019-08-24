@@ -16,7 +16,6 @@ import os.path
 import sys
 sys.path.insert(0, '../')
 
-from matplotlib.patches import Arrow
 from Constants import *
 from getDictValues import *
 from simulation import Simulation
@@ -31,7 +30,7 @@ font = {'family' : 'serif',
        }
 matplotlib.rc('font', **font)
 
-colors = ['g', 'b']
+colors = ['#ff7f0e', '#1f77b4']
 
 ########################################
 ##       LASER CHARACTERIZATION       ##
@@ -51,7 +50,7 @@ psdLim = [
 #----------------------------
 
 iBias = 35  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-vRF = 0.0 #RMS voltage value of the signal generator [V]
+vRF = 1.0*10**(-9) #RMS voltage value of the signal generator [V]
 fR = 5.0
 
 #----------------------------
@@ -146,22 +145,20 @@ for i in range(len(pwrInjct)):
     length = np.log10(max(TFavg) - min(TFavg)) / 2.0
     yStart = yValue*10**(-length)
 
-    arrow = Arrow(x=wLInject, y=yStart,
-                dx=0, dy=yValue-yStart,
-                width=0.02,
-                color='c'
-                )
-
     axs[i][0].plot(fftWL, TFavg, colors[i])
     axs[i][0].set_yscale("log")
     axs[i][0].set_ylabel("PSD")
     axs[i][0].set_xlabel("$\lambda$ [nm]")
-    axs[i][0].add_patch(arrow)
     axs[i][0].set_xlim(psdLim[i][0])
     axs[i][0].set_ylim(psdLim[i][1])
     axs[i][0].annotate(zones[i], (0.1, 0.70), xycoords='axes fraction', size=20)
     axs[i][0].annotate(graphLabel[i][0], (0.9, 0.85),
                                            xycoords='axes fraction', size=20)
+    axs[i][0].annotate('', xy=(wLInject,yValue),
+                            xytext=(wLInject,yStart),
+                            arrowprops={'arrowstyle': '-|>', 'color':'r'},
+                            va='center'
+                        )
 
 
     axs[i][1].plot(time, powerSp, colors[i])
@@ -179,18 +176,16 @@ for i in range(len(pwrInjct)):
                                             xycoords='axes fraction', size=20)
 
     axs[0][1].get_shared_x_axes().join(axs[0][1], axs[1][1])
-    #axs[2][i].plot(time, NSp, colors[i], label="N(t)")
-    #axs[2][i].grid(linestyle='-.')
-    #axs[2][i].annotate(graphLabel[2][i], (0.9, 0.85),
-    #                                        xycoords='axes fraction', size=20)
 
-#axs[0][0].set_ylabel("I(t) [$mA$]", fontsize=15)
-#axs[1][0].set_ylabel("S(t) [$m^{-3}$]", fontsize=15)
-#axs[2][0].set_ylabel("Chirp [GHz]", fontsize=15)
-#axs[3][0].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
-
-#for i in range(len(vRF)):
-#    axs[-1][i].set_xlabel("t [ns]", fontsize=15)
+    # Right Y-axis labels
+    center = np.mean(axs[i][2].get_ylim())
+    left = axs[i][2].get_xlim()[-1]
+    axs[i][2].text(left, center, "$P_{Iny}$ = %i $\mu$W" %(pwrInjct[i]),
+                   {'color': colors[i], 'fontsize': 20},
+                   horizontalalignment='left',
+                   verticalalignment='center',
+                   rotation=-90,
+                   clip_on=False)
 
 plt.tight_layout()
 plt.show()
