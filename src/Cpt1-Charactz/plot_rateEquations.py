@@ -16,6 +16,7 @@ import sys
 sys.path.insert(0, '../')
 
 from simulation import Simulation
+from Constants import nTr
 
 font = {
     'family' : 'serif',
@@ -34,11 +35,11 @@ graphLabel = [
 ]
 
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+vRF = [0, 0.05 *10**(-9), 1 *10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 fR = 5.0
 period = 3 / fR
 
-existData = True
+existData = False
 
 fig, axs = plt.subplots(4, len(vRF), sharex=True, sharey="row",
                                                             figsize=(17, 10))
@@ -60,10 +61,12 @@ for i in range(len(vRF)):
         N = dataPSD['N']
 
     else:
-        laser = Simulation(iBias, vRF[i], fR, sInyct, nuDetng)
+        laser = Simulation(iBias, vRF[i], fR)
         laser.rateEquations()
+        #laser.save()
 
-        time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N
+        time, I, S, dPhi = laser.time, laser.I, laser.S, laser.dPhi
+        N = laser.N/nTr
 
     indexes = np.where((time > 1.2) & (time < period+1.2))
 

@@ -21,6 +21,7 @@ import sys
 sys.path.insert(0, '../')
 
 from simulation import Simulation
+from Constants import nTr
 
 font = {'family' : 'serif',
         'weight' : 'normal',
@@ -54,7 +55,7 @@ else:
     laser = Simulation(iBias, vRF, fR)
     laser.rateEquations()
 
-    time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N
+    time, I, S, dPhi, N = laser.time, laser.I, laser.S, laser.dPhi, laser.N/nTr
 
 indexes = np.where(time < 1.2)
 
@@ -79,12 +80,12 @@ axs[3].plot(time, dPhi,colors[3], label="N(t)")
 axs[3].grid(linestyle='-.')
 axs[3].set_ylim([-40, 20])
 
-axs[0].set_ylabel("I(t) [$mA$]", fontsize=15)
-axs[1].set_ylabel("S(t) [$m^{-3}$]", fontsize=15)
-axs[2].set_ylabel("$N(t) / N_{Tr}$", fontsize=15)
-axs[3].set_ylabel("Chirp [GHz]", fontsize=15)
+axs[0].set_ylabel("I(t) [$mA$]")
+axs[1].set_ylabel("S(t) [$m^{-3}$]")
+axs[2].set_ylabel("$N(t) / N_{Tr}$")
+axs[3].set_ylabel("Chirp [GHz]")
 
-axs[3].set_xlabel("t [ns]", fontsize=15)
+axs[3].set_xlabel("t [ns]")
 
 plt.tight_layout()
 plt.show()
