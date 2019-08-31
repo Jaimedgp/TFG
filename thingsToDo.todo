@@ -13,6 +13,9 @@ Intr_NonLinear:
 Intr_OFC:
 
 Mdl_RoF:
+    ☐  Mencionar que se trabaja con un I_th y un WL_th
 
 Mdl_Code:
+    ☐  Mencionar que se trabaja con un I_th y un WL_th
+    ☐ Trabajo en el transitorio sqrt(abs(S))
 
