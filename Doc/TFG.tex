@@ -18,7 +18,7 @@
 	\usepackage[hmarginratio=1:1,left=20mm, top=22mm]{geometry} % Document margins
 	%\usepackage{multicol} % Used for the two-column layout of the document
 	\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
-	%\usepackage{mathtools}
+	\usepackage{mathtools}
 	%\usepackage{booktabs} % Horizontal rules in tables
 	\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
 	\usepackage{hyperref} % For hyperlinks in the PDF
@@ -57,6 +57,12 @@
 	%
 	%\DeclareGraphicsExtensions{.pdf,.png,.jpg} % Graphics type
 
+	\newcommand{\ibias}{$I_{Bias}$}
+	\newcommand{\chirp}{\textit{Chirp}}
+	\newcommand{\I}{corriente de inyecci\'on $I(t)$}
+	\newcommand{\n}{densidad de portadores de carga $N(t)$}
+	\newcommand{\s}{densidad de fotones $S(t)$}
+	\newcommand{\fase}{fase \'optica $\Phi(t)$}
 %----------------------------------------------------------------------------------------
 %	   METADATA
 %----------------------------------------------------------------------------------------
@@ -160,52 +166,60 @@
 
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Introducción} % Scope of the project = rad effects + minimization
-				\label{sec:Intro}
+				\label{Intr}
 
 				%\input{}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Láseres de Semiconductor}
+					\label{Intr:LsrSmcdtr}
 					
 					%\input{}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Procesos Estocásticos}
+					\label{Intr:PrcsEstcs}
 					
 					%\input{}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Dinámica No Lineal}
+					\label{Intr:NonLnr}
 					
 					%\input{}
 %
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Peines de Frecuencia Óptica}
+					\label{Intr:OFC}
 					
 					\input{Introduccion/OFC.tex}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Objetivo del Estudio}
+					\label{Intr:Obj}
 					
 					%\input{}
 				
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Modelo Computacional}
+				\label{Mdl}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{RoF}
+					\label{Mdl:RoF}
 				
 					%\input{}
 
 				\addtocontents{toc}{\vspace{0.1cm}}
 				\section{Código de la Simulación}
+					\label{Mdl:Code}
 				
-					%\input{}
+					\input{ModelComp/Code.tex}
 				
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Láser en solitario}
 
-				\input{Resultados/OFC-GS.tex}	
+				\input{Resultados/Solitario.tex}	
 
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Inyeccion de Luz}
