@@ -35,7 +35,7 @@ graphLabel = [
 ]
 
 iBias = 30  # bias current [mA] / must be in [C ns^-1] by multiplying *10**-12
-vRF = [0, 0.05 *10**(-9), 1 *10**(-9)]#, 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
+vRF = [0.05 *10**(-9), 1 *10**(-9), 1.5 * 10**(-9)] #RMS voltage value of the signal generator [V]
 fR = 5.0
 period = 3 / fR
 
