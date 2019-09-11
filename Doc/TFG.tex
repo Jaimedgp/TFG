@@ -57,7 +57,8 @@
 	%
 	%\DeclareGraphicsExtensions{.pdf,.png,.jpg} % Graphics type
 
-	\newcommand{\ibias}{$I_{Bias}$}
+	\newcommand{\gs}{Gain-Swithing}
+	\newcommand{\ibias}{I_{bias}}
 	\newcommand{\chirp}{\textit{Chirp}}
 	\newcommand{\I}{corriente de inyecci\'on $I(t)$}
 	\newcommand{\n}{densidad de portadores de carga $N(t)$}
@@ -158,7 +159,7 @@
 
 		\tableofcontents
 
-		\listoffigures
+		%\listoffigures
 
 		%----------------------------------------------------------------------------------------
 		%	  ARTICLE CONTENTS
@@ -178,6 +179,7 @@
 
 			\addtocontents{toc}{\vspace{0.1cm}}
 			\chapter{Láser en solitario}
+				\label{Sol}
 
 				\input{Resultados/Cpt-Sol/main.tex}	
 
