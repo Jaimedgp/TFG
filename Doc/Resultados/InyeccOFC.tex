@@ -1,20 +1,36 @@
 \graphicspath{{../Graphics/Cpt3-CombInject/}}
 
+En este cap\'itulo se han combinado los m\'etodos de generaci\'on de OFC estudiados en los cap\'itulos anteriores, abordando el estudio de los r\'egimenes din\'amicos que existen en la generaci\'on de OFC mediante \gs\ e inyecci\'on de luz. Se ha trabajado con el l\'aser ML con $\ibias = 35$ mA, $V_{RF} = 1.$ V y alta frecuencia $f_R = 5$ GHz. Para las condiciones de inyecci\'on de SL se ha tomado un \'unico valor de $\delta\nu = -2$ GHz, variando la potencia de inyecci\'on $P_{Iny}$.
+
+En la Figura \ref{Img:MapGS-IO} se muestran los espectros \'opticos de las diferentes regiones din\'amicas obtenidas para distintas $P_{Iny}$ a $\delta\nu = -2$ GHz. 
+
 
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=1.0\linewidth]{psdMap.png}
-				\caption{\label{Img:widgets}el pie de pagina que le quieras 	poner a la imagen}
+				\caption{\label{Img:MapGS-IO}Espectros \'opticos obtenidos mediante \gs\ e inyección \'optica de las diferentes regiones dinámicas obtenidas para diferentes $P_{Iny}$ a $\delta\nu = -2$ GHz. Se indica la frecuencia de inyección $\nu_{SL}$ con una flecha y $P_{Iny}$ para cada espectro \'optico.}
 			\end{figure}
+
+		Para $P_{Iny} = 1\;\mu$W se obtiene un espectro \'optico con doble peine \'optico de frecuencias, DOFC, observando dos picos de emisión a cada lado del OFC principal (Figura \ref{Img:MapGS-IO} (a)). El DOFC se desruye al aumentar la potencia de inyección, obteniendo un OFC simple en la regi\'on P1 para $P_{Iny} = 100\;\mu$W (Figura \ref{Img:MapGS-IO} (b)). Al aumentar $P_{Iny} = 200 \;\mu$W se produce un doblamiento de periodo P2, obteniendo un OFC cuyas frecuencias de separaci\'on entre pico es la mitad que para la regi\'on P1 (Figura \ref{Img:MapGS-IO} (c)). La región de caos, CHAOS, se obtiene para $P_{Iny} = 300\;\mu$W, para la que el OFC se destruye (Figura \ref{Img:MapGS-IO} (d)). Con altas potencias de inyecci\'on $P_{Iny} = 1000\;\mu$W y $ 20000\;\mu$W se alcanza nuevamente la regi\'on P1 con un pico m\'aximo para la frecuencia de inyecci\'on $\nu_{SL}$. Dentro de esta regi\'on, al aumentar $P_{Iny}$ tanto el ruido debido a la emisi\'on espont\'anea como los picos de emisi\'on que se encuentran a los lados del pico en $\nu_{SL}$ disminuyen, mientras que el pico co nla frecuencia de inyecci\'on aumenta. Esta tendencia puede indicar la existencia de una nueva regi\'on con IL para $P_{Iny}$ superiores a los valores con los que se ha trabajado.
+
+		Se han estudiado y comparado algunos casos concretos de las regiones mostradas en la Figura \ref{Img:MapGS-IO}, analizando el comportamiento de las variables internas con el objetivo de entender mejor los fen\'omenos que se producen en cada caso, de cara a realizar una correcta distinci\'on de las diferentes regiones din\'amicas.
+
+		En la Figura \ref{fig:p1-p2} se muestran los espectros \'opticos, $P(t)$ y el atractor en el espacio de los estados de las ecuaciones de balance, despreciando los efectos de la fase \'optica; para $\delta\nu = -2$GHz y $P_{Iny} = 100\;\mu$W y $200\;\mu$W.
 
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=1.0\linewidth]{p1-p2.png}
-				\caption{\label{fig:p1-p2}p1-P2}	
+				\caption{\label{fig:p1-p2}Espectros \'opticos, $P(t)$ y atractor en el espacio de los estados de las ecuaciones de balance, despreciando los efectos de la fase \'optica; para $\delta\nu = -2$GHz y $P_{Iny} = 100\;\mu$W (P1, naranja) y $200\;\mu$W (P2, azul).}	
 			\end{figure}
+
+		Los resultados de la Figura \ref{fig:p1-p2} permiten comparar m\'s a fondo las regiones P1 y P2, obteniendo para ambos casos dos OFC con similares perfiles pero cuya separaci\'on entre l\'ineas es la mitad para el caso de P2. Esto se puede observar en la Figura \ref{fig:p1-p2} (e) en la que la diferencia de amplitudes entre picos continuos produce que el periodo de las oscilaciones de $P(t)$ no sea el tiempo entre picos continuas, sino el tiempo entre picos con la misma amplitud, que es el doble. Tambi\'en se puede observar en la Figura \ref{fig:p1-p2} (f) en la que se obtiene una doble oscilación con un diagrama similar al de la Figura \ref{fig:P2zon} (f) para la regi\'on P2 del c\'apitulo anterior.
+
+		En la Figura \ref{fig:chaos} se muestran los espectros \'opticos, $P(t)$ y el atractor en el espacio de los estados de las ecuaciones de balance, despreciando los efectos de la fase \'optica; para $\delta\nu = -2$GHz y $P_{Iny} = 1\;\mu$W y $300\;\mu$W.
 
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=1.0\linewidth]{chaos.png}
-				\caption{\label{fig:chaos}Chaos}	
+				\caption{\label{fig:chaos}Espectros \'opticos, $P(t)$ y atractor en el espacio de los estados de las ecuaciones de balance, despreciando los efectos de la fase \'optica; para $\delta\nu = -2$GHz y $P_{Iny} = 1\;\mu$W (DOFC, naranja) y $300\;\mu$W (CHAOS, azul).}	
 			\end{figure}
+
+		El espectro \'optico del DOFC (Figura \ref{fig:chaos} (a)) permite observar varias l\'ineas de emisión bien resultas y con una anchura entre ellas pequeña y bien definida. Ambos espectros \'opticos presentan un perfil similar formado por una ancha banda de ruido debido a la emisi\'on espont\'anea y l\'ineas de emisión que emergen de \'esta. Para el caso de CHAOS estos picos de emisi\'on son mucho menores que para el DOFC. La diferencia entre ambas regiones se hace m\'as notoria en la potencia $P(t)$, en la que para el caso del CHAOS (Figura \ref{fig:chaos} (e)) se observan oscilaciones con diferentes amplitudes para cada pido y diferentes tiempos entre \'estos. Los atractores obtenidos no dejan ninguna duda a la diferncia entre ambas regiones, obteniendo un diagrama tipo caos para $P_{Iny} = 300\;\mu$W en el que se tiende a tomar valores entodo el espacio de estados. Para el caso del DOFC se obtiene un diagrama de tipo P1 (Figura \ref{fig:chaos} (c) pero con algunas diferencias en los trazos.
