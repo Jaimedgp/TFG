@@ -1,8 +1,10 @@
 Preguntas Angel:
-    ☐ Fig 3.6 Pwr in 1.20V picos diferentes
+    ☐ No he hecho mencion OFC nu separacion de lineas
+    ☐ hablar de movimiento browniano fig 4.3
+    ☐ Puedo hablar de atractor 2D en la figura 4.4????
+    ☐ No he hablado en Cpt4 del ruido 
 
 Intr_LsrSemiconductor:
-    ☐ Hablar de varcn de landa vs current
     ☐ Definicion de chirp
 
 Intr_Stochastic:
@@ -10,6 +12,7 @@ Intr_Stochastic:
 Intr_NonLinear:
 
 Intr_OFC:
+    ☐ hablar de GS depende de los picos y el pulso
 
 Mdl_RoF:
     ☐  Mencionar que se trabaja con un I_th y un WL_th
@@ -20,3 +23,6 @@ Mdl_Code:
     ☐ Trabajo en el transitorio sqrt(abs(S))
     ☐ Definir el chirp con la expresion
 
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+    ✔ Fig 3.6 Pwr in 1.20V picos diferentes @done(2019-09-12 16:47) @project(Preguntas Angel)
