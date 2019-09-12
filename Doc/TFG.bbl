@@ -6,8 +6,14 @@ Orazio Svelto and David~C Hanna.
 \newblock Springer, 1998.
 
 \bibitem{Chaves19}
-Diego Chaves~Carriles and Ángel~Alberto Valle~Gutierrez.
+Diego~Chaves y~Ángel Valle.
 \newblock Peines de frecuencia óptica generados por láseres de semiconductor.
-\newblock {\em Trabajo Fin de Grado}, 2020.
+\newblock {\em Trabajo Fin de Grado en preparaci\'on}.
+
+\bibitem{van1995semiconductor}
+GHM Van~Tartwijk and D~Lenstra.
+\newblock Semiconductor lasers with optical injection and feedback.
+\newblock {\em Quantum and Semiclassical Optics: Journal of the European
+  Optical Society Part B}, 7(2):87, 1995.
 
 \end{thebibliography}
