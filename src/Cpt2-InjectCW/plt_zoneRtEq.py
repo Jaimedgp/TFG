@@ -175,7 +175,7 @@ axs[2][0].get_shared_x_axes().join(axs[2][0], axs[2][1], axs[2][2])
 
 axs[1][2].get_shared_y_axes().join(axs[1][2], axs[1][0], axs[1][1])
 
-axs[0][0].set_ylabel("PSD")
+axs[0][0].set_ylabel("PSD [u.a.]")
 axs[1][0].set_ylabel("P(t) [mW]")
 axs[2][0].set_ylabel("$\Phi$")
 

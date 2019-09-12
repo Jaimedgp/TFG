@@ -138,7 +138,7 @@ for i in range(len(pwrInjct)):
         axs[i][j].plot(fftWL, TFavg, color='#1f77b4')
         axs[i][j].set_yscale('log')
         axs[i][j].set_xlabel("$\lambda$ [nm]")
-        axs[i][j].set_ylabel("PSD")
+        axs[i][j].set_ylabel("PSD [u.a.]")
         axs[i][j].set_xlim(psdLim[i][j][0])
         axs[i][j].set_ylim(psdLim[i][j][1])
         axs[i][j].annotate(zones[i][j], (0.1, 0.70),

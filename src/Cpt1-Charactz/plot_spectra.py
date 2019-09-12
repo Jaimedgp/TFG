@@ -53,8 +53,8 @@ for i in range(len(iBias)):
 
     plt.plot(fftWL, TFavg, label="%i mA" %(iBias[i]))
 
-plt.xlabel("$\lambda$ [nm]", fontsize=15)
-plt.ylabel("PSD", fontsize=15)
+plt.xlabel("$\lambda$ [nm]")
+plt.ylabel("PSD [u.a.]")
 plt.yscale("log")
 plt.xlim(1546.8, 1547.2)
 plt.ylim(0.9*10**(-12), 0.003)

@@ -66,7 +66,7 @@ axs[1].set_xlim([1546.1, 1547.6])
 axs[1].set_ylim([10**(-14), 0.7*10**(-3)])
 
 axs[0].set_ylabel("P(t) [mW]")
-axs[1].set_ylabel("PSD")
+axs[1].set_ylabel("PSD [u.a.]")
 
 axs[0].legend()
 axs[1].legend()

@@ -71,7 +71,7 @@ for i in range(len(vRF)):
 
     axs[i].plot(fftWL, TFavg, colors[i])
     axs[i].set_xlabel("$\lambda$ [nm]")
-    axs[i].set_ylabel("PSD")
+    axs[i].set_ylabel("PSD [u.a.]")
     axs[i].set_xlim([1546.0, 1547.75])
     axs[i].xaxis.set_major_locator(ticker.MultipleLocator(0.5))
     axs[i].xaxis.set_minor_locator(ticker.MultipleLocator(0.1))

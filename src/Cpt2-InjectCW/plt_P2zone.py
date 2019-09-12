@@ -149,7 +149,7 @@ for i in range(len(pwrInjct)):
 
     axs[i][0].plot(fftWL, TFavg, colors[i])
     axs[i][0].set_yscale("log")
-    axs[i][0].set_ylabel("PSD")
+    axs[i][0].set_ylabel("PSD [u.a.]")
     axs[i][0].set_xlabel("$\lambda$ [nm]")
     axs[i][0].set_xlim(psdLim[i][0])
     axs[i][0].set_ylim(psdLim[i][1])

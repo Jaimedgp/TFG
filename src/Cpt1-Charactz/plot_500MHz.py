@@ -72,7 +72,7 @@ for i in range(len(vRF)):
     axs[1][i].set_ylim(6.82*10**(-11))
 
 axs[0][0].set_ylabel("P(t) [mW]")
-axs[1][0].set_ylabel("PSD")
+axs[1][0].set_ylabel("PSD [u.a.]")
 
 axs[0][3].get_shared_y_axes().join(axs[0][0], axs[0][1], axs[0][2], axs[0][3])
 
