@@ -1,0 +1,78 @@
+La interacción entre los fotones y los portadores en un laser de semiconductor monomodo, incluyendo la fase del campo çóptico, puede ser modelado usando la aproximación de las ecuaciones de balance conocida \cite{artSim}, \cite{schunk1986noise}, \cite{fatadin2006numerical}. A continuación se muestran las ecuaciones utilizadas para describir la dinámica de la densidad de portadores ($N(t))$,  la densidad de fotones ($S(t)$) y la fase óptica ($\Phi(t)$).
+
+	\begin{equation}
+		\frac{\mathrm{d} N}{\mathrm{d} t} = \frac{I(t)}{e V_{act}} - R(N) - \frac{v_g \textrm{g}(N)S(t)}{1 + \epsilon S(t)} 
+		\label{eq:RtEq-N}
+	\end{equation}
+
+	\begin{equation}
+		\frac{\mathrm{d} S}{\mathrm{d} t} = \left[ \frac{\Gamma v_g \textrm{g}(N)}{1 - \epsilon S(t)} - \frac{1}{\tau_p} \right] S(t) + \beta \Gamma BN^2 (t) + \sqrt{2 \beta \Gamma B N^2(t)S(t)} F_S(t) + Y_S(t)
+		\label{eq:RtEq-S}
+	\end{equation}
+
+	\begin{equation}
+		\frac{\mathrm{d} \Phi}{\mathrm{d} t} = \frac{\alpha}{2}\left[ \Gamma v_g  - \frac{1}{\tau_p} \right] + + \sqrt{\frac{\beta \Gamma B N^2(t)}{2 S(t))}} F_{\Phi} (t) + Y_{\Phi}(t)
+		\label{eq:RtEq-Ph}
+	\end{equation}
+
+	En las ecuaciones \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph} aparecen la corriente inyectada $I(t)$, $V_{act}$ el volumen activo, $e$ la carga del electrón, $R(N)$ el ratio de recombinación de la carga, $v_g$ la velocidad de grupo, $g(N)$ la ganancia del material, $\epsilon$ el coeficiente no lineal de ganancia, $\Gamma$ el factor de confinamiento óptico, $\tau_p$ el tiempo de vida del fotón, $\beta$ la fracción de emisión espontánea acoplada al modo del láser y $\alpha$ el factor de realzamiento del ancho de línea. Los términos $Y_S(t)$ y $Y_{\Phi}(t)$ describen la inyección óptica externa, y sus expresiones se detallarán más adelante. En la ecuación \ref{eq:RtEq-Ph} se ha incluido un término adicional $C(I)$ que depende de la corriente inyectada y tiene en cuenta los cambios producidos por la variación de temperatura.
+
+Los términos de Langevin $F_S$ y $F_{\Phi}$ de las ecuaciones \ref{eq:RtEq-S} y \ref{eq:RtEq-Ph}, representan ruidos estocásticos adicionales provenientes de diferentes fuentes, con las siguientes relaciones de correlación:
+
+	\begin{equation}
+		\left \langle F_i(t)F_j(t') \right \rangle = 2\delta_{ij}\delta(t'-t)
+		\label{eq:NoiseCorre}
+	\end{equation}
+
+En la ecuación \ref{eq:NoiseCorre} $\delta(t)$ es la función delta de Dirac y $\delta_{ij}$ es la función delta de Kronecker, con los subíndices $i$ y $j$ referentes a las variables $S$ y $\Phi$.
+
+La ganancia del material $g(N)$ viene descrita por la ecuación \ref{eq:MatGain}, donde $\frac{\mathrm{d}g}{\mathrm{d}N}$ es la ganancia diferencial y $N_{tr}$ es la densidad de portadores en transpariencia.
+
+	\begin{equation}
+		g(N) = \frac{\mathrm{d}g}{\mathrm{d}N} (N - N_{tr})
+		\label{eq:MatGain}
+	\end{equation}
+
+La recombinación de portadores $R(N)$ se muestra en el ecuación \ref{eq:CarriRcom}, con $A$, $B$ y $C$ los coeficientes de recombinación no radiativa, espontánea y de Auger, respectivamente.
+
+	\begin{equation}
+		R(N) = AN + BN^2 + CN^3
+		\label{eq:CarriRcom}
+	\end{equation}
+
+Si se desprecian los efectos el\'ectricos de alta frecuencia, se puede espresar la frecuencia inyectada $I(t)$ tal y como se muestra en la ecuación \ref{eq:gainSwtching}.
+
+	\begin{equation}
+		I(t) = \ibias + \frac{2\sqrt{2}V_{RF}}{Z_0+Z_l} \sin(2\pi f_R t)
+		\label{eq:gainSwtching}
+	\end{equation}
+
+	En la ecuación \ref{eq:gainSwtching} $\ibias$ es la corriente de polarización, $f_R$ la frecuencia de repetici\'on, $C_{loss}$ un coeficiente de p\'erdida que tiene en cuenta la dependencia con la frecuencia de la atenuaci\'on el\'ectrica de los cables, $V_{RF}$ la media cuadr\'atica del valor del voltaje del generador de señal aplicado a una carga ideal de $50 \Omega$, $Z_0$ la impedancia de salida del generador, y $Z_l$ la impedancia del m\'odulo l\'aser.
+
+	La potencia de salida del l\'aser es obtenida apartir de la densidad de fotones $S(t)$ mediante la ecuaci\'on \ref{eq:Power}, donde $\eta_f$ es la eficiencia cu\'antica externa en fibra dada por el producto de la eficiencia cu\'antica diferencial y la eficiencia de acoplamineto, $h$ es la constante de Plank y $f_0$ es la frecuencia de emisión del l\'aser.
+
+	\begin{equation}
+		P(t) = \eta_f \frac{h f_0 V_{act}}{\Gamma \tau_p} S(t)
+		\label{eq:Power}
+	\end{equation}
+
+	Para los casos en los que se tenga inyecci\'on \'optica, \'esta vendr\'a dada por los t\'erminos $Y_S$ y $Y_{\Phi}$ de las ecuaciones \ref{eq:RtEq-S} y \ref{eq:RtEq-S} \cite{schunk1986noise}.
+
+	\begin{equation}
+		Y_S = 2k_c\sqrt{S(t)S_{Iny}} \cos(\Phi(t) - 2\pi \delta\nu't)
+		\label{eq:Iny-S}
+	\end{equation}
+
+	\begin{equation}
+		Y_{\Phi} = -k_c\sqrt{\frac{S_{Iny}}{S(t)}} \sin(\Phi(t) - 2\pi \delta\nu't)
+		\label{eq:Iny-Phi}
+	\end{equation}
+
+En las ecuaciones \ref{eq:Iny-S} y \ref{eq:Iny-Phi} el t\'ermino $S_{Iny}$ hace referencia a la densidad de fotones debida a la inyecci\'on \'optica, que es proporcional a la potencia de inyecci\'on $P_{Iny}$ a partir de la ecuación \ref{eq:Power}. El t\'ermino $k_c$ es el coeficiente de ecoplamiento entre el l\'aser maestro y el l\'aser esclavo, y $\delta \nu'$ es la desviaci\'on del campo del l\'aser inyectado respecto a la frecuencia del l\'aser esclavo en el umbral.
+
+De cara a la obtenci\'on de los espectros \'opticos y los peines de frecuencia, se ha descrito el campo \'optico total $E_T(t)$ como una onda con amplitud proporcional a la potencia de salida $P(t)$ y fase la fase \'optica del l\'aser $\Phi(t)$, tal y como se muestra en la ecuaci\'on \ref{eq:OpField}.
+
+	\begin{equation}
+		E_T(t) = \sqrt{P(t)} e^{i \Phi(t)}
+		\label{eq:OpField}
+	\end{equation}
