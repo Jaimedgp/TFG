@@ -1,69 +1,107 @@
 El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semiconductor \gs\ se ha desarrollado utilizando el lenguaje de programaci\'on Python, versi\'on python 2.7. Los diferentes scripts utilizados para la simulaci\'on \cite{github} permiten resolver las ecuaciones de balance \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph}.
 
-Para el c\'alculo de las ecuaciones de balance se ha utilizado el m\'etodo de resoluci\'on de ecuaciones estoc\'asticas descrito en la secci\'on \ref{Intr:PrcsEstcs}, expandiento las ecuaciones \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph} con las expresiones  \ref{eq:MatGain} \ref{eq:CarriRcom} y \ref{eq:gainSwtching}. Se han incluido tambi\'en los t\'erminos de la inyecci\'on \'optica \ref{eq:Iny-S} y \ref{eq:Iny-Phi}.
 
-	\begin{equation}
-		\begin{matrix}
-			N(t + \mathrm{d}t) =  & N(t) + \frac{\Delta t \ibias }{e V_{act}} + \frac{\Delta t C_{loss} 2 \sqrt{2} V_{RF}}{eV_{act} (Z_0+Z_l)} \sin(2\pi f_R t) \\ \\
-			 & - A\Delta t N(t) - B\Delta t N(t)^2 - C\Delta t N(t)^3 \\ \\
-			 & - v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon}  + v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon}
-		\end{matrix}
-		\label{eq:Code-N}
-	\end{equation}
+	\addtocontents{toc}{\vspace{0.1cm}}
+	\subsection{Desarrollo de las Ecuaciones de Balance}
+		\label{Mdl:Code:RtEq}
 
-	\begin{equation}
-		\begin{matrix}
-			S(t + \mathrm{d}t) =  & S(t) + \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon} - \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon} \\ \\
-			 & - \frac{\Delta t}{\tau_p}S(t) + \beta\Gamma B\Delta t N(t)^2 + \sqrt{2 \beta \Gamma B \Delta tN^2(t)S(t)} X_i \\ \\
-			 & + 2k_c\sqrt{S(t)S_{Iny}} \cos(\Phi(t) - 2\pi \delta\nu't)
-		\end{matrix}
-		\label{eq:Code-S}
-	\end{equation}
+		Para el c\'alculo de las ecuaciones de balance se ha utilizado el m\'etodo de resoluci\'on de ecuaciones estoc\'asticas descrito en la secci\'on \ref{Intr:PrcsEstcs}, expandiento las ecuaciones \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph} con las expresiones  \ref{eq:MatGain} \ref{eq:CarriRcom} y \ref{eq:gainSwtching}. Se han incluido tambi\'en los t\'erminos de la inyecci\'on \'optica \ref{eq:Iny-S} y \ref{eq:Iny-Phi}.
 
-	\begin{equation}
-		\begin{matrix}
-			\Phi(t + \mathrm{d}t) =  & \Phi(t) + \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) - \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d} g}{\mathrm{d}N} N_{tr} - \frac{\alpha\Delta t}{2\tau_p} + 2\pi\Delta\nu(I)\Delta t \\ \\
-			 & + \sqrt{\frac{\beta \Gamma B \Delta t N^2(t)}{2 S(t))}} Y_i - k_c\sqrt{\frac{S_{Iny}}{S(t)}} \sin(\Phi(t) - 2\pi \delta\nu't)
-		\end{matrix}
-		\label{eq:Code-Ph}
-	\end{equation}
+			\begin{equation}
+				\begin{matrix}
+					N(t + \mathrm{d}t) =  & N(t) + \frac{\Delta t \ibias }{e V_{act}} + \frac{\Delta t C_{loss} 2 \sqrt{2} V_{RF}}{eV_{act} (Z_0+Z_l)} \sin(2\pi f_R t) \\ \\
+					& - A\Delta t N(t) - B\Delta t N(t)^2 - C\Delta t N(t)^3 \\ \\
+					& - v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon}  + v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon}
+				\end{matrix}
+				\label{eq:Code-N}
+			\end{equation}
 
-En las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} aparecen: $\Delta t$ el tiempo de integraci\'on, $\Delta\nu(I)$ la diferencia de frecuencias entre la frecuencia de emisi\'on a $\ibias$ y la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y los t\'erminos de ruido gaussiano $X_i$ e $Y_i$ con $N(0, 1)$ e independientes entre s\'i. Para estos t\'erminos de ruido gaussiano $X_i$ e $Y_i$ se ha utlizado la funci\'on \texttt{numpy.random.normal(loc=0, scale=1, size=nTotal)} de la libreria \texttt{NumPy} para Python \cite{numpy}.
+			\begin{equation}
+				\begin{matrix}
+					S(t + \mathrm{d}t) =  & S(t) + \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon} - \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon} \\ \\
+					& - \frac{\Delta t}{\tau_p}S(t) + \beta\Gamma B\Delta t N(t)^2 + \sqrt{2 \beta \Gamma B \Delta tN^2(t)S(t)} X_i \\ \\
+					& + 2k_c\sqrt{S(t)S_{Iny}} \cos(\Phi(t) - 2\pi \delta\nu't)
+				\end{matrix}
+				\label{eq:Code-S}
+			\end{equation}
 
-Apartir de estas ecuaciones se han obtenido diferentes t\'erminos que no dependen del tiempo (independientes de $N(t)$ y $S(t)$), permitiendo ser calculados antes de la ejecuci\'on de la simulaci\'on. \'Esto se realiza en el script \texttt{Constants.py}, que es importado al realizar la simulaci\'on, ahorrando tiempo de computaci\'on. Con \'este objetivo tambi\'en se han desarrollado las funciones seno y coseno de los t\'erminos de la inyecci\'on teniendo en cuenta las propiedades de esta\'as funciones para resta de \'angulos.
+			\begin{equation}
+				\begin{matrix}
+					\Phi(t + \mathrm{d}t) =  & \Phi(t) + \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) - \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d} g}{\mathrm{d}N} N_{tr} - \frac{\alpha\Delta t}{2\tau_p} + 2\pi\Delta\nu(I)\Delta t \\ \\
+					& + \sqrt{\frac{\beta \Gamma B \Delta t N^2(t)}{2 S(t))}} Y_i - k_c\sqrt{\frac{S_{Iny}}{S(t)}} \sin(\Phi(t) - 2\pi \delta\nu't)
+				\end{matrix}
+				\label{eq:Code-Ph}
+			\end{equation}
 
-	\begin{equation}
-		\begin{matrix}
-			\sin(u - v) = \sin(u)\cos(v) - \cus(u)\sin(v) \\ \\
+		En las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} aparecen: $\Delta t$ el tiempo de integraci\'on, $\Delta\nu(I)$ la diferencia de frecuencias entre la frecuencia de emisi\'on a $\ibias$ y la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y los t\'erminos de ruido gaussiano $X_i$ e $Y_i$ con $N(0, 1)$ e independientes entre s\'i. Para estos t\'erminos de ruido gaussiano $X_i$ e $Y_i$ se ha utlizado la funci\'on \texttt{numpy.random.normal(loc=0, scale=1, size=nTotal)} de la libreria \texttt{NumPy} para Python \cite{numpy}.
 
-			\cos(u - v) = \cos(u)\cos(v) + \sin(u)\sin(v) 
-		\end{matrix}
-	\end{equation}
+		Apartir de estas ecuaciones se han obtenido diferentes t\'erminos que no dependen del tiempo (independientes de $N(t)$ y $S(t)$), permitiendo ser calculados antes de la ejecuci\'on de la simulaci\'on. \'Esto se realiza en el script \texttt{Constants.py}, que es importado al realizar la simulaci\'on, ahorrando tiempo de computaci\'on. Con \'este objetivo tambi\'en se han desarrollado las funciones seno y coseno de los t\'erminos de la inyecci\'on teniendo en cuenta las propiedades de esta\'as funciones para resta de \'angulos.
 
-	Los t\'erminos de la inyecci\'on \'optica $Y_S$ e $Y_{\Phi}$ de las ecuaciones \ref{eq:Iny-S} y \ref{eq:Iny-Phi} vienen ccaracterizados por $S_{Iny}$ y $\delta\nu'$. Sin embargo, para un mayor entendimiento en la comparaci\'on con los resultados experimentales, la inyecci\'on \'optica en la simulaci\'on ha sido caracterizada por su potencia inyectada $P_{Iny}$, pudiendo obtener $S_{Iny}$ con la ecuaci\'on \ref{eq:Power}, y por la diferencia de frecuencias $\delta\nu$ entre la frecuencia de inyecci\'on del l\'aser maestro $\nu_{ML}$ y la frecuencia de emisi\'on del l\'aser esclavo sin \gs\ $\nu_{SL}$, que depende de la corriente $\ibias$. Puesto que $\delta\nu'$ viene definido por la frecuencia de emisi\'on del l\'aser esclavo en el umbral $\nu_{th}$, es necesario realizar un cambio de variable.
+			\begin{equation}
+				\begin{matrix}
+					\sin(u - v) = \sin(u)\cos(v) - \cus(u)\sin(v) \\ \\
 
-	\begin{equation}
-		\delta\nu' = \delta\nu - \nu_{th} + \nu
-	\end{equation}
+					\cos(u - v) = \cos(u)\cos(v) + \sin(u)\sin(v) 
+				\end{matrix}
+			\end{equation}
 
-	Tambi\'en se observa en la ecuaci\'on \ref{eq:Code-N} como la modulaci\'on de la corriente $I(t)$ solo depende del tiempo, por lo que $\sin(2\pi f_R t)$ puede ser calculado y almacenado en un vector al comienzo de la simulaci\'on, ahorrando tiempo de c\'alculo. Se ha considerado $C_{loss} = 1$ para simplificar los c\'alculos \cite{Chaves19}.
+		Los t\'erminos de la inyecci\'on \'optica $Y_S$ e $Y_{\Phi}$ de las ecuaciones \ref{eq:Iny-S} y \ref{eq:Iny-Phi} vienen ccaracterizados por $S_{Iny}$ y $\delta\nu'$. Sin embargo, para un mayor entendimiento en la comparaci\'on con los resultados experimentales, la inyecci\'on \'optica en la simulaci\'on ha sido caracterizada por su potencia inyectada $P_{Iny}$, pudiendo obtener $S_{Iny}$ con la ecuaci\'on \ref{eq:Power}, y por la diferencia de frecuencias $\delta\nu$ entre la frecuencia de inyecci\'on del l\'aser maestro $\nu_{ML}$ y la frecuencia de emisi\'on del l\'aser esclavo sin \gs\ $\nu_{SL}$, que depende de la corriente $\ibias$. Puesto que $\delta\nu'$ viene definido por la frecuencia de emisi\'on del l\'aser esclavo en el umbral $\nu_{th}$, es necesario realizar un cambio de variable.
 
-	En \texttt{Constants.py} se computan, junto con los t\'erminos nindependientes de $N(t)$ y $S(t)$ de las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph}, el resto de par\'ametros de dichas ecuaciones necesarios para la realizaci\'on de la simulaci\'on, obtenidos de \cite{artSim} y \cite{Chaves19}.
+			\begin{equation}
+				\delta\nu' = \delta\nu - \nu_{th} + \nu
+			\end{equation}
 
-	Puesto que en las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} se trabaja en referencia a una corriente umbral y una frecuencia umbral, es necesario tener en cuenta los cambios de determinados t\'erminos con la corriente de polarización $\ibias$. En el script \texttt{getDictValues.py} se inicializan los diferentes valores de la frecuencia de emisión $\nu$, la diferencia de frecuencias respecto a la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y el corrimiento de frecuencias de la transformada r\'apida de Fourier; en diccionarios de python.
+		Tambi\'en se observa en la ecuaci\'on \ref{eq:Code-N} como la modulaci\'on de la corriente $I(t)$ solo depende del tiempo, por lo que $\sin(2\pi f_R t)$ puede ser calculado y almacenado en un vector al comienzo de la simulaci\'on, ahorrando tiempo de c\'alculo. Se ha considerado $C_{loss} = 1$ para simplificar los c\'alculos \cite{Chaves19}.
+
+		En \texttt{Constants.py} se computan, junto con los t\'erminos nindependientes de $N(t)$ y $S(t)$ de las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph}, el resto de par\'ametros de dichas ecuaciones necesarios para la realizaci\'on de la simulaci\'on, obtenidos de \cite{artSim} y \cite{Chaves19}.
+
+		Puesto que en las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} se trabaja en referencia a una corriente umbral y una frecuencia umbral, es necesario tener en cuenta los cambios de determinados t\'erminos con la corriente de polarización $\ibias$. En el script \texttt{getDictValues.py} se inicializan los diferentes valores de la frecuencia de emisión $\nu$, la diferencia de frecuencias respecto a la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y el corrimiento de frecuencias de la transformada r\'apida de Fourier (FFT de sus siglas en ingl\'es); en diccionarios de python.
 
 	\addtocontents{toc}{\vspace{0.1cm}}
 	\subsection{Transformada R\'apida de Fourier}
-		\label{Mdl:Code:Temp}
+		\label{Mdl:Code:FFT}
+
+		Los esp\'ectros \'opticos del l\'aser de semiconductor se obtiene a partir del m\'odulo cuadrado de la transformada de Fourier del campo el\'ectrico total $E_T(t)$ de la ecuaci\'on \ref{eq:OpField}. Para ello se ha utilizado la función \texttt{numpy.fft.fft()} para la FFT y \texttt{numpy.abs()} para el m\'odulo, de la librer\'ia NumPy \cite{numpy}.
+
+		La claser \texttt{numpy.fft} utiliza los algoritmos \cite{numerical} y \cite{cooley1965algorithm} para la resoluci\'on de la FFT, devolviendo un array de n\'umeros complejos con el tamaño del array introducido. El espectro \'optico es una variable real por lo que corresponde al m\'odulo de dicho array. 
+
+		Las frecuencias de la FFT realizada para un paso de $\Delta N$ viene dado por el intervalo $[-\frac{1}{2\Delta N}, \frac{1}{2\Delta N})$ centrado en el cero. Para el caso del l\'aser de semiconductor se ha de realizar una correcci\'on en dicho intervalo de tal forma que se corra centr\'andolo en la frecuencia de emisi\'on en el umbral $\nu_{th}$. 
 
 	\addtocontents{toc}{\vspace{0.1cm}}
-	\subsection{T\'ermino de la temperatura}
+	\subsection{T\'ermino de la fase}
 		\label{Mdl:Code:Temp}
 
-		Explicar el termino de la temperatura
+		Realizando un estudio de la fase \'optica, despreciando los efectos del factor $\alpha =0$, se observa como al trabajar con frecuencias relativas a la frecuencia umbral se produce un desfase de $2\pi \nu_{th}$, por lo que las frecuencias de la FFT obtenidas en el apartado anterior \ref{Mdl:Code:FFT} han de corregirse desplazando el intervalo de tal manera que se encuentre centrado en la frecuencia de emisi\'on en la corriente umbral.
 
+		Sin embargo, al realizar las simulaciones con dicha correcci\'on se observo una discrepancia entre las frecuencias obtenidas con las experimentales, lo que llev\'o a pensar que se deb\'ia realizar una segunda correcci\'on.
+
+		Al considerar $\alpha > 0$ el desfaser aumenta y as\'i se ha de realizar otra correcci\'on en las frecuecias de la FFT. Para la obtenci\'on del valor de esta segunda correcci\'on se han simulado las variables internas despreciando para la fase \'optica los t\'erminos de inyecci\'on \'optica $Y_{\Phi}$, ruido estoc\'astico $Y_i$ y de la temperatura $\Delta \nu(I)$, y trabajando en corriente continua.
+
+			\begin{equation}
+				C (I) = \frac{\alpha}{2} \left[ \Gamma v_g \frac{\mathrm{d} g}{\mathrm{d} N} - \frac{1}{\tau_p} \right]
+				\label{eq:Correc}
+			\end{equation}
+
+			Se obtiene que para corriente continua la expresi\'on \ref{eq:Correc} toma un valor aproximadamente constante para tiempos grandes, dependiendo dicho valor de la corriente utilizada. En el script \texttt{get\_phaseTerm.py} se han obtenido varios valores de $C(I)$ para diferentes corrientes $\ibias$, corrigiendo nuevamente las frecuencias de la FFT para dichos valores.
+		
 	\addtocontents{toc}{\vspace{0.1cm}}
 	\subsection{Transitorio}
 		\label{Mdl:Code:Trans}
 
-		Explicar el transitorio
+		Al incluir el t\'ermino de ruido de $S(t)$ en la simulaci\'on se obtuvo un errir de c\'alculo debido al factor $\sqrt{S(t)}$. Esto se debe a que para tiempos pequeños el término de ruido $Y_i$ produce grandes cambios en $S(t)$, pudiendose obtener valores negativos y así $\sqrt{S(t)}$ no tiene soluciçón real. Sin embargo, para tiempos mayores $S(t)$ crece lo sufiente como para no observarse valores negativos. En estos tiempos pequeños el láser comienza a encenderse y a realizar un comportamiento anarmónico, no siendo esta región de interés para el estudio de la formación de los espectros.
+
+		Por este motivo, la solución a este error ha sido tomar un tiempo inicial, transitorio, en el que se ha modificado la ecuación \ref{eq:Code-S} trabajando con $\sqrt{|S(t)|}$ de tal forma que no se produzca dicho error. Este tiempo ha de ser suficientemente grande como para que pasado dicho tiempo no se observe dicho comportamiento y la ecuación \ref{eq:Code-S} vuelva a ser v\'alida. Los resultados para dicho tiempo se han despreciado, no considerandose para los espectos \'opticos.
+
+		Una soluci\'on m\'as rigurosa a este problema habr\'ia consistido en bajar el paso de integraci\'on lo sufiente como para que el efecto de $Y_i$ no consiga cambiar el signo de $S(t)$. Dicha soluci\'on se desestim\'o debido al enorme coste computacional que requer\'ia, ya que hubiese sido necesario disminuir el paso de integraci\'on m\'as de dos ordenes de magnitud.
+
+	\addtocontents{toc}{\vspace{0.1cm}}
+	\subsection{Simulaci\'on Principal}
+		\label{Mdl:Code:main}
+		
+		La simulaci\'on principal de las variables internas del l\'aser se realizan en la clase \texttt{Simulation(iBias, vRF, fR, pwrInjct=0, nuDetng=0, numWindw=1)} (Ap\'endice \ref{App:Code}). A esta clase se les pasa como parametros los valores de $\ibias$, $V_{RF}$, $f_R$, $P_{Iny}$ y $\delta\nu$ que caracterizan tanto el \gs\ como la inyección \'optica. Adem\'as, se pasa el n\'umero de ventanas para realizar la simulaci\'on. Esto es debido a la definici\'on del espectro \'optico como un promedio, y as\'i, se deber\'ia realizar la FFT para varias ventanas. Sin embargo, se ha trabajado con una sola ventana para obtener un mayor acuerdo con los resultados experimentales, en los que no se ha realizado ning\'un promedio.
+
+		Dentro de esta clase se definen los tiempos de la ventana y del transitorio. Debido al algoritmo utilizado para la FFT se ha cumplir que el tiempo de la ventana sea el paso de la FFT $\Delta N$ por una potencia de dos $\frac{t_{Total}}{\Delta N} = 2^n$.
+
+		En la simulaci\'on se ha trabajado con diferentes bucles que recorren diferentes intervalos de tiempo. El primer bucle hace referencia a las ventanas de trabajo para las que se va arealizar el promedio de la resoluci\'on de las ecuaciones de balance. Dentro de este bucle es donde se inicializan los vectores de ruido gaussiano y se resuelven la ecuaciones en dos bloques. En el primer bloque se realiza la integraci\'on de las ecuaciones para el tiempo del transitorio, trabajando con el arreglo de $\sqrt{|S(t)|}$. En el segundo bloque se realiza para el tiempo total de la ventana, y se almacenan los resultados de las variables. Ambos bloques comparten la misma estructura formada por dos bucles: el primero que recorre el tiempo de la ventana (o transitorio), con pasos de la FFT $\Delta N$; y otro que recorre los pasos de la FFT para los pasos de la integraci\'on. El c\'alculo de las variables se realiza dentro de \'este segundo bucle y al finalizar, se calcula el campo electrico (ecuaci\'on \ref{eq:OpField}) y se almacena junto con el \'ultimo valor obtenido de $N(t)$, $S(t)$ y $\Phi(t)$, volviendo a realizar el proceso para cada intervalo $\Delta N$. 
+
+		Una vez finalizados todos los bucles se obtiene el vector del campo el\'ectrico con $2^n$ valores, y se obtiene el espectro de potencias a partir de su FFT. Este proceso se realiza para cada ventana, obteniendo el promedio de todos los espectros de potencias.
