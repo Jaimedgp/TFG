@@ -22,13 +22,13 @@ Para el c\'alculo de las ecuaciones de balance se ha utilizado el m\'etodo de re
 
 	\begin{equation}
 		\begin{matrix}
-			\Phi(t + \mathrm{d}t) =  & \Phi(t) + \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) - \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d} g}{\mathrm{d}N} N_{tr} - \frac{\alpha\Delta t}{2\tau_p} + C'(I) \\ \\
+			\Phi(t + \mathrm{d}t) =  & \Phi(t) + \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) - \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d} g}{\mathrm{d}N} N_{tr} - \frac{\alpha\Delta t}{2\tau_p} + 2\pi\Delta\nu(I)\Delta t \\ \\
 			 & + \sqrt{\frac{\beta \Gamma B \Delta t N^2(t)}{2 S(t))}} Y_i - k_c\sqrt{\frac{S_{Iny}}{S(t)}} \sin(\Phi(t) - 2\pi \delta\nu't)
 		\end{matrix}
 		\label{eq:Code-Ph}
 	\end{equation}
 
-En las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} aparecen $\Delta t$ el tiempo de integraci\'on y los t\'erminos de ruido gaussiano $X_i$ e $Y_i$ con $N(0, 1)$ e independientes entre s\'i. Para estos t\'erminos de ruido gaussiano $X_i$ e $Y_i$ se ha utlizado la funci\'on \texttt{numpy.random.normal(loc=0, scale=1, size=nTotal)} de la libreria \texttt{NumPy} para Python \cite{numpy}.
+En las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} aparecen: $\Delta t$ el tiempo de integraci\'on, $\Delta\nu(I)$ la diferencia de frecuencias entre la frecuencia de emisi\'on a $\ibias$ y la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y los t\'erminos de ruido gaussiano $X_i$ e $Y_i$ con $N(0, 1)$ e independientes entre s\'i. Para estos t\'erminos de ruido gaussiano $X_i$ e $Y_i$ se ha utlizado la funci\'on \texttt{numpy.random.normal(loc=0, scale=1, size=nTotal)} de la libreria \texttt{NumPy} para Python \cite{numpy}.
 
 Apartir de estas ecuaciones se han obtenido diferentes t\'erminos que no dependen del tiempo (independientes de $N(t)$ y $S(t)$), permitiendo ser calculados antes de la ejecuci\'on de la simulaci\'on. \'Esto se realiza en el script \texttt{Constants.py}, que es importado al realizar la simulaci\'on, ahorrando tiempo de computaci\'on. Con \'este objetivo tambi\'en se han desarrollado las funciones seno y coseno de los t\'erminos de la inyecci\'on teniendo en cuenta las propiedades de esta\'as funciones para resta de \'angulos.
 
