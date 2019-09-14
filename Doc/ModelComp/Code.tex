@@ -1,5 +1,60 @@
+El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semiconductor \gs\ se ha desarrollado utilizando el lenguaje de programaci\'on Python, versi\'on python 2.7. Los diferentes scripts utilizados para la simulaci\'on \cite{github} permiten resolver las ecuaciones de balance \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph}.
 
-Se explicar\'a el codigo utilizado para el trabajo
+Para el c\'alculo de las ecuaciones de balance se ha utilizado el m\'etodo de resoluci\'on de ecuaciones estoc\'asticas descrito en la secci\'on \ref{Intr:PrcsEstcs}, expandiento las ecuaciones \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph} con las expresiones  \ref{eq:MatGain} \ref{eq:CarriRcom} y \ref{eq:gainSwtching}. Se han incluido tambi\'en los t\'erminos de la inyecci\'on \'optica \ref{eq:Iny-S} y \ref{eq:Iny-Phi}.
+
+	\begin{equation}
+		\begin{matrix}
+			N(t + \mathrm{d}t) =  & N(t) + \frac{\Delta t \ibias }{e V_{act}} + \frac{\Delta t C_{loss} 2 \sqrt{2} V_{RF}}{eV_{act} (Z_0+Z_l)} \sin(2\pi f_R t) \\ \\
+			 & - A\Delta t N(t) - B\Delta t N(t)^2 - C\Delta t N(t)^3 \\ \\
+			 & - v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon}  + v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon}
+		\end{matrix}
+		\label{eq:Code-N}
+	\end{equation}
+
+	\begin{equation}
+		\begin{matrix}
+			S(t + \mathrm{d}t) =  & S(t) + \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) \frac{1}{1/S(t) + \epsilon} - \Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N_{tr} \frac{1}{1/S(t) + \epsilon} \\ \\
+			 & - \frac{\Delta t}{\tau_p}S(t) + \beta\Gamma B\Delta t N(t)^2 + \sqrt{2 \beta \Gamma B \Delta tN^2(t)S(t)} X_i \\ \\
+			 & + 2k_c\sqrt{S(t)S_{Iny}} \cos(\Phi(t) - 2\pi \delta\nu't)
+		\end{matrix}
+		\label{eq:Code-S}
+	\end{equation}
+
+	\begin{equation}
+		\begin{matrix}
+			\Phi(t + \mathrm{d}t) =  & \Phi(t) + \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d}g}{\mathrm{d}N} \Delta t N(t) - \frac{\alpha}{2}\Gamma v_g \frac{\mathrm{d} g}{\mathrm{d}N} N_{tr} - \frac{\alpha\Delta t}{2\tau_p} + C'(I) \\ \\
+			 & + \sqrt{\frac{\beta \Gamma B \Delta t N^2(t)}{2 S(t))}} Y_i - k_c\sqrt{\frac{S_{Iny}}{S(t)}} \sin(\Phi(t) - 2\pi \delta\nu't)
+		\end{matrix}
+		\label{eq:Code-Ph}
+	\end{equation}
+
+En las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} aparecen $\Delta t$ el tiempo de integraci\'on y los t\'erminos de ruido gaussiano $X_i$ e $Y_i$ con $N(0, 1)$ e independientes entre s\'i. Para estos t\'erminos de ruido gaussiano $X_i$ e $Y_i$ se ha utlizado la funci\'on \texttt{numpy.random.normal(loc=0, scale=1, size=nTotal)} de la libreria \texttt{NumPy} para Python \cite{numpy}.
+
+Apartir de estas ecuaciones se han obtenido diferentes t\'erminos que no dependen del tiempo (independientes de $N(t)$ y $S(t)$), permitiendo ser calculados antes de la ejecuci\'on de la simulaci\'on. \'Esto se realiza en el script \texttt{Constants.py}, que es importado al realizar la simulaci\'on, ahorrando tiempo de computaci\'on. Con \'este objetivo tambi\'en se han desarrollado las funciones seno y coseno de los t\'erminos de la inyecci\'on teniendo en cuenta las propiedades de esta\'as funciones para resta de \'angulos.
+
+	\begin{equation}
+		\begin{matrix}
+			\sin(u - v) = \sin(u)\cos(v) - \cus(u)\sin(v) \\ \\
+
+			\cos(u - v) = \cos(u)\cos(v) + \sin(u)\sin(v) 
+		\end{matrix}
+	\end{equation}
+
+	Los t\'erminos de la inyecci\'on \'optica $Y_S$ e $Y_{\Phi}$ de las ecuaciones \ref{eq:Iny-S} y \ref{eq:Iny-Phi} vienen ccaracterizados por $S_{Iny}$ y $\delta\nu'$. Sin embargo, para un mayor entendimiento en la comparaci\'on con los resultados experimentales, la inyecci\'on \'optica en la simulaci\'on ha sido caracterizada por su potencia inyectada $P_{Iny}$, pudiendo obtener $S_{Iny}$ con la ecuaci\'on \ref{eq:Power}, y por la diferencia de frecuencias $\delta\nu$ entre la frecuencia de inyecci\'on del l\'aser maestro $\nu_{ML}$ y la frecuencia de emisi\'on del l\'aser esclavo sin \gs\ $\nu_{SL}$, que depende de la corriente $\ibias$. Puesto que $\delta\nu'$ viene definido por la frecuencia de emisi\'on del l\'aser esclavo en el umbral $\nu_{th}$, es necesario realizar un cambio de variable.
+
+	\begin{equation}
+		\delta\nu' = \delta\nu - \nu_{th} + \nu
+	\end{equation}
+
+	Tambi\'en se observa en la ecuaci\'on \ref{eq:Code-N} como la modulaci\'on de la corriente $I(t)$ solo depende del tiempo, por lo que $\sin(2\pi f_R t)$ puede ser calculado y almacenado en un vector al comienzo de la simulaci\'on, ahorrando tiempo de c\'alculo. Se ha considerado $C_{loss} = 1$ para simplificar los c\'alculos \cite{Chaves19}.
+
+	En \texttt{Constants.py} se computan, junto con los t\'erminos nindependientes de $N(t)$ y $S(t)$ de las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph}, el resto de par\'ametros de dichas ecuaciones necesarios para la realizaci\'on de la simulaci\'on, obtenidos de \cite{artSim} y \cite{Chaves19}.
+
+	Puesto que en las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} se trabaja en referencia a una corriente umbral y una frecuencia umbral, es necesario tener en cuenta los cambios de determinados t\'erminos con la corriente de polarización $\ibias$. En el script \texttt{getDictValues.py} se inicializan los diferentes valores de la frecuencia de emisión $\nu$, la diferencia de frecuencias respecto a la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y el corrimiento de frecuencias de la transformada r\'apida de Fourier; en diccionarios de python.
+
+	\addtocontents{toc}{\vspace{0.1cm}}
+	\subsection{Transformada R\'apida de Fourier}
+		\label{Mdl:Code:Temp}
 
 	\addtocontents{toc}{\vspace{0.1cm}}
 	\subsection{T\'ermino de la temperatura}
