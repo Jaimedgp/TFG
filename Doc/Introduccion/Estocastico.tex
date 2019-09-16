@@ -2,14 +2,14 @@
 	%En esta seccion se va a hablar de los procesos estocasticos del problema y de las ecuaciones diferenciales estocasticas, asi como de su resolucion.
 	
 
-Los procesos estoc\'asticos permiten describir la evoluci\'on temporal de un sistema con comportamiento aleatorio a partir de la probabilidad estad\'istica de \'este. El ejemplo m\'as relevante de los procesos estoc\'asticos el movimiento Browniano, que describe la evoluci\'on de la posici\'on de una part\'icula en el seno de un fluido, con impactos frecuentes e irregulares (aleatorios) con las part\'iculas del fluido. El movimiento Browniano viene definido por la ecuaci\'on de Lagevin y as\'i, puede resolverse realizando el promedio con diferentes perturbaciones aleatorias. Para el caso de un experimento esto equivaldr\'ia a realizar el promedio de los resultados, repitiendo el experimento un n\'umero suficiente de veces, hasta obtener la distribuci\'on de probabilidad del proceso.  Una forma alternativa de resoluci\'on del movimiento Browniano es a partir de la ecuaci\'on de Fokker-Plank \ref{eq:Fokker-Plank} con $P = P(\vec{r}, t)$ la ecuaci\'on de difusi\'on, que da la probabilidad de que la particula est\'a en $\vec{r}$ en un tiempo $t$.
+Los procesos estoc\'asticos permiten describir la evoluci\'on temporal de un sistema con comportamiento aleatorio a partir de la probabilidad estad\'istica de \'este \cite{gardiner1985handbook}. El ejemplo m\'as relevante de los procesos estoc\'asticos es el movimiento Browniano, que describe la evoluci\'on de la posici\'on de una part\'icula en el seno de un fluido, con impactos frecuentes e irregulares (aleatorios) con las part\'iculas del fluido. El movimiento Browniano viene definido por la ecuaci\'on de Langevin y as\'i, se puede describir su evoluci\'on realizando el promedio con diferentes perturbaciones aleatorias. Para el caso de un experimento esto equivaldr\'ia a realizar el promedio de los resultados, repitiendo el experimento un n\'umero suficiente de veces, hasta obtener la distribuci\'on de probabilidad del proceso.  Una forma alternativa de resoluci\'on del movimiento Browniano es a partir de la ecuaci\'on de Fokker-Planck. Para la evolución unidimensional esta ecuación es la ecuacion de difusión \ref{eq:Fokker-Plank} que da la probabilidad de que la posición de la partícula, $\overline{\underline{X}}(t)$, esté en $x$ en un tiempo $t$ con $P = P(x, t)$, donde $D$ es el coeficiente de difusión.
 
 	\begin{equation}
-		\frac{\partial P}{\partial t} = D \frac{\partial^2 P}{\partial \vec{r}^2}
+		\frac{\partial P}{\partial t} = D \frac{\partial^2 P}{\partial x^2}
 		\label{eq:Fokker-Plank}
 	\end{equation}
 
-	Otro ejemplo de proceso estoc\'astico es el de luz emitida por un l\'aser. Cuando la distribuci\'on de probabilidad del sistema para un conjunto de variables, no varia para un desplazamiento en el tiempo, se dice que se trata de un proceso estoc\'astico estacionario y se cumple que:
+	Otro ejemplo de proceso estoc\'astico es el de luz emitida por un l\'aser, cuya principal fuente de aleatoriedad viene dada por la emisión espontánea. Cuando la distribuci\'on de probabilidad del sistema para un conjunto de variables, no varia para un desplazamiento en el tiempo, se dice que se trata de un proceso estoc\'astico estacionario y se cumple que:
 	
 	\begin{equation}
 		\begin{matrix}
@@ -18,7 +18,9 @@ Los procesos estoc\'asticos permiten describir la evoluci\'on temporal de un sis
 		\end{matrix}
 	\end{equation}
 
-As\'i, la autocorrelaci\'on $R(t_1, t_2) = R_\tau$ depende de un valor fijo. Para un proceso estacionario, para el que la media es contante respecto a $t$, se puede relacionar la autocorrelaci\'on y el espectro de potencia $S(\omega)$ mediante el teorema de Kintchine, y la transformada de Fourier.
+
+
+As\'i, la autocorrelaci\'on $R(t_1, t_2) = E\left[\overline{\underline{X}}(t_1)\overline{\underline{X}}(t_2)\right] = R_\tau$ depende solo de la diferencia de tiempos $\tau = t_1 - t_2$. En la ecuación anterior $E\left[\overline{\underline{X}}(t_1)\overline{\underline{X}}(t_2)\right]$ es el valor medio del producto de $\overline{\underline{X}}(t_1)$ por $\overline{\underline{X}}(t_2)$ sobre distintos resultados del experimento. Para un proceso estacionario, para el que la media es contante respecto a $t$, se puede relacionar la autocorrelaci\'on y el espectro de potencia $S(\omega)$ mediante el teorema de Kintchine, y la transformada de Fourier.
 
 	\begin{equation}
 		\begin{matrix}
@@ -28,35 +30,35 @@ As\'i, la autocorrelaci\'on $R(t_1, t_2) = R_\tau$ depende de un valor fijo. Par
 		\label{eq:kintchine}
 	\end{equation}
 
-En los procesos estoc\'asticos Markovianos las probabilidades condicionadas est\'an determinadas por el conocimiento del pasado m\'as reciente , pues $\tau_1 \geq \tau_2 \geq ... \gep \tau_n$. Para que un proceso estoc\'astico sea Markoviano ha de cumplir las condiciones de \ref{eq:Markiviano}, pudiendo obtener la ecuaci\'on de Chapman Kolmog\'orov \ref{eq:Ch-Kgr}.
+%En los procesos estoc\'asticos Markovianos las probabilidades condicionadas est\'an determinadas por el conocimiento del pasado m\'as reciente , pues $\tau_1 \geq \tau_2 \geq \textrm{...} \geq \tau_n$. Para que un proceso estoc\'astico sea Markoviano ha de cumplir las condiciones de \ref{eq:Markiviano}, pudiendo obtener la ecuaci\'on de Chapman Kolmog\'orov \ref{eq:Ch-Kgr}.
 
-	\begin{equation}
-		\begin{matrix}
-			P(x_1, t_1, x_2, t_2, ...| y_1, \tau_1, y_2, \tau_2, ...) = P(x_1, t_1, x_2, t_2, ...| y_1, \tau_1) \\ \\
-			P(x_1, t_1, x_2, t_2, ..., x_n, t_n) = P(x_1, t_1|x_2, t_2)P(x_2, t_2|x_3, t_3)...P(x_n-1, t_n-1|x_n, t_n)P(x_n, t_n)
-		\end{matrix}
-		\label{eq:Markiviano}	
-	\end{equation}
+	%\begin{equation}
+	%	\begin{matrix}
+	%		P(x_1, t_1, x_2, t_2, ...| y_1, \tau_1, y_2, \tau_2, ...) = P(x_1, t_1, x_2, t_2, ...| y_1, \tau_1) \\ \\
+	%		P(x_1, t_1, x_2, t_2, ..., x_n, t_n) = P(x_1, t_1|x_2, t_2)P(x_2, t_2|x_3, t_3)...P(x_n-1, t_n-1|x_n, t_n)P(x_n, t_n)
+	%	\end{matrix}
+	%	\label{eq:Markiviano}	
+	%\end{equation}
 
-	\begin{equation}
-		P(x_1, t_1|x_3, t_3) = \int \mathrm{d}x_2 P(x_1, t_1|x_2, t_2)P(x_2, t_2|x_3, t_3)
-		\label{eq:Ch-Kgr}
-	\end{equation}
+	%\begin{equation}
+	%	P(x_1, t_1|x_3, t_3) = \int \mathrm{d}x_2 P(x_1, t_1|x_2, t_2)P(x_2, t_2|x_3, t_3)
+	%	\label{eq:Ch-Kgr}
+	%\end{equation}
 
-Se puede observar a partir de la ecuaci\'on \ref{eq:Ch-Kgr} que $P(z, t| y, t')$ satisface la ecuaci\'on de Fokker Plank \ref{eq:FPE}.
+Hay un tipo especial de procesos estocásticos en los que las probabilidades condicionadas están determinadas por el conocimiento del pasado más reciente, los procesos Markovianos. Para ellos la densidad de probabilidad de que el proceso tome el valor $z$ en $t$, sabiendo que tomó el valor $y$ en $t'$ ($P(z, t| y, t')$), satisface la ecuaci\'on de Fokker Plank \ref{eq:FPE}.
 
 	\begin{equation}
 		\frac{\partial P(z, t|y, t'))}{\partial t} = \frac{\partial }{\partial z}\left(A(z, t)P(z, t|y, t') \right ) + \frac{1}{2} \frac{\partial^2 }{\partial z^2}\left(B(z, t)P(z, t|y, t') \right )	
 		\label{eq:FPE}
 	\end{equation}
 
-	Un desarrollo de la ecuaci\'on \ref{eq:FPE} con $P(z, t|y, t) = \delta(z-y)$ permite hallar una densidad de probabilidad $P(z, t+\Delta t | y, t)$ de tipo gaussiana $\eta(t)$ con media cero y varianza $B\Delta t$.
+Un desarrollo de la ecuaci\'on \ref{eq:FPE} con condición inicial $P(z, t|y, t) = \delta(z-y)$ permite hallar una densidad de probabilidad $P(z, t+\Delta t | y, t)$ gaussiana con media cero y varianza $B\Delta t$.
 
 	\begin{equation}
 		Z(t+\Delta t) = y(t) + A(y, t)\Delta t + \eta(t) \sqrt{\Delta t}
 	\end{equation}
 
-El sistema evoluciona con un arrastre sistem\'atico $y(t) + A(y, t)\Delta t$ sobre el que se superpone la fluctuaci\'on $\eta(t)$.
+El sistema evoluciona con un arrastre sistem\'atico $y(t) + A(y, t)\Delta t$ sobre el que se superpone la fluctuaci\'on $\eta(t)$, gaussiana de media cero y varianza $B$.
 
 Las ecuaciones diferenciales estoc\'asticas vienen definidas por la ecuaci\'on de Langevin de la forma:
 
@@ -65,11 +67,11 @@ Las ecuaciones diferenciales estoc\'asticas vienen definidas por la ecuaci\'on d
 		\label{eq:SDE}
 	\end{equation}
 
-	En la ecuaci\'on \ref{eq:SDE} aparece el t\'ermino aleatorio $\xi(t)$ que describe la fluctuaci\'on r\'apida e irregular, con $\left \langle \xi(t) \right \rangle \equiv 0$ y $\left \langle \xi(t)\xi(t') \right \rangle = \delta(t-t')$. A este t\'ermino se le conoce como ruido blanco, debido a que se obtiene que el espectro de potencia es $S(\omega) = 1$ seg\'un la ecuaci\'on \ref{eq:kintchine} para $R(\tau) = \left \langle \xi(t)\xi(t') \right \rangle$.
+En la ecuaci\'on \ref{eq:SDE} aparece el t\'ermino aleatorio $\xi(t)$ que describe la fluctuaci\'on r\'apida e irregular, con $\left \langle \xi(t) \right \rangle \equiv 0$ y $\left \langle \xi(t)\xi(t') \right \rangle = \delta(t-t')$. A este t\'ermino se le conoce como ruido blanco, debido a que se obtiene que el espectro de potencia es $S(\omega) = 1$ seg\'un la ecuaci\'on \ref{eq:kintchine} para $R(\tau) = \left \langle \xi(t)\xi(t') \right \rangle$.
 
-Se obtiene que las ecuaciones \ref{eq:FPE} y \ref{eq:SDE} son equivalentes, por lo que se pueden simular procesos estoc\'asticos mediante la resoluci\'on num\'erical de \ref{eq:FPE} o mediante la integraci\'on num\'erica de la ecuaci\'on diferencial estoc\'astica \ref{eq:SDE}. 
+Se obtiene que las ecuaciones \ref{eq:FPE} y \ref{eq:SDE} son equivalentes, por lo que se pueden simular procesos estoc\'asticos mediante la resoluci\'on num\'erica de \ref{eq:FPE} o mediante la integraci\'on num\'erica de la ecuaci\'on diferencial estoc\'astica \ref{eq:SDE}. 
 
-Para la integraci\'on num\'erica de la ecuaci\'on estoc\'astica \ref{eq:SDE} se ha utilizado el algot=ritmo de Euler, discretizando el valor de $t$ (d$t \approx \Delta t$) y que d$x \approx x(t+\Delta t) - x(t)$. Considerando estas aproximaciones y teniendo en cuenta su equivalencia con la ecuaci\'on \ref{eq:FPE} se ha obtenido la siguiente expresi\'on:
+Para la integraci\'on num\'erica de la ecuaci\'on estoc\'astica \ref{eq:SDE} se ha utilizado el algoritmo de Euler, discretizando el valor de $t$ (d$t \approx \Delta t$) y que d$x \approx x(t+\Delta t) - x(t)$. Considerando estas aproximaciones y teniendo en cuenta su equivalencia con la ecuaci\'on \ref{eq:FPE} se ha obtenido la siguiente expresi\'on:
 
 	\begin{equation}
 		\begin{matrix}
@@ -79,7 +81,7 @@ Para la integraci\'on num\'erica de la ecuaci\'on estoc\'astica \ref{eq:SDE} se 
 		\label{eq:Gauss}
 	\end{equation}
 
-	En la ecuaci\'on \ref{eq:Gauss} se muestran los t\'erminos del ruido gaussiano, siendo $E[\eta] = 0$ su media, $V[\eta] = b^2$ la varianza y $Zi = N(0, 1)$ una distribuci\'on de probabilidad gaussiana. De esta forma, la soluci\'on a la ecuaci\'on \ref{eq:SDE}, considerando $x_i = x(t)$, queda:
+En la ecuaci\'on \ref{eq:Gauss} se muestran los t\'erminos del ruido gaussiano, siendo $E[\eta] = 0$ su media, $V[\eta] = b^2$ la varianza y $Z_i = N(0, 1)$ una distribuci\'on de probabilidad gaussiana. De esta forma, la soluci\'on a la ecuaci\'on \ref{eq:SDE}, considerando $x_i = x(t)$, queda \cite{gardiner1985handbook}:
 
 	\begin{equation}
 		x_{i+1} = x_i + a(x_i, t_i)\Delta t + b(x_i, t_i) Z_i\sqrt{\Delta t}
