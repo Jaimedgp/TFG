@@ -1,32 +1,24 @@
 
-☐  DESCARGAR ARTICULOS DESDE EDUROAM
-
+☐ CAMBIAR TITULO OFC(G-S)
 Preguntas Angel:
-    ☐ No he hecho mencion OFC nu separacion de lineas
-    ☐ hablar de movimiento browniano fig 4.3
-    ☐ Puedo hablar de atractor 2D en la figura 4.4????
-    ☐ No he hablado en Cpt4 del ruido 
-    ☐ Hablar en el Cpt4 de condicion de alta frecuencia
+    ☐ Como citar la tesis
 
 Intr_LsrSemiconductor:
-    ☐ Definicion de chirp
 
 Intr_Stochastic:
 
 Intr_NonLinear:
 
 Intr_OFC:
-    ☐ hablar de GS depende de los picos y el pulso
 
 Mdl_RoF:
     ☐  Mencionar que se trabaja con un I_th y un WL_th
-    ☐ Ecuaciones de balance
 
 Mdl_Code:
     ☐  Mencionar que se trabaja con un I_th y un WL_th
-    ☐ Trabajo en el transitorio sqrt(abs(S))
     ☐ Definir el chirp con la expresion
 
+Mejoras:
+    ☐ Al aumentar la resolucion se veria la anchura de los picos
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
-    ✔ Fig 3.6 Pwr in 1.20V picos diferentes @done(2019-09-12 16:47) @project(Preguntas Angel)

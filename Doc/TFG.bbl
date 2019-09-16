@@ -1,24 +1,67 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{saleh2019fundamentals}
+Bahaa~EA Saleh and Malvin~Carl Teich.
+\newblock {\em Fundamentals of photonics}.
+\newblock John Wiley \& Sons, 2019.
 
 \bibitem{principles}
 Orazio Svelto and David~C Hanna.
 \newblock {\em Principles of lasers}, volume~4.
 \newblock Springer, 1998.
 
+\bibitem{temprana2015overcoming}
+E~Temprana, E~Myslivets, BP-P Kuo, L~Liu, V~Ataie, N~Alic, and S~Radic.
+\newblock Overcoming kerr-induced capacity limit in optical fiber transmission.
+\newblock {\em Science}, 348(6242):1445--1448, 2015.
+
+\bibitem{artSim}
+Jose Manuel G.Tijero Ángel Valle Luis~Pesquera Alejandro~Rosado, Antonio
+  Pérez-Serrano and Ignacio Esquivias.
+\newblock Numerical and experimental analysis of optical frequency comb
+  generation in gain-switched semiconductor lasers.
+\newblock {\em IEEE Journal of Quantum Electronics, enviado}.
+
+\bibitem{schunk1986noise}
+Nikolaus Schunk and KLAUS Petermann.
+\newblock Noise analysis of injection-locked semiconductor injection lasers.
+\newblock {\em IEEE Journal of Quantum Electronics}, 22(5):642--650, 1986.
+
+\bibitem{fatadin2006numerical}
+Irshaad Fatadin, David Ives, and Martin Wicks.
+\newblock Numerical simulation of intensity and phase noise from extracted
+  parameters for cw dfb lasers.
+\newblock {\em IEEE Journal of Quantum Electronics}, 42(9):934--941, 2006.
+
+\bibitem{github}
+Jaime D\'iez.
+\newblock {TFG}.
+\newblock \url{https://github.com/Jaimedgp/TFG}, 2019.
+
 \bibitem{Chaves19}
 Diego~Chaves y~Ángel Valle.
 \newblock Peines de frecuencia óptica generados por láseres de semiconductor.
 \newblock {\em Trabajo Fin de Grado en preparaci\'on}.
+
+\bibitem{numpy}
+Travis~E Oliphant.
+\newblock {\em A guide to NumPy}, volume~1.
+\newblock Trelgol Publishing USA, 2006.
+
+\bibitem{numerical}
+William~H Press, Saul~A Teukolsky, William~T Vetterling, and Brian~P Flannery.
+\newblock Numerical recipes in c++.
+\newblock {\em The art of scientific computing}, 2:1002, 1992.
+
+\bibitem{cooley1965algorithm}
+James~W Cooley and John~W Tukey.
+\newblock An algorithm for the machine calculation of complex fourier series.
+\newblock {\em Mathematics of computation}, 19(90):297--301, 1965.
 
 \bibitem{van1995semiconductor}
 GHM Van~Tartwijk and D~Lenstra.
 \newblock Semiconductor lasers with optical injection and feedback.
 \newblock {\em Quantum and Semiclassical Optics: Journal of the European
   Optical Society Part B}, 7(2):87, 1995.
-
-\bibitem{artSim}
-GHM Van~Tartwijk and D~Lenstra.
-\newblock Numerical and experimental...
-\newblock {\em IEEE Journal of Quantum Electronics, enviado}.
 
 \end{thebibliography}

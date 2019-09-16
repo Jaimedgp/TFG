@@ -1,7 +1,7 @@
 El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semiconductor \gs\ se ha desarrollado utilizando el lenguaje de programaci\'on Python, versi\'on python 2.7. Los diferentes scripts utilizados para la simulaci\'on \cite{github} permiten resolver las ecuaciones de balance \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph}.
 
 
-	\addtocontents{toc}{\vspace{0.1cm}}
+	\addtocontents{toc}{\vspace{0.01cm}}
 	\subsection{Desarrollo de las Ecuaciones de Balance}
 		\label{Mdl:Code:RtEq}
 
@@ -39,7 +39,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 			\begin{equation}
 				\begin{matrix}
-					\sin(u - v) = \sin(u)\cos(v) - \cus(u)\sin(v) \\ \\
+					\sin(u - v) = \sin(u)\cos(v) - \cos(u)\sin(v) \\ \\
 
 					\cos(u - v) = \cos(u)\cos(v) + \sin(u)\sin(v) 
 				\end{matrix}
@@ -57,7 +57,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 		Puesto que en las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} se trabaja en referencia a una corriente umbral y una frecuencia umbral, es necesario tener en cuenta los cambios de determinados t\'erminos con la corriente de polarización $\ibias$. En el script \texttt{getDictValues.py} se inicializan los diferentes valores de la frecuencia de emisión $\nu$, la diferencia de frecuencias respecto a la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y el corrimiento de frecuencias de la transformada r\'apida de Fourier (FFT de sus siglas en ingl\'es); en diccionarios de python.
 
-	\addtocontents{toc}{\vspace{0.1cm}}
+	\addtocontents{toc}{\vspace{0.01cm}}
 	\subsection{Transformada R\'apida de Fourier}
 		\label{Mdl:Code:FFT}
 
@@ -67,7 +67,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 		Las frecuencias de la FFT realizada para un paso de $\Delta N$ viene dado por el intervalo $[-\frac{1}{2\Delta N}, \frac{1}{2\Delta N})$ centrado en el cero. Para el caso del l\'aser de semiconductor se ha de realizar una correcci\'on en dicho intervalo de tal forma que se corra centr\'andolo en la frecuencia de emisi\'on en el umbral $\nu_{th}$. 
 
-	\addtocontents{toc}{\vspace{0.1cm}}
+	\addtocontents{toc}{\vspace{0.01cm}}
 	\subsection{T\'ermino de la fase}
 		\label{Mdl:Code:Temp}
 
@@ -84,7 +84,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 			Se obtiene que para corriente continua la expresi\'on \ref{eq:Correc} toma un valor aproximadamente constante para tiempos grandes, dependiendo dicho valor de la corriente utilizada. En el script \texttt{get\_phaseTerm.py} se han obtenido varios valores de $C(I)$ para diferentes corrientes $\ibias$, corrigiendo nuevamente las frecuencias de la FFT para dichos valores.
 		
-	\addtocontents{toc}{\vspace{0.1cm}}
+	\addtocontents{toc}{\vspace{0.01cm}}
 	\subsection{Transitorio}
 		\label{Mdl:Code:Trans}
 
@@ -94,7 +94,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 		Una soluci\'on m\'as rigurosa a este problema habr\'ia consistido en bajar el paso de integraci\'on lo sufiente como para que el efecto de $Y_i$ no consiga cambiar el signo de $S(t)$. Dicha soluci\'on se desestim\'o debido al enorme coste computacional que requer\'ia, ya que hubiese sido necesario disminuir el paso de integraci\'on m\'as de dos ordenes de magnitud.
 
-	\addtocontents{toc}{\vspace{0.1cm}}
+	\addtocontents{toc}{\vspace{0.01cm}}
 	\subsection{Simulaci\'on Principal}
 		\label{Mdl:Code:main}
 		

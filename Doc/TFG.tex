@@ -164,35 +164,35 @@
 		%	  ARTICLE CONTENTS
 		%----------------------------------------------------------------------------------------
 
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Introducción} % Scope of the project = rad effects + minimization
 				\label{Intr}
 
 				\input{Introduccion/main.tex}
 				
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Modelo Computacional}
 				\label{Mdl}
 
 				\input{ModelComp/main.tex}
 
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Láser en solitario}
 				\label{Sol}
 
 				\input{Resultados/Cpt-Sol/main.tex}	
 
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Inyeccion Óptica}
 
 				\input{Resultados/Inyeccion.tex}
 
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Inyeccion Óptica en un láser \gs}
 
 				\input{Resultados/InyeccOFC.tex}
 
-			\addtocontents{toc}{\vspace{0.1cm}}
+			\addtocontents{toc}{\vspace{0.01cm}}
 			\chapter{Conclusiones}
 
 				hola a todos
@@ -214,6 +214,8 @@
 				\chapter{Código de la simulación}
 					\label{App:Code}
 
+					En este ca\'itulo se muestran partes del c\'odigo de la clase \texttt{Simulation()} desarrollada para la simulaci\'on de peines de frecuencia \'optica generados por l\'aseres de semiconductor con \gs\ e inyecci\'on de luz. No se muestra el c\'odigo completo del programa de la simulaci\'on sino solo aquellas l\'ineas de c\'odigo consideradas las m\'as importantes para entender el procedimeinto utilizado para la resoluci\'on de las ecuaciones diferenciales estoc\'asticas \ref{eq:RtEq-N}-\ref{eq:RtEq-Ph}. El resto del c\'odigo utilizado para la simulaci\'on se encuentra disponible para consulta en \cite{github}.
+					
 					\input{Apendices/Code.tex}
 
 	\end{document}
