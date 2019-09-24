@@ -53,7 +53,7 @@ El c\'odigo utilizado para la simulaci\'on de la din\'amica del l\'aser de semic
 
 		Tambi\'en se observa en la ecuaci\'on \ref{eq:Code-N} como la modulaci\'on de la corriente $I(t)$ solo depende del tiempo, por lo que $\sin(2\pi f_R t)$ puede ser calculado y almacenado en un vector al comienzo de la simulaci\'on, ahorrando tiempo de c\'alculo.
 
-		En \texttt{Constants.py} se computan, junto con los t\'erminos nindependientes de $N(t)$ y $S(t)$ de las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph}, el resto de par\'ametros de dichas ecuaciones necesarios para la realizaci\'on de la simulaci\'on, obtenidos de \cite{artSim} y \cite{Chaves19}.
+		En \texttt{Constants.py} se computan, junto con los t\'erminos independientes de $N(t)$ y $S(t)$ de las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph}, el resto de par\'ametros de dichas ecuaciones necesarios para la realizaci\'on de la simulaci\'on, obtenidos de \cite{artSim} y \cite{Chaves19}.
 
 		Puesto que en las ecuaciones \ref{eq:Code-N}-\ref{eq:Code-Ph} se trabaja en referencia a una corriente umbral y una frecuencia umbral, es necesario tener en cuenta los cambios de determinados t\'erminos con la corriente de polarización $\ibias$. En el script \texttt{getDictValues.py} se inicializan los diferentes valores de la frecuencia de emisión $\nu$, la diferencia de frecuencias respecto a la frecuencia de emisi\'on en la corriente umbral \cite{Chaves19} y el corrimiento de frecuencias de la transformada r\'apida de Fourier (FFT de sus siglas en ingl\'es); en diccionarios de python.
 

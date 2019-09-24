@@ -52,7 +52,7 @@ Hay un tipo especial de procesos estocásticos en los que las probabilidades con
 		\label{eq:FPE}
 	\end{equation}
 
-Un desarrollo de la ecuaci\'on \ref{eq:FPE} con condición inicial $P(z, t|y, t) = \delta(z-y)$ permite hallar una densidad de probabilidad $P(z, t+\Delta t | y, t)$ gaussiana con media cero y varianza $B\Delta t$.
+Un desarrollo de la ecuaci\'on \ref{eq:FPE} con condición inicial $P(z, t|y, t) = \delta(z-y)$ permite hallar una densidad de probabilidad $P(z, t+\Delta t | y, t)$ gaussiana con media $y(t) + A(y, t)\Delta t$ y varianza $B\Delta t$.
 
 	\begin{equation}
 		Z(t+\Delta t) = y(t) + A(y, t)\Delta t + \eta(t) \sqrt{\Delta t}
@@ -81,7 +81,7 @@ Para la integraci\'on num\'erica de la ecuaci\'on estoc\'astica \ref{eq:SDE} se 
 		\label{eq:Gauss}
 	\end{equation}
 
-En la ecuaci\'on \ref{eq:Gauss} se muestran los t\'erminos del ruido gaussiano, siendo $E[\eta] = 0$ su media, $V[\eta] = b^2$ la varianza y $Z_i = N(0, 1)$ una distribuci\'on de probabilidad gaussiana. De esta forma, la soluci\'on a la ecuaci\'on \ref{eq:SDE}, considerando $x_i = x(t)$, queda \cite{gardiner1985handbook}:
+En la ecuaci\'on \ref{eq:Gauss} se muestran los t\'erminos del ruido gaussiano, siendo $E[\eta] = 0$ su media, $V[\eta] = b^2$ la varianza y $Z_i = N(0, 1)$ una distribuci\'on de probabilidad gaussiana. De esta forma, la soluci\'on a la ecuaci\'on \ref{eq:SDE}, considerando $x_i = x(t_i)$, queda \cite{gardiner1985handbook}:
 
 	\begin{equation}
 		x_{i+1} = x_i + a(x_i, t_i)\Delta t + b(x_i, t_i) Z_i\sqrt{\Delta t}
